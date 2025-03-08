@@ -61,12 +61,12 @@ class UProperty : public UField {
 #endif
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_UPROPERTY_FIELDS(X)     \
-    X(int32_t, ArrayDim)                  \
-    X(int32_t, ElementSize)               \
-    X(property_flags_type, PropertyFlags) \
-    X(int32_t, Offset_Internal)           \
-    X(UProperty*, PropertyLinkNext)
+#define UNREALSDK_UPROPERTY_FIELDS(X)         \
+    X(int32_t, ArrayDim, , )                  \
+    X(int32_t, ElementSize, , )               \
+    X(property_flags_type, PropertyFlags, , ) \
+    X(int32_t, Offset_Internal, , )           \
+    X(UProperty*, PropertyLinkNext, , )
 
     UNREALSDK_DEFINE_FIELDS_HEADER(UProperty, UNREALSDK_UPROPERTY_FIELDS);
 

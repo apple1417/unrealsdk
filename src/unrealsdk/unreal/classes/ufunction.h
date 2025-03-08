@@ -29,10 +29,10 @@ class UFunction : public UStruct {
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define UNREALSDK_UFUNCTION_FIELDS(X) \
-    X(uint32_t, FunctionFlags)        \
-    X(uint8_t, NumParams)             \
-    X(uint16_t, ParamsSize)           \
-    X(uint16_t, ReturnValueOffset)
+    X(uint32_t, FunctionFlags, , )    \
+    X(uint8_t, NumParams, , )         \
+    X(uint16_t, ParamsSize, , )       \
+    X(uint16_t, ReturnValueOffset, , )
 
     // NOLINTNEXTLINE(readability-identifier-naming)
     UNREALSDK_DEFINE_FIELDS_HEADER(UFunction, UNREALSDK_UFUNCTION_FIELDS);

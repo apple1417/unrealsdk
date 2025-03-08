@@ -32,9 +32,9 @@ class UStruct : public UField {
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define UNREALSDK_USTRUCT_FIELDS(X) \
-    X(UStruct*, SuperField)         \
-    X(UField*, Children)            \
-    X(UProperty*, PropertyLink)
+    X(UStruct*, SuperField, , )     \
+    X(UField*, Children, , )        \
+    X(UProperty*, PropertyLink, , )
 
     // NOLINTNEXTLINE(readability-identifier-naming)
     UNREALSDK_DEFINE_FIELDS_HEADER(UStruct, UNREALSDK_USTRUCT_FIELDS);

@@ -36,7 +36,7 @@ class UField : public UObject {
     ~UField() = delete;
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_UFIELD_FIELDS(X) X(UField*, Next)
+#define UNREALSDK_UFIELD_FIELDS(X) X(UField*, Next, , )
 
     // NOLINTNEXTLINE(readability-identifier-naming)
     UNREALSDK_DEFINE_FIELDS_HEADER(UField, UNREALSDK_UFIELD_FIELDS);

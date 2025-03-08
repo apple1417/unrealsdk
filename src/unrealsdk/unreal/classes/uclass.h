@@ -29,9 +29,9 @@ class UClass : public UStruct {
     ~UClass() = delete;
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_UCLASS_FIELDS(X)  \
-    X(UObject*, ClassDefaultObject) \
-    X(TArray<FImplementedInterface>, Interfaces)
+#define UNREALSDK_UCLASS_FIELDS(X)      \
+    X(UObject*, ClassDefaultObject, , ) \
+    X(TArray<FImplementedInterface>, Interfaces, , )
 
     // NOLINTNEXTLINE(readability-identifier-naming)
     UNREALSDK_DEFINE_FIELDS_HEADER(UClass, UNREALSDK_UCLASS_FIELDS);

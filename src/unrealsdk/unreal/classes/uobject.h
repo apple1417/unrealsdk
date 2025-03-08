@@ -39,12 +39,12 @@ class UObject {
 #endif
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_UOBJECT_FIELDS(X)   \
-    X(object_flags_type, ObjectFlags) \
-    X(int32_t, InternalIndex)         \
-    X(UClass*, Class)                 \
-    X(FName, Name)                    \
-    X(UObject*, Outer)
+#define UNREALSDK_UOBJECT_FIELDS(X)       \
+    X(object_flags_type, ObjectFlags, , ) \
+    X(int32_t, InternalIndex, , )         \
+    X(UClass*, Class, , )                 \
+    X(FName, Name, , )                    \
+    X(UObject*, Outer, , )
 
     UNREALSDK_DEFINE_FIELDS_HEADER(UObject, UNREALSDK_UOBJECT_FIELDS);
 
