@@ -1,5 +1,6 @@
 #include "unrealsdk/pch.h"
 
+#include <type_traits>
 #include "unrealsdk/config.h"
 #include "unrealsdk/hook_manager.h"
 #include "unrealsdk/unreal/classes/ufunction.h"
@@ -116,6 +117,39 @@ void inject_next_call(void) {
     should_inject_next_call = true;
 }
 
+#define UNREALSDK_LOG_HOOK_MANAGER_UPDATES
+#ifdef UNREALSDK_LOG_HOOK_MANAGER_UPDATES
+
+std::wofstream log_hook_manager_update_stream;
+
+/**
+ * @brief Logs that the tracked hooks have been updated.
+ *
+ * @param update_type Char identifying how the hooks have been updated.
+ * @param func The function which was updated.
+ * @param type The hook type which was updated.
+ * @param identifier The hook identifier which was updated.
+ */
+void log_hook_manager_update(wchar_t update_type,
+                             std::wstring_view func,
+                             Type type,
+                             std::wstring_view identifier) {
+    if (!log_hook_manager_update_stream.is_open()) {
+        log_hook_manager_update_stream.open(
+            utils::get_this_dll().parent_path() / "unrealsdk.hooks.tsv", std::wofstream::trunc);
+    }
+
+    log_hook_manager_update_stream << update_type << L'\t' << func << L'\t'
+                                   << static_cast<std::underlying_type_t<Type>>(type) << L'\t'
+                                   << identifier << L'\n' << std::flush;
+}
+#else
+inline void log_hook_manager_update(wchar_t update_type,
+                                    std::wstring_view func,
+                                    Type type,
+                                    std::wstring_view identifier) {}
+#endif
+
 /**
  * @brief Extracts the object name from a hook function's full path name.
  *
@@ -134,6 +168,8 @@ bool add_hook(std::wstring_view func,
               Type type,
               std::wstring_view identifier,
               DLLSafeCallback* callback) {
+    log_hook_manager_update(L'A', func, type, identifier);
+
     auto fname = extract_func_obj_name(func);
 
     auto& path_name_map = hooks[fname];
@@ -172,6 +208,8 @@ bool has_hook(std::wstring_view func, Type type, std::wstring_view identifier) {
 }
 
 bool remove_hook(std::wstring_view func, Type type, std::wstring_view identifier) {
+    log_hook_manager_update(L'R', func, type, identifier);
+
     auto fname = extract_func_obj_name(func);
 
     auto fname_iter = hooks.find(fname);
