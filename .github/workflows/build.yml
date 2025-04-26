@@ -45,6 +45,12 @@ jobs:
     - name: Build
       run: cmake --build out/build/${{ matrix.preset }}
 
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.preset }}
+        path: out/build/${{ matrix.preset }}/*.dll
+
   build-ubuntu:
     runs-on: ubuntu-latest
 
@@ -93,6 +99,11 @@ jobs:
             cmake . --preset ${{ matrix.toolchain.preset }} -G Ninja
             cmake --build out/build/${{ matrix.toolchain.preset }}
 
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.toolchain.preset }}
+          path: out/build/${{ matrix.toolchain.preset }}/*.dll
 
 # ==============================================================================
 
