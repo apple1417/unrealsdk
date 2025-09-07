@@ -81,7 +81,7 @@ namespace impl {
 #ifndef UNREALSDK_IMPORTING
 
 bool is_command_valid(std::wstring_view line, bool direct_user_input) {
-    if (direct_user_input && commands.find(NEXT_LINE) != commands.end()) {
+    if (direct_user_input && commands.contains(NEXT_LINE)) {
         return true;
     }
     auto non_space = std::ranges::find_if_not(line, &std::iswspace);

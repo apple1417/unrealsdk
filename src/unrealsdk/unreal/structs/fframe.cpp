@@ -9,6 +9,7 @@ namespace unrealsdk::unreal {
 
 uint8_t* FFrame::extract_current_args(WrappedStruct& args) {
     auto args_addr = reinterpret_cast<uintptr_t>(args.base.get());
+    // NOLINTNEXTLINE(misc-const-correctness) - see llvm/llvm-project#157320
     uint8_t* original_code = this->Code;
 
     for (auto prop = reinterpret_cast<UProperty*>(args.type->Children());

@@ -36,7 +36,7 @@ void GetStartupInfoA_hook(LPSTARTUPINFOA lpStartupInfo) {
         return;
     }
 
-    const std::lock_guard<std::mutex> lock{ready_mutex};
+    const std::scoped_lock lock{ready_mutex};
     ready.store(true);
     ready_cv.notify_all();
 }

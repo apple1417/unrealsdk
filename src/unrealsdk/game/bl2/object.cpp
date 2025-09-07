@@ -80,7 +80,7 @@ UObject* BL2Hook::construct_object(UClass* cls,
 
 namespace {
 
-#if defined(__MINGW32__)
+#ifdef __MINGW32__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wattributes"  // thiscall on non-class
 #endif
@@ -90,7 +90,7 @@ typedef void(__thiscall* get_path_name_func)(const UObject* self,
                                              const UObject* stop_outer,
                                              ManagedFString* str);
 
-#if defined(__MINGW32__)
+#ifdef __MINGW32__
 #pragma GCC diagnostic pop
 #endif
 

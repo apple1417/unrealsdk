@@ -43,7 +43,7 @@ void BL1Hook::post_init(void) {
 
 namespace {
 
-#if defined(__MINGW32__)
+#ifdef __MINGW32__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wattributes"  // thiscall on non-class
 #endif
@@ -59,7 +59,7 @@ const constinit Pattern<11> GNATIVES_SIG{
 typedef void(__thiscall* fframe_step_func)(UObject*, FFrame*, void*);
 fframe_step_func** fframe_step_gnatives;
 
-#if defined(__MINGW32__)
+#ifdef __MINGW32__
 #pragma GCC diagnostic pop
 #endif
 
@@ -78,7 +78,7 @@ void BL1Hook::fframe_step(FFrame* frame, UObject* obj, void* param) const {
 
 namespace {
 
-#if defined(__MINGW32__)
+#ifdef __MINGW32__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wattributes"  // thiscall on non-class
 #endif
@@ -115,7 +115,7 @@ typedef void(__thiscall* fname_init_func)(FName* name,
 
 fname_init_func fname_init_ptr = nullptr;
 
-#if defined(__MINGW32__)
+#ifdef __MINGW32__
 #pragma GCC diagnostic pop
 #endif
 
