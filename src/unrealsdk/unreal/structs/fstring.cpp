@@ -74,8 +74,10 @@ UnmanagedFString::operator std::wstring() const {
     return std::wstring{this->operator std::wstring_view()};
 }
 UnmanagedFString::operator std::wstring_view() const {
+    // You'd think data == nullptr implies size == 0, but occasionally during game shutdown I've
+    // seen otherwise.
     auto size = this->size();
-    if (size == 0) {
+    if (size == 0 || this->data == nullptr) {
         return L"";
     }
 
