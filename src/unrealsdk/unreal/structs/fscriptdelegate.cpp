@@ -64,7 +64,7 @@ void FScriptDelegate::validate_signature(const std::optional<BoundFunction>& fun
     // Since delegates store the function name, make sure we can find this function again from just
     // it's name
     {
-        UFunction* func_from_find = nullptr;
+        const UFunction* func_from_find = nullptr;
         try {
             func_from_find = func->object->Class()->find_func_and_validate(func->func->Name());
         } catch (const std::invalid_argument&) {

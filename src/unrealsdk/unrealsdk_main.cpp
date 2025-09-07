@@ -45,7 +45,7 @@ std::unordered_set<void*> unreal_allocations{};
 #endif
 
 bool init(const std::function<std::unique_ptr<game::AbstractHook>(void)>& game_getter) {
-    const std::lock_guard<std::mutex> lock(init_mutex);
+    const std::scoped_lock lock(init_mutex);
 
     if (hook_instance != nullptr) {
         return false;
@@ -75,12 +75,12 @@ bool init(const std::function<std::unique_ptr<game::AbstractHook>(void)>& game_g
 }
 
 UNREALSDK_CAPI([[nodiscard]] bool, is_initialized) {
-    const std::lock_guard<std::mutex> lock(init_mutex);
+    const std::scoped_lock lock(init_mutex);
     return hook_instance != nullptr;
 }
 
 UNREALSDK_CAPI([[nodiscard]] bool, is_console_ready) {
-    return hook_instance && hook_instance->is_console_ready();
+    return is_initialized() && hook_instance->is_console_ready();
 }
 
 UNREALSDK_CAPI([[nodiscard]] const GObjects*, gobjects) {

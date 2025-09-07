@@ -67,7 +67,7 @@ std::vector<log_callback> all_log_callbacks{};
         }
 
         {
-            const std::lock_guard<std::mutex> callback_lock(callback_mutex);
+            const std::scoped_lock callback_lock(callback_mutex);
             while (!pending_messages.empty()) {
                 auto msg = std::move(pending_messages.front());
                 pending_messages.pop();
@@ -289,7 +289,7 @@ void enqueue_log_msg(uint64_t unix_time_ms,
                      size_t location_size,
                      int line) {
     {
-        const std::lock_guard<std::mutex> lock(pending_messages_mutex);
+        const std::scoped_lock lock(pending_messages_mutex);
         pending_messages.emplace(unix_time_ms, level, msg, msg_size, location, location_size, line);
     }
     pending_messages_available.notify_all();
@@ -305,13 +305,13 @@ bool set_console_level(Level level) {
 }
 
 void add_callback(log_callback callback) {
-    const std::lock_guard<std::mutex> lock(callback_mutex);
+    const std::scoped_lock lock(callback_mutex);
 
     all_log_callbacks.push_back(callback);
 }
 
 void remove_callback(log_callback callback) {
-    const std::lock_guard<std::mutex> lock(callback_mutex);
+    const std::scoped_lock lock(callback_mutex);
 
     auto [begin, end] = std::ranges::remove(all_log_callbacks, callback);
     all_log_callbacks.erase(begin, end);

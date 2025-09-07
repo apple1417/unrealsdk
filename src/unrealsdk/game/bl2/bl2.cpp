@@ -42,7 +42,7 @@ void BL2Hook::post_init(void) {
     inject_console();
 }
 
-#if defined(__MINGW32__)
+#ifdef __MINGW32__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wattributes"  // thiscall on non-class
 #endif
@@ -114,7 +114,7 @@ void BL2Hook::ftext_as_culture_invariant(unreal::FText* /*text*/,
 
 #pragma endregion
 
-#if defined(__MINGW32__)
+#ifdef __MINGW32__
 #pragma GCC diagnostic pop
 #endif
 

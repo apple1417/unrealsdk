@@ -137,7 +137,7 @@ std::mutex log_all_calls_stream_mutex{};
 void log_all_calls(bool should_log) {
     // Only keep this file stream open while we need it
     if (should_log) {
-        const std::lock_guard<std::mutex> lock(log_all_calls_stream_mutex);
+        const std::scoped_lock lock(log_all_calls_stream_mutex);
         log_all_calls_stream.open(
             utils::get_this_dll().parent_path()
                 / config::get_str("unrealsdk.log_all_calls_file").value_or("unrealsdk.calls.tsv"),
@@ -147,7 +147,7 @@ void log_all_calls(bool should_log) {
     should_log_all_calls = should_log;
 
     if (!should_log) {
-        const std::lock_guard<std::mutex> lock(log_all_calls_stream_mutex);
+        const std::scoped_lock lock(log_all_calls_stream_mutex);
         log_all_calls_stream.close();
     }
 }
@@ -432,7 +432,7 @@ std::shared_ptr<Node> preprocess_hook(std::wstring_view source,
             func_name = func->get_path_name();
             auto obj_name = obj->get_path_name();
 
-            const std::lock_guard<std::mutex> lock(log_all_calls_stream_mutex);
+            const std::scoped_lock lock(log_all_calls_stream_mutex);
             log_all_calls_stream << source << L'\t' << func_name << L'\t' << obj_name << L'\n';
         }
     }
