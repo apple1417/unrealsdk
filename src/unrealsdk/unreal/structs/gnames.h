@@ -19,7 +19,7 @@ struct FNameEntry {
 
     // NOLINTBEGIN(readability-magic-numbers, readability-identifier-naming)
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
     int32_t Index;
 
    private:
@@ -57,7 +57,7 @@ struct FNameEntry {
     [[nodiscard]] bool is_wide(void) const;
 };
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
 
 // NOLINTNEXTLINE(readability-identifier-naming)
 struct TStaticIndirectArrayThreadSafeRead_FNameEntry {

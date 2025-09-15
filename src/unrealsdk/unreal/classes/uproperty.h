@@ -34,7 +34,7 @@ class UProperty : public UField {
     UProperty& operator=(UProperty&&) = delete;
     ~UProperty() = delete;
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
     using property_flags_type = uint64_t;
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
     using property_flags_type = uint32_t;

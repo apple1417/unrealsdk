@@ -95,7 +95,7 @@ void UObject::post_edit_change_property(UProperty* prop) const {
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
     constexpr auto default_idx = 19;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
     constexpr auto default_idx = 78;
 #else
 #error Unknown SDK flavour
@@ -115,7 +115,7 @@ void UObject::post_edit_change_chain_property(UProperty* prop,
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
     constexpr auto default_idx = 18;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
     constexpr auto default_idx = 77;
 #else
 #error Unknown SDK flavour

@@ -19,7 +19,7 @@ struct FScriptDelegate {
    private:
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
     UObject* object = nullptr;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
     FWeakObjectPtr object;
 #else
 #error Unknown SDK flavour

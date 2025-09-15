@@ -5,6 +5,7 @@
 #include "unrealsdk/game/bl1/bl1.h"
 #include "unrealsdk/game/bl2/bl2.h"
 #include "unrealsdk/game/bl3/bl3.h"
+#include "unrealsdk/game/bl4/bl4.h"
 #include "unrealsdk/game/tps/tps.h"
 #include "unrealsdk/utils.h"
 
@@ -22,6 +23,8 @@ namespace {
 using all_known_games = std::tuple<BL1Hook, BL2Hook, TPSHook>;
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
 using all_known_games = std::tuple<BL3Hook>;
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
+using all_known_games = std::tuple<BL4Hook>;
 #else
 #error Unknown SDK flavour
 #endif

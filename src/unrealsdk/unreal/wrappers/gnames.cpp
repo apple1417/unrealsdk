@@ -8,7 +8,7 @@ namespace unrealsdk::unreal {
 GNames::GNames(void) : internal(nullptr) {}
 GNames::GNames(internal_type internal) : internal(internal) {}
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
 
 size_t GNames::size(void) const {
     return this->internal->Count;

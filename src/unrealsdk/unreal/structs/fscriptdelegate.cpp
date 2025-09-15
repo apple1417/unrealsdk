@@ -19,7 +19,7 @@ void FScriptDelegate::set_object(UObject* obj) {
     this->object = obj;
 }
 
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
 
 UObject* FScriptDelegate::get_object(void) const {
     return unrealsdk::gobjects().get_weak_object(&this->object);

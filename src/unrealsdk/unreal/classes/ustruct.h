@@ -30,7 +30,7 @@ class UStruct : public UField {
     UStruct& operator=(UStruct&&) = delete;
     ~UStruct() = delete;
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
     using property_size_type = int32_t;
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
     using property_size_type = uint16_t;

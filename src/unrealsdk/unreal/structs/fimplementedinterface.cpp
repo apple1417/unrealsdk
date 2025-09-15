@@ -6,7 +6,7 @@
 namespace unrealsdk::unreal {
 
 size_t FImplementedInterface::get_pointer_offset() const {
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
     return this->isNative ? 0 : this->PointerOffset;
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
     return this->VFTableProperty == nullptr ? 0 : this->VFTableProperty->Offset_Internal();

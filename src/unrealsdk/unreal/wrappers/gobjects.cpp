@@ -4,7 +4,7 @@
 #include "unrealsdk/unreal/structs/fweakobjectptr.h"
 #include "unrealsdk/unreal/wrappers/gobjects.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
 #include "unrealsdk/unreal/structs/gobjects.h"
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
 #include "unrealsdk/unreal/structs/tarray.h"
@@ -72,7 +72,7 @@ GObjects::Iterator GObjects::end(void) {
 GObjects::GObjects(void) : internal(nullptr) {}
 GObjects::GObjects(internal_type internal) : internal(internal) {}
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
 
 size_t GObjects::size(void) const {
     return this->internal->ObjObjects.Count;

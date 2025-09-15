@@ -30,7 +30,7 @@ class UObject {
 
     uintptr_t* vftable;
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
     using object_flags_type = uint32_t;
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
     using object_flags_type = uint64_t;

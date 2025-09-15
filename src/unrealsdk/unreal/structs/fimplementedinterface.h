@@ -18,7 +18,7 @@ struct FImplementedInterface {
     UClass* Class;
 
    private:
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
     int32_t PointerOffset;
     bool isNative;
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW

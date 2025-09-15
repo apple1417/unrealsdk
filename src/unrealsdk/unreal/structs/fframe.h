@@ -34,7 +34,7 @@ struct FOutputDevice {
     uint32_t bAllowSuppression;
 
    public:
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
     // Intentionally empty
 #else
 #error Unknown SDK flavour
@@ -52,7 +52,7 @@ struct FFrame : public FOutputDevice {
     uint8_t* Code;
     void* Locals;
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
    private:
     UProperty* LastProperty;
     void* LastPropertyAddress;

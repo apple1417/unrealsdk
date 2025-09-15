@@ -10,6 +10,7 @@
 // NOLINTBEGIN(cppcoreguidelines-macro-usage)
 #define UNREALSDK_FLAVOUR_WILLOW 1
 #define UNREALSDK_FLAVOUR_OAK 2
+#define UNREALSDK_FLAVOUR_OAK2 3
 // NOLINTEND(cppcoreguidelines-macro-usage)
 
 #define WIN32_LEAN_AND_MEAN
@@ -91,12 +92,15 @@ static_assert(std::numeric_limits<double>::is_iec559 && std::numeric_limits<doub
 using float32_t = float;
 using float64_t = double;
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-static_assert(sizeof(uintptr_t) == sizeof(uint32_t),
-              "Expected 32 bit pointers for Willow SDK flavour");
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
 static_assert(sizeof(uintptr_t) == sizeof(uint64_t),
               "Expected 64 bit pointers for Oak SDK flavour");
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
+static_assert(sizeof(uintptr_t) == sizeof(uint64_t),
+              "Expected 64 bit pointers for Oak2 SDK flavour");
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+static_assert(sizeof(uintptr_t) == sizeof(uint32_t),
+              "Expected 32 bit pointers for Willow SDK flavour");
 #else
 #error Unknown sdk flavour
 #endif

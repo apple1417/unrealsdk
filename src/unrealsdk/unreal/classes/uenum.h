@@ -31,7 +31,7 @@ class UEnum : public UField {
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
     using names_type = TArray<FName>;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
     using names_type = TArray<TPair<FName, uint64_t> >;
 #else
 #error Unknown sdk flavour

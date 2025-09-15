@@ -11,7 +11,7 @@ namespace unrealsdk::unreal {
 
 UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(UEnum, UNREALSDK_UENUM_FIELDS);
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
 
 std::unordered_map<FName, uint64_t> UEnum::get_names(void) const {
     std::unordered_map<FName, uint64_t> output;

@@ -13,7 +13,7 @@ namespace unrealsdk::unreal {
 
 class GNames {
    public:
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
     using internal_type = TStaticIndirectArrayThreadSafeRead_FNameEntry*;
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
     using internal_type = TArray<FNameEntry*>*;

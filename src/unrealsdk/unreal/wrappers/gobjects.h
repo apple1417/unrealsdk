@@ -3,7 +3,7 @@
 
 #include "unrealsdk/pch.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
 #include "unrealsdk/unreal/structs/gobjects.h"
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
 #include "unrealsdk/unreal/structs/tarray.h"
@@ -18,7 +18,7 @@ class UObject;
 
 class GObjects {
    public:
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
     using internal_type = FUObjectArray*;
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
     using internal_type = TArray<UObject*>*;

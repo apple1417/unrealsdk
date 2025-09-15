@@ -14,7 +14,7 @@ class UObject;
 #pragma clang diagnostic ignored "-Wunused-private-field"
 #endif
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
 
 // There are a few fields we need to modify to deal with weak pointers. To be thread safe we need
 // them to be atomic fields - as unreal itself does. The fields are all aligned as normal, we expect

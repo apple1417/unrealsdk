@@ -9,7 +9,7 @@
 
 namespace unrealsdk::unreal {
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
 
 FText::FText(std::string_view str) : FText(utils::widen(str)) {}
 FText::FText(std::wstring_view str) : data(), flags() {

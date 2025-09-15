@@ -23,7 +23,7 @@
 #include "unrealsdk/unreal/structs/tarray.h"
 #include "unrealsdk/unreal/structs/tpair.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
 
 namespace unrealsdk::unreal {
 
