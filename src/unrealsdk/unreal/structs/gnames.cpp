@@ -29,7 +29,7 @@ FNameEntry* FNamePool::at(int32_t idx) const {
     size_t chunk_idx = (as_unsigned & 0xFFFF000) >> 16;
     // NOLINTEND(readability-magic-numbers)
 
-    if (chunk_idx >= this->num_chunks) {
+    if (chunk_idx > this->last_chunk_idx) {
         throw std::out_of_range("FName chunk index out of range");
     }
     // Assuming every name index is fine? They do seem to be 128k apart.

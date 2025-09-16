@@ -63,7 +63,7 @@ struct FNamePool {
     // NOLINTNEXTLINE(readability-magic-numbers)
     uint8_t unknown[0x8];
 
-    uint32_t num_chunks;
+    uint32_t last_chunk_idx;
     uint32_t num_entries;
 
     // We treat these as variable length arrays.

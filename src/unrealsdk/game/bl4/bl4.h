@@ -26,6 +26,7 @@ class BL4Hook : public ThrowingHook {
     void hook(void) override;
     void post_init(void) override;
 
+    void fname_init(unreal::FName* name, const wchar_t* str, int32_t number) const override;
     [[nodiscard]] std::variant<const std::string_view, const std::wstring_view> fname_get_str(
         const unreal::FName& name) const override;
 
