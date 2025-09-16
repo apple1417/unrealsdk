@@ -152,6 +152,8 @@ using UFloatAttributeProperty = unreal::offsets::generic::GenericAttributeProper
 using UIntAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<UIntProperty>;
 using USoftClassProperty = unreal::offsets::generic::USoftClassProperty<UObjectProperty>;
 
+class FNameEntry : public bl2::FNameEntry {};
+
 // NOLINTEND(cppcoreguidelines-pro-type-member-init,
 //           readability-identifier-naming,
 //           readability-magic-numbers)

@@ -26,10 +26,6 @@ const GObjects& gobjects(void) {
     return *UNREALSDK_MANGLE(gobjects)();
 }
 
-const GNames& gnames(void) {
-    return *UNREALSDK_MANGLE(gnames)();
-}
-
 void* u_malloc(size_t len) {
     return UNREALSDK_MANGLE(u_malloc)(len);
 }
@@ -69,6 +65,18 @@ void fname_init(FName* name, const wchar_t* str, int32_t number) {
 }
 void fname_init(FName* name, const std::wstring& str, int32_t number) {
     UNREALSDK_MANGLE(fname_init)(name, str.data(), number);
+}
+std::variant<const std::string_view, const std::wstring_view> fname_get_str(
+    const unreal::FName& name) {
+    const void* str = nullptr;
+    size_t size = 0;
+    bool is_wide = false;
+    UNREALSDK_MANGLE(fname_get_str)(name, &str, &size, &is_wide);
+
+    if (is_wide) {
+        return std::wstring_view{reinterpret_cast<const wchar_t*>(str), size};
+    }
+    return std::string_view{reinterpret_cast<const char*>(str), size};
 }
 
 void fframe_step(FFrame* frame, UObject* obj, void* param) {

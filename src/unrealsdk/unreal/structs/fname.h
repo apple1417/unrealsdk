@@ -3,6 +3,15 @@
 
 #include "unrealsdk/pch.h"
 
+namespace unrealsdk::game {
+
+class BL1Hook;
+class BL2Hook;
+class BL3Hook;
+class BL4Hook;
+
+}  // namespace unrealsdk::game
+
 namespace unrealsdk::unreal {
 
 #if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
@@ -11,6 +20,11 @@ namespace unrealsdk::unreal {
 
 struct FName {
    private:
+    friend class game::BL1Hook;
+    friend class game::BL2Hook;
+    friend class game::BL3Hook;
+    friend class game::BL4Hook;
+
     int32_t index{0};
     int32_t number{0};
 

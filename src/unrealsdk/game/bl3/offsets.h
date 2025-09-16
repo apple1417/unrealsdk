@@ -20,6 +20,7 @@
 #include "unrealsdk/unreal/offsets.h"
 #include "unrealsdk/unreal/structs/fname.h"
 #include "unrealsdk/unreal/structs/fstring.h"
+#include "unrealsdk/unreal/structs/gnames.h"
 #include "unrealsdk/unreal/structs/tarray.h"
 #include "unrealsdk/unreal/structs/tpair.h"
 
@@ -174,6 +175,21 @@ class UBoolProperty : public UProperty {
 
    public:
     uint8_t FieldMask;
+};
+
+struct FNameEntry {
+   public:
+    union {
+        uint8_t Flags;
+        int32_t Index;
+    };
+
+   private:
+    uint8_t UnknownData00[0x04];
+    FNameEntry* HashNext;
+
+   public:
+    unreal::FNameEntry::name_union Name;
 };
 
 // NOLINTEND(cppcoreguidelines-pro-type-member-init,

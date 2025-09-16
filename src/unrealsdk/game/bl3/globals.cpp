@@ -1,8 +1,9 @@
 #include "unrealsdk/pch.h"
 
 #include "unrealsdk/game/bl3/bl3.h"
+#include "unrealsdk/game/bl3/offsets.h"
 #include "unrealsdk/memory.h"
-#include "unrealsdk/unreal/wrappers/gnames.h"
+#include "unrealsdk/unreal/structs/gnames.h"
 #include "unrealsdk/unreal/wrappers/gobjects.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK && !defined(UNREALSDK_IMPORTING)
@@ -38,8 +39,6 @@ const GObjects& BL3Hook::gobjects(void) const {
 
 namespace {
 
-GNames gnames_wrapper{};
-
 const constinit Pattern<27> GNAMES_SIG{
     "E8 ????????"          // call Borderlands3.exe+3DDBB7C
     "48 8B C3"             // mov rax, rbx
@@ -49,20 +48,24 @@ const constinit Pattern<27> GNAMES_SIG{
     "C3"                   // ret
     "33 DB"                // xor ebx, ebx
 };
+TStaticIndirectArrayThreadSafeRead_FNameEntry* gnames_ptr;
 
 }  // namespace
 
 void BL3Hook::find_gnames(void) {
     // Using plain `sigscan` since there's an extra level of indirection here, want to make sure to
     // print an error before we potentially dereference it
-    auto gnames_ptr = *read_offset<GNames::internal_type*>(GNAMES_SIG.sigscan("GNames"));
+    gnames_ptr = *read_offset<decltype(gnames_ptr)*>(GNAMES_SIG.sigscan("GNames"));
     LOG(MISC, "GNames: {:p}", reinterpret_cast<void*>(gnames_ptr));
-
-    gnames_wrapper = GNames(gnames_ptr);
 }
 
-const GNames& BL3Hook::gnames(void) const {
-    return gnames_wrapper;
+[[nodiscard]] std::variant<const std::string_view, const std::wstring_view> BL3Hook::fname_get_str(
+    const unreal::FName& name) const {
+    auto entry = reinterpret_cast<bl3::FNameEntry*>(gnames_ptr->at(name.index));
+    if ((entry->Index & FNameEntry::NAME_WIDE_MASK) != 0) {
+        return std::wstring_view{&entry->Name.Wide[0]};
+    }
+    return std::string_view{&entry->Name.Ansi[0]};
 }
 
 }  // namespace unrealsdk::game

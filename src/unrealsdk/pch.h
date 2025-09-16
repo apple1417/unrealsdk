@@ -67,6 +67,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
+#include <variant>
 
 // This file is mostly just here so that the `LOG` macro is automatically available everywhere
 // It only includes library headers, so is also ok to include

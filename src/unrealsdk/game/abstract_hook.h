@@ -59,7 +59,6 @@ struct AbstractHook {
     [[nodiscard]] virtual bool is_console_ready(void) const = 0;
 
     [[nodiscard]] virtual const unreal::GObjects& gobjects(void) const = 0;
-    [[nodiscard]] virtual const unreal::GNames& gnames(void) const = 0;
     [[nodiscard]] virtual void* u_malloc(size_t len) const = 0;
     [[nodiscard]] virtual void* u_realloc(void* original, size_t len) const = 0;
     virtual void u_free(void* data) const = 0;
@@ -75,6 +74,9 @@ struct AbstractHook {
                                                         uint32_t flags) const = 0;
 
     virtual void fname_init(unreal::FName* name, const wchar_t* str, int32_t number) const = 0;
+    [[nodiscard]] virtual std::variant<const std::string_view, const std::wstring_view>
+    fname_get_str(const unreal::FName& name) const = 0;
+
     virtual void fframe_step(unreal::FFrame* frame, unreal::UObject* obj, void* param) const = 0;
     virtual void process_event(unreal::UObject* object,
                                unreal::UFunction* func,

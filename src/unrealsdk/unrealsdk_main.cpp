@@ -87,10 +87,6 @@ UNREALSDK_CAPI([[nodiscard]] const GObjects*, gobjects) {
     return &hook_instance->gobjects();
 }
 
-UNREALSDK_CAPI([[nodiscard]] const GNames*, gnames) {
-    return &hook_instance->gnames();
-}
-
 UNREALSDK_CAPI(void*, u_malloc, size_t len) {
     auto ptr = hook_instance->u_malloc(len);
 
@@ -152,6 +148,16 @@ namespace internal {
 
 UNREALSDK_CAPI(void, fname_init, FName* name, const wchar_t* str, int32_t number) {
     hook_instance->fname_init(name, str, number);
+}
+
+UNREALSDK_CAPI(void, fname_get_str, FName name, const void** str, size_t* size, bool* is_wide) {
+    std::visit(
+        [&](auto&& arg) {
+            *str = arg.data();
+            *size = arg.size();
+            *is_wide = std::is_same_v<typename std::decay_t<decltype(arg)>::value_type, wchar_t>;
+        },
+        hook_instance->fname_get_str(name));
 }
 
 UNREALSDK_CAPI(void, fframe_step, FFrame* frame, UObject* obj, void* param) {

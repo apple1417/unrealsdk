@@ -26,6 +26,7 @@
 #include "unrealsdk/unreal/classes/uproperty.h"
 #include "unrealsdk/unreal/classes/uscriptstruct.h"
 #include "unrealsdk/unreal/classes/ustruct.h"
+#include "unrealsdk/unreal/structs/gnames.h"
 
 namespace unrealsdk::unreal::offsets {
 
@@ -59,7 +60,8 @@ namespace unrealsdk::unreal::offsets {
     X(UScriptStruct)                       \
     X(USoftClassProperty)                  \
     X(UStruct)                             \
-    X(UStructProperty)
+    X(UStructProperty)                     \
+    X(FNameEntry)
 
 #define UNREALSDK_OFFSETS__DEFINE_OFFSET_LIST_MEMBERS(name) unrealsdk::unreal::name::Offsets name;
 #define UNREALSDK_OFFSETS__NESTED_FROM_TYPE(name) \

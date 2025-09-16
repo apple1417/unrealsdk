@@ -3,7 +3,6 @@
 #include "unrealsdk/unreal/classes/uclass.h"
 #include "unrealsdk/unreal/structs/fframe.h"
 #include "unrealsdk/unreal/structs/ftext.h"
-#include "unrealsdk/unreal/wrappers/gnames.h"
 #include "unrealsdk/unreal/wrappers/gobjects.h"
 #include "unrealsdk/version_error.h"
 
@@ -39,10 +38,6 @@ bool ThrowingHook::is_console_ready(void) const {
 }
 const unreal::GObjects& ThrowingHook::gobjects(void) const {
     throw_version_error("gobjects not implemented");
-    unreachable();
-}
-const unreal::GNames& ThrowingHook::gnames(void) const {
-    throw_version_error("gnames not implemented");
     unreachable();
 }
 void* ThrowingHook::u_malloc(size_t /*len*/) const {
@@ -81,6 +76,11 @@ void ThrowingHook::fname_init(unreal::FName* /*name*/,
     throw_version_error("fname_init not implemented");
     unreachable();
 }
+std::variant<const std::string_view, const std::wstring_view> ThrowingHook::fname_get_str(
+    const unreal::FName& /*name*/) const {
+    throw_version_error("fname_get_str not implemented");
+    unreachable();
+};
 void ThrowingHook::fframe_step(unreal::FFrame* /*frame*/,
                                unreal::UObject* /*obj*/,
                                void* /*param*/) const {

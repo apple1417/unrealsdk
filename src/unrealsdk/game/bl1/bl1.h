@@ -99,7 +99,6 @@ class BL1Hook : public AbstractHook {
     [[nodiscard]] bool is_console_ready(void) const override;
 
     [[nodiscard]] const unreal::GObjects& gobjects(void) const override;
-    [[nodiscard]] const unreal::GNames& gnames(void) const override;
     [[nodiscard]] void* u_malloc(size_t len) const override;
     [[nodiscard]] void* u_realloc(void* original, size_t len) const override;
     void u_free(void* data) const override;
@@ -114,6 +113,8 @@ class BL1Hook : public AbstractHook {
                                                 uint32_t flags) const override;
 
     void fname_init(unreal::FName* name, const wchar_t* str, int32_t number) const override;
+    [[nodiscard]] std::variant<const std::string_view, const std::wstring_view> fname_get_str(
+        const unreal::FName& name) const override;
     void fframe_step(unreal::FFrame* frame, unreal::UObject* obj, void* param) const override;
     void process_event(unreal::UObject* object,
                        unreal::UFunction* func,

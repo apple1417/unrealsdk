@@ -19,6 +19,7 @@
 #include "unrealsdk/unreal/classes/uscriptstruct.h"
 #include "unrealsdk/unreal/offsets.h"
 #include "unrealsdk/unreal/structs/fname.h"
+#include "unrealsdk/unreal/structs/gnames.h"
 #include "unrealsdk/unreal/structs/tarray.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
@@ -197,6 +198,23 @@ using UClassProperty = unreal::offsets::generic::UClassProperty<UObjectProperty>
 using UFloatAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<UFloatProperty>;
 using UIntAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<UIntProperty>;
 using USoftClassProperty = unreal::offsets::generic::USoftClassProperty<UObjectProperty>;
+
+struct FNameEntry {
+   private:
+    uint8_t UnknownData00[0x08];
+
+   public:
+    union {
+        uint8_t Flags;
+        int32_t Index;
+    };
+
+   private:
+    uint8_t UnknownData01[0x04];
+
+   public:
+    unreal::FNameEntry::name_union Name;
+};
 
 // NOLINTEND(cppcoreguidelines-pro-type-member-init,
 //           readability-identifier-naming,

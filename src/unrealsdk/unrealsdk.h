@@ -74,13 +74,6 @@ bool init(const std::function<std::unique_ptr<game::AbstractHook>(void)>& game_g
 [[nodiscard]] const unreal::GObjects& gobjects(void);
 
 /**
- * @brief Gets a reference to the GNames wrapper.
- *
- * @return A reference to the GNames wrapper.
- */
-[[nodiscard]] const unreal::GNames& gnames(void);
-
-/**
  * @brief Calls unreal's malloc function.
  * @note This memory is guaranteed to be zero'd.
  *
@@ -168,6 +161,15 @@ namespace internal {
  */
 void fname_init(unreal::FName* name, const wchar_t* str, int32_t number);
 void fname_init(unreal::FName* name, const std::wstring& str, int32_t number);
+
+/**
+ * @brief Gets the string portion of an FName.
+ *
+ * @param name The name to convert.
+ * @returns The relevant string.
+ */
+[[nodiscard]] std::variant<const std::string_view, const std::wstring_view> fname_get_str(
+    const unreal::FName& name);
 
 /**
  * @brief Calls `FFrame::Step`.
