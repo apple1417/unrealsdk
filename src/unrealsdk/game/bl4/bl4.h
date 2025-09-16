@@ -17,9 +17,19 @@ class BL4Hook : public ThrowingHook {
      */
     static void hook_antidebug(void);
 
+    /**
+     * @brief Finds and sets up such that `fname_init` and `fname_get_str` may be called.
+     */
+    static void find_fname_funcs(void);
+
    public:
     void hook(void) override;
     void post_init(void) override;
+
+    [[nodiscard]] std::variant<const std::string_view, const std::wstring_view> fname_get_str(
+        const unreal::FName& name) const override;
+
+    [[nodiscard]] const unreal::offsets::OffsetList& get_offsets(void) const override;
 };
 
 template <>

@@ -53,10 +53,30 @@ struct TStaticIndirectArrayThreadSafeRead_FNameEntry {
     /**
      * @brief Get an element in the array, with bounds checking.
      *
-     * @param idx The index to get.
-     * @return The item at that index.
+     * @param idx The index in the array to get.
+     * @return The entry at that index.
      */
     [[nodiscard]] FNameEntry* at(size_t idx) const;
+};
+
+struct FNamePool {
+    // NOLINTNEXTLINE(readability-magic-numbers)
+    uint8_t unknown[0x8];
+
+    uint32_t num_chunks;
+    uint32_t num_entries;
+
+    // We treat these as variable length arrays.
+    using chunk = wchar_t[1];
+    chunk* chunks[1];
+
+    /**
+     * @brief Get an element in the array, with bounds checking.
+     *
+     * @param idx The fname index to get.
+     * @return The item at that index.
+     */
+    [[nodiscard]] FNameEntry* at(int32_t idx) const;
 };
 
 #if defined(__clang__) || defined(__MINGW32__)

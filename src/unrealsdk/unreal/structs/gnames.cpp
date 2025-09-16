@@ -20,4 +20,24 @@ FNameEntry* TStaticIndirectArrayThreadSafeRead_FNameEntry::at(size_t idx) const 
     //           cppcoreguidelines-pro-bounds-constant-array-index)
 };
 
+FNameEntry* FNamePool::at(int32_t idx) const {
+    uint32_t as_unsigned{};
+    memcpy(&as_unsigned, &idx, sizeof(idx));
+
+    // NOLINTBEGIN(readability-magic-numbers)
+    size_t name_idx = (as_unsigned & 0x0000FFFF) >> 0;
+    size_t chunk_idx = (as_unsigned & 0xFFFF000) >> 16;
+    // NOLINTEND(readability-magic-numbers)
+
+    if (chunk_idx >= this->num_chunks) {
+        throw std::out_of_range("FName chunk index out of range");
+    }
+    // Assuming every name index is fine? They do seem to be 128k apart.
+
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
+    auto ptr = &(*this->chunks[chunk_idx])[name_idx];
+
+    return reinterpret_cast<FNameEntry*>(ptr);
+}
+
 }  // namespace unrealsdk::unreal
