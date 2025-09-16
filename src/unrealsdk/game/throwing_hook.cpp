@@ -94,8 +94,8 @@ void ThrowingHook::process_event(unreal::UObject* /*object*/,
     unreachable();
 }
 void ThrowingHook::uconsole_output_text(const std::wstring& /*str*/) const {
-    throw_version_error("uconsole_output_text not implemented");
-    unreachable();
+    // Ok breaking the contract a little here: this one just swallows calls without throwing
+    // Otherwise every single log message throws
 }
 std::wstring ThrowingHook::uobject_path_name(const unreal::UObject* /*obj*/) const {
     throw_version_error("uobject_path_name not implemented");

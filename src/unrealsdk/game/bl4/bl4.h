@@ -10,7 +10,17 @@
 
 namespace unrealsdk::game {
 
-class BL4Hook : public ThrowingHook {};
+class BL4Hook : public ThrowingHook {
+   protected:
+    /**
+     * @brief Hooks the antidebug functions and disables them.
+     */
+    static void hook_antidebug(void);
+
+   public:
+    void hook(void) override;
+    void post_init(void) override;
+};
 
 template <>
 struct GameTraits<BL4Hook> {

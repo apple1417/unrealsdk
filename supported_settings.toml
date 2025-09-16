@@ -57,3 +57,14 @@ log_all_calls_file = "unrealsdk.calls.tsv"
 uobject_post_edit_change_property_vf_index = -1
 # Overrides the virtual function index used when calling `UObject::PostEditChangeChainProperty`.
 uobject_post_edit_change_chain_property_vf_index = -1
+
+[unrealsdk.bl4_debug]
+# BL4 has some annoying anti-debug features which these flags can help get around. They're only
+# really useful while developing the SDK itself.
+
+# After applying all anti-debug patches, wait for a debugger to attach before continuing SDK init.
+wait_for_debugger = false
+
+# The address of the symbiote anti-debug thread. Specifying this avoids the slow sigscan, which may
+# help if you want to debug as the game's getting unpacked.
+symbiote_addr = -1
