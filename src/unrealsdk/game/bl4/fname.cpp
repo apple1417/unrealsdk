@@ -14,7 +14,7 @@ namespace unrealsdk::game {
 namespace {
 
 const constexpr Pattern<29> FNAMEPOOL_SIG{
-    "80 3D ???????? 00"  // cmp byte ptr [1512A0C40], 00    <--- Initalized flag
+    "80 3D ???????? 00"  // cmp byte ptr [1512A0C40], 00    <--- Initialized flag
     "75 ??"              // jne 1411575F3
     "48 8D 05 ????????"  // lea rax, [1512A0C80]            <--- FNamePool
     "48 89 CE"           // mov rsi, rcx
@@ -22,7 +22,7 @@ const constexpr Pattern<29> FNAMEPOOL_SIG{
     "89 D7"              // mov edi, edx
     "E8 ????????"        // call 14114BE40                  <--- Init func
 };
-const constexpr auto FNAMEPOOL_INITALIZED_OFFSET = 2;
+const constexpr auto FNAMEPOOL_INITIALIZED_OFFSET = 2;
 const constexpr auto FNAMEPOOL_PTR_OFFSET = 12;
 
 FNamePool* name_pool_ptr;
@@ -61,9 +61,9 @@ void BL4Hook::find_fname_funcs(void) {
 
     // I tried manually initaliaing the pool, but it didn't seem to like it
     // Just wait for it to happen on the main thread instead
-    auto name_pool_initalized =
-        read_offset<volatile uint8_t*>(name_pool_base + FNAMEPOOL_INITALIZED_OFFSET);
-    while (*name_pool_initalized != 0) {
+    auto name_pool_initialized =
+        read_offset<volatile uint8_t*>(name_pool_base + FNAMEPOOL_INITIALIZED_OFFSET);
+    while (*name_pool_initialized != 0) {
         const constexpr auto sleep_time = std::chrono::milliseconds{50};
         std::this_thread::sleep_for(sleep_time);
     }

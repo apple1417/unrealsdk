@@ -73,7 +73,7 @@ void restore_antidebugd_functions(void) {
         //   sub rsp, 28
         // Again, they just patch the first byte to be a ret - which ends up mangling this (4-byte)
         // instruction.
-        // Since this function is bigger, it's a litle more sketchy restoring it. However, I think
+        // Since this function is bigger, it's a little more sketchy restoring it. However, I think
         // it's very likely it will always start with sub to make stack space, and even if that
         // changes a REX prefix is still quite likely, so we should be able to get away with this.
         unlock_range(dbg_ui_remote_breakin, 1);
@@ -104,7 +104,7 @@ const constexpr Pattern<13> SYMBIOTE_ENTRY_POINT_PATTERN{
 
 void BL4Hook::hook_antidebug(void) {
     // There's a couple of no-access pages in the exe range. They seem to correspond to the .impdata
-    // and .trace sections - I don't think these are explictly meant as antidebug, but they block
+    // and .trace sections - I don't think these are explicitly meant as antidebug, but they block
     // our sigscans. Set them to read only before we do anything else.
     auto [base, size] = get_exe_range();
     remove_no_access_pages(base, size);
