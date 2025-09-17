@@ -82,7 +82,13 @@ struct FUObjectArray {
     FChunkedFixedUObjectArray ObjObjects;
 
    private:
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
     uint8_t UnknownData00[0x178];
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
+    uint8_t UnknownData00[0x80];
+#else
+#error Unknown sdk flavour
+#endif
 
    public:
     std::atomic<int32_t> MasterSerialNumber;

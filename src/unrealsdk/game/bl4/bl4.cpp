@@ -9,6 +9,7 @@ void BL4Hook::hook(void) {
     hook_antidebug();
 
     find_fname_funcs();
+    find_gobjects();
 }
 
 void BL4Hook::post_init(void) {}

@@ -18,7 +18,13 @@ namespace unrealsdk::unreal {
 
 UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(UObject, UNREALSDK_UOBJECT_FIELDS);
 
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
+#define UNREALSDK_INTERNAL_PATH_NAME
+#endif
+
 #ifdef UNREALSDK_INTERNAL_PATH_NAME
+
+namespace {
 
 /**
  * @brief Recursive helper to generate full object path name.
@@ -27,20 +33,22 @@ UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(UObject, UNREALSDK_UOBJECT_FIELDS);
  * @param obj The object to get the path name of.
  * @param stream The stream to push the object name onto.
  */
-static void iter_path_name(const UObject* obj, std::wstringstream& stream) {
-    if (obj->Outer != nullptr) {
-        iter_path_name(obj->Outer, stream);
+void iter_path_name(const UObject* obj, std::wstringstream& stream) {
+    if (obj->Outer() != nullptr) {
+        iter_path_name(obj->Outer(), stream);
 
-        static const FName PACKAGE_NAME = L"Package"_fn;
-        if (obj->Outer->Class->Name != PACKAGE_NAME
-            && obj->Outer->Outer->Class->Name == PACKAGE_NAME) {
+        static const FName package_name = L"Package"_fn;
+        if (obj->Outer()->Class()->Name() != package_name
+            && obj->Outer()->Outer()->Class()->Name() == package_name) {
             stream << L':';
         } else {
             stream << L'.';
         }
     }
-    stream << obj->Name;
+    stream << obj->Name();
 }
+
+}  // namespace
 
 std::wstring UObject::get_path_name(void) const {
     std::wstringstream stream;
