@@ -13,6 +13,8 @@ namespace unrealsdk::game {
 class BL4Hook : public ThrowingHook {
    protected:
     static void hook_antidebug(void);
+    static void hook_call_function(void);
+
     static void find_fname_funcs(void);
     static void find_gobjects(void);
     static void find_gmalloc(void);
