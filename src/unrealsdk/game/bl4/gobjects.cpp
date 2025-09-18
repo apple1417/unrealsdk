@@ -37,4 +37,3 @@ const unreal::GObjects& BL4Hook::gobjects(void) const {
 }  // namespace unrealsdk::game
 
 #endif
-

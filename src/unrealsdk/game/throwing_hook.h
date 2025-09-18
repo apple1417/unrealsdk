@@ -5,7 +5,7 @@
 
 #include "unrealsdk/game/abstract_hook.h"
 
-#if !defined(UNREALSDK_IMPORTING)
+#ifndef UNREALSDK_IMPORTING
 
 namespace unrealsdk::game {
 

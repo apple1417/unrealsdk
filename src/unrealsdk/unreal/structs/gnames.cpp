@@ -25,8 +25,8 @@ FNameEntry* FNamePool::at(int32_t idx) const {
     memcpy(&as_unsigned, &idx, sizeof(idx));
 
     // NOLINTBEGIN(readability-magic-numbers)
-    size_t name_idx = (as_unsigned & 0x0000FFFF) >> 0;
-    size_t chunk_idx = (as_unsigned & 0xFFFF000) >> 16;
+    const size_t name_idx = (as_unsigned & 0x0000FFFF) >> 0;
+    const size_t chunk_idx = (as_unsigned & 0xFFFF000) >> 16;
     // NOLINTEND(readability-magic-numbers)
 
     if (chunk_idx > this->last_chunk_idx) {

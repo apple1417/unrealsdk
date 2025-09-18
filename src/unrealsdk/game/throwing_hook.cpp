@@ -6,14 +6,14 @@
 #include "unrealsdk/unreal/wrappers/gobjects.h"
 #include "unrealsdk/version_error.h"
 
-#if !defined(UNREALSDK_IMPORTING)
+#ifndef UNREALSDK_IMPORTING
 
 namespace unrealsdk::game {
 
 namespace {
 
 [[noreturn]] inline void unreachable(void) {
-#if defined(__cpp_lib_unreachable)
+#ifdef __cpp_lib_unreachable
     std::unreachable();
 #elif defined(_MSC_VER) && !defined(__clang__)
     __assume(false);
