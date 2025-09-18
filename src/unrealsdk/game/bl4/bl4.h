@@ -12,26 +12,19 @@ namespace unrealsdk::game {
 
 class BL4Hook : public ThrowingHook {
    protected:
-    /**
-     * @brief Hooks the antidebug functions and disables them.
-     */
     static void hook_antidebug(void);
-
-    /**
-     * @brief Finds and sets up such that `fname_init` and `fname_get_str` may be called.
-     */
     static void find_fname_funcs(void);
-
-    /**
-     * @brief Finds GObjects, and sets up such that `gobjects` may be called.
-     */
     static void find_gobjects(void);
+    static void find_gmalloc(void);
 
    public:
     void hook(void) override;
     void post_init(void) override;
 
     [[nodiscard]] const unreal::GObjects& gobjects(void) const override;
+    [[nodiscard]] void* u_malloc(size_t len) const override;
+    [[nodiscard]] void* u_realloc(void* original, size_t len) const override;
+    void u_free(void* data) const override;
 
     void fname_init(unreal::FName* name, const wchar_t* str, int32_t number) const override;
     [[nodiscard]] std::variant<const std::string_view, const std::wstring_view> fname_get_str(

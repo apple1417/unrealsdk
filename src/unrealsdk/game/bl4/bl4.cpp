@@ -10,6 +10,7 @@ void BL4Hook::hook(void) {
 
     find_fname_funcs();
     find_gobjects();
+    find_gmalloc();
 }
 
 void BL4Hook::post_init(void) {}
