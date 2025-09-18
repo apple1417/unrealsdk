@@ -16,6 +16,7 @@ class BL4Hook : public ThrowingHook {
     static void find_fname_funcs(void);
     static void find_gobjects(void);
     static void find_gmalloc(void);
+    static void find_get_path_name(void);
 
    public:
     void hook(void) override;
@@ -29,6 +30,8 @@ class BL4Hook : public ThrowingHook {
     void fname_init(unreal::FName* name, const wchar_t* str, int32_t number) const override;
     [[nodiscard]] std::variant<const std::string_view, const std::wstring_view> fname_get_str(
         const unreal::FName& name) const override;
+
+    [[nodiscard]] std::wstring uobject_path_name(const unreal::UObject* obj) const override;
 
     [[nodiscard]] const unreal::offsets::OffsetList& get_offsets(void) const override;
 };
