@@ -138,6 +138,48 @@ UObject* BL4Hook::construct_object(UClass* cls,
 
 #pragma endregion
 
+#pragma region StaticFindObject
+
+namespace {
+
+using static_find_object_safe_func = UObject* (*)(const UClass* cls,
+                                                  intptr_t package,
+                                                  const wchar_t* str,
+                                                  uint32_t exact_class);
+static_find_object_safe_func static_find_object_ptr;
+
+const constinit Pattern<26> STATIC_FIND_OBJECT_PATTERN{
+    "41 56 56 57 53 48 83 EC ?? 48 8B 05 ?? ?? ?? ?? 48 31 E0 48 89 44 24 ?? F6 05"
+};
+
+const constinit Pattern<31> STATIC_FIND_OBJECT_PATTERN{
+    "41 56"                 // push r14
+    "56"                    // push rsi
+    "57"                    // push rdi
+    "53"                    // push rbx
+    "48 83 EC ??"           // sub rsp, 38h
+    "48 8B 05 ?? ?? ?? ??"  // mov rax, cs:security_cookie
+    "48 31 E0"              // xor rax, rsp
+    "48 89 44 24 ??"        // mov [rsp+58h+var_28], rax
+    "F6 05 31 58 E8 0F 01"  // test cs:1513B1940, 1
+};
+
+const constexpr intptr_t ANY_PACKAGE = -1;
+
+}  // namespace
+
+void BL4Hook::find_static_find_object(void) {
+    static_find_object_ptr =
+        STATIC_FIND_OBJECT_PATTERN.sigscan_nullable<static_find_object_safe_func>();
+    LOG(MISC, "StaticFindObjectSafe: {:p}", reinterpret_cast<void*>(static_find_object_ptr));
+}
+
+UObject* BL4Hook::find_object(UClass* cls, const std::wstring& name) const {
+    return static_find_object_ptr(cls, ANY_PACKAGE, name.c_str(), 0 /* false */);
+}
+
+#pragma endregion
+
 }  // namespace unrealsdk::game
 
 #endif

@@ -16,10 +16,12 @@ void BL4Hook::hook(void) {
     find_get_path_name();
 
     find_construct_object();
+    find_static_find_object();
 }
 
 void BL4Hook::post_init(void) {}
 
 }  // namespace unrealsdk::game
+
 
 #endif
