@@ -95,9 +95,20 @@ struct __declspec(align(16)) FStaticConstructObjectParameters {
 using construct_obj_func = UObject* (*)(FStaticConstructObjectParameters* params);
 construct_obj_func construct_obj_ptr;
 
-const constinit Pattern<40> CONSTRUCT_OBJECT_PATTERN{
-    "41 56 56 57 55 53 48 81 EC ?? ?? ?? ?? 48 89 CE 48 8B 05 ?? ?? ?? ?? 48 31 E0 48 89 84 24 ?? "
-    "?? ?? ?? 48 8B 39 48 8B 51"};
+const constinit Pattern<41> CONSTRUCT_OBJECT_PATTERN{
+    "41 56"                        // push r14
+    "56"                           // push rsi
+    "57"                           // push rdi
+    "55"                           // push rbp
+    "53"                           // push rbx
+    "48 81 EC ?? ?? ?? ??"         // sub rsp, 280h
+    "48 89 CE"                     // mov rsi, rcx
+    "48 8B 05 ?? ?? ?? ??"         // mov rax, [rip+...]
+    "48 31 E0"                     // xor rax, rsp
+    "48 89 84 24 ?? ?? ?? ??"      // mov [rsp+2A8h], rax
+    "48 8B 39"                     // mov rdi, [rcx]
+    "48 8B 51 08"                  // mov rdx, [rcx+8]
+};
 
 }  // namespace
 
