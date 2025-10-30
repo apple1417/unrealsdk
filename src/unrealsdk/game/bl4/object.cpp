@@ -148,17 +148,13 @@ using static_find_object_safe_func = UObject* (*)(const UClass* cls,
                                                   uint32_t exact_class);
 static_find_object_safe_func static_find_object_ptr;
 
-const constinit Pattern<26> STATIC_FIND_OBJECT_PATTERN{
-    "41 56 56 57 53 48 83 EC ?? 48 8B 05 ?? ?? ?? ?? 48 31 E0 48 89 44 24 ?? F6 05"
-};
-
 const constinit Pattern<31> STATIC_FIND_OBJECT_PATTERN{
     "41 56"                 // push r14
     "56"                    // push rsi
     "57"                    // push rdi
     "53"                    // push rbx
     "48 83 EC ??"           // sub rsp, 38h
-    "48 8B 05 ?? ?? ?? ??"  // mov rax, cs:security_cookie
+    "48 8B 05 ????????"     // mov rax, cs:security_cookie
     "48 31 E0"              // xor rax, rsp
     "48 89 44 24 ??"        // mov [rsp+58h+var_28], rax
     "F6 05 31 58 E8 0F 01"  // test cs:1513B1940, 1
