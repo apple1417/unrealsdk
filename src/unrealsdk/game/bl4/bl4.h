@@ -24,6 +24,7 @@ class BL4Hook : public ThrowingHook {
     static void find_construct_object(void);
     static void find_static_find_object(void);
     static void find_load_package(void);
+    static void find_fframe_step(void);
    public:
     void hook(void) override;
     void post_init(void) override;
@@ -46,6 +47,7 @@ class BL4Hook : public ThrowingHook {
                        unreal::UFunction* func,
                        void* params) const override;
     void fname_init(unreal::FName* name, const wchar_t* str, int32_t number) const override;
+    void fframe_step(unreal::FFrame* frame, unreal::UObject* obj, void* param) const override;
     [[nodiscard]] std::variant<const std::string_view, const std::wstring_view> fname_get_str(
         const unreal::FName& name) const override;
 
