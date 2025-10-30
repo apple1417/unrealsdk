@@ -17,6 +17,7 @@ void BL4Hook::hook(void) {
 
     find_construct_object();
     find_static_find_object();
+    find_load_package();
 }
 
 void BL4Hook::post_init(void) {}

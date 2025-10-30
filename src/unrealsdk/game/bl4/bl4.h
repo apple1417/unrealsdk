@@ -23,6 +23,7 @@ class BL4Hook : public ThrowingHook {
 
     static void find_construct_object(void);
     static void find_static_find_object(void);
+    static void find_load_package(void);
    public:
     void hook(void) override;
     void post_init(void) override;
@@ -39,6 +40,8 @@ class BL4Hook : public ThrowingHook {
                                                     unreal::UObject* template_obj) const override;
     [[nodiscard]] unreal::UObject* find_object(unreal::UClass* cls,
                                                const std::wstring& name) const override;
+    [[nodiscard]] unreal::UObject* load_package(const std::wstring& name,
+                                                uint32_t flags) const override;
     void process_event(unreal::UObject* object,
                        unreal::UFunction* func,
                        void* params) const override;
