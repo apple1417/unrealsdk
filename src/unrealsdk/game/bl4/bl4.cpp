@@ -30,7 +30,9 @@ void BL4Hook::hook(void) {
     find_fframe_step();
 }
 
-void BL4Hook::post_init(void) {}
+void BL4Hook::post_init(void) {
+    // inject_console();
+}
 
 
 #pragma region FFrame::Step

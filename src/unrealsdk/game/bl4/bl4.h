@@ -25,9 +25,13 @@ class BL4Hook : public ThrowingHook {
     static void find_static_find_object(void);
     static void find_load_package(void);
     static void find_fframe_step(void);
+
+    static void inject_console(void);
    public:
     void hook(void) override;
     void post_init(void) override;
+
+    [[nodiscard]] bool is_console_ready(void) const override;
 
     [[nodiscard]] const unreal::GObjects& gobjects(void) const override;
     [[nodiscard]] void* u_malloc(size_t len) const override;
@@ -43,13 +47,14 @@ class BL4Hook : public ThrowingHook {
                                                const std::wstring& name) const override;
     [[nodiscard]] unreal::UObject* load_package(const std::wstring& name,
                                                 uint32_t flags) const override;
+    void fname_init(unreal::FName* name, const wchar_t* str, int32_t number) const override;
+    [[nodiscard]] std::variant<const std::string_view, const std::wstring_view> fname_get_str(
+        const unreal::FName& name) const override;
+    void fframe_step(unreal::FFrame* frame, unreal::UObject* obj, void* param) const override;
     void process_event(unreal::UObject* object,
                        unreal::UFunction* func,
                        void* params) const override;
-    void fname_init(unreal::FName* name, const wchar_t* str, int32_t number) const override;
-    void fframe_step(unreal::FFrame* frame, unreal::UObject* obj, void* param) const override;
-    [[nodiscard]] std::variant<const std::string_view, const std::wstring_view> fname_get_str(
-        const unreal::FName& name) const override;
+    void uconsole_output_text(const std::wstring& str) const override;
 
     [[nodiscard]] std::wstring uobject_path_name(const unreal::UObject* obj) const override;
 
