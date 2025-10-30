@@ -27,6 +27,7 @@ void BL4Hook::hook(void) {
     find_construct_object();
     find_static_find_object();
     find_load_package();
+    find_fframe_step();
 }
 
 void BL4Hook::post_init(void) {}
@@ -41,7 +42,10 @@ using gnatives_func = void (*)(FFrame* stack, UObject* obj, void* param);
 gnatives_func* gnatives_table_ptr;
 
 const constinit Pattern<17> GNATIVES_PTR{
-    "4C 8D 0D ?? ?? ?? ?? 48 89 FA 49 89 F0 41 FF 14 C1"
+    "4C 8D 0D ????????"     // lea     r9, funcs_1414F593E
+    "48 89 FA"              // mov     rdx, rdi
+    "49 89 F0"              // mov     r8, rsi
+    "41 ??????"             // call    ds:(funcs_1414F593E)
 };
 
 }  // namespace

@@ -187,20 +187,7 @@ using load_package_func = UObject* (*)(const UObject* outer,
                                        void* instancingContext,
                                        void* reader_override);
 load_package_func load_package_ptr;
-/*
-.shared:000000014153FFF0 41 57                                               push    r15
-.shared:000000014153FFF2 41 56                                               push    r14
-.shared:000000014153FFF4 41 54                                               push    r12
-.shared:000000014153FFF6 56                                                  push    rsi
-.shared:000000014153FFF7 57                                                  push    rdi
-.shared:000000014153FFF8 55                                                  push    rbp
-.shared:000000014153FFF9 53                                                  push    rbx
-.shared:000000014153FFFA 48 81 EC B0 00 00 00                                sub     rsp, 0B0h
-.shared:0000000141540001 4C 89 CB                                            mov     rbx, r9
-.shared:0000000141540004 44 89 C6                                            mov     esi, r8d
-.shared:0000000141540007 48 89 CF                                            mov     rdi, rcx
 
-*/
 const constinit Pattern<26> LOAD_PACKAGE_PATTERN{
     "41 57"                 // push r15
     "41 56"                 // push r14
