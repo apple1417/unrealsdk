@@ -14,6 +14,7 @@ class BL4Hook : public ThrowingHook {
    protected:
     static void hook_antidebug(void);
     static void hook_call_function(void);
+    static void hook_process_event(void);
 
     static void find_fname_funcs(void);
     static void find_gobjects(void);
@@ -28,7 +29,9 @@ class BL4Hook : public ThrowingHook {
     [[nodiscard]] void* u_malloc(size_t len) const override;
     [[nodiscard]] void* u_realloc(void* original, size_t len) const override;
     void u_free(void* data) const override;
-
+    void process_event(unreal::UObject* object,
+                       unreal::UFunction* func,
+                       void* params) const override;
     void fname_init(unreal::FName* name, const wchar_t* str, int32_t number) const override;
     [[nodiscard]] std::variant<const std::string_view, const std::wstring_view> fname_get_str(
         const unreal::FName& name) const override;

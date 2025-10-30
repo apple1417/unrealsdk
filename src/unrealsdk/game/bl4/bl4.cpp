@@ -8,6 +8,7 @@ namespace unrealsdk::game {
 void BL4Hook::hook(void) {
     hook_antidebug();
     hook_call_function();
+    hook_process_event();
 
     find_fname_funcs();
     find_gobjects();

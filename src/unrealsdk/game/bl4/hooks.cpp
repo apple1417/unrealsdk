@@ -106,6 +106,109 @@ void BL4Hook::hook_call_function(void) {
 
 #pragma endregion
 
+#pragma region ProcessEvent
+
+
+namespace {
+
+using process_event_func = void(UObject* obj, UFunction* func, void* params);
+process_event_func* process_event_ptr;
+
+// 55 41 57 41 56 41 55 41 54 56 57 53 48 81 EC ? ? ? ? 48 8D AC 24 ? ? ? ? 48 8B 05 ? ? ? ? 48 31
+// E8 48 89 45
+const constinit Pattern<41> PROCESS_EVENT_SIG{
+    "55"                       // push rbp
+    "41 57"                    // push r15
+    "41 56"                    // push r14
+    "41 55"                    // push r13
+    "41 54"                    // push r12
+    "56"                       // push rsi
+    "57"                       // push rdi
+    "53"                       // push rbx
+    "48 81 EC ?? ?? ?? ??"     // sub rsp, 000000C8
+    "48 8D AC 24 ?? ?? ?? ??"  // lea rbp, [rsp+80h]
+    "48 8B 05 ?? ?? ?? ??"     // mov rax, [rip+0]
+    "48 31 E8"                 // xor rax, rbp
+    "48 89 45 40"              // mov [rbp+40h], rax
+};
+
+void process_event_hook(UObject* obj, UFunction* func, void* params) {
+    try {
+        LOG(INFO, "Object: {} - Func: {}", obj->Name(), func->Name());
+
+        auto data = hook_manager::impl::preprocess_hook(L"ProcessEvent", func, obj);
+        if (data != nullptr) {
+            // Copy args so that hooks can't modify them, for parity with call function
+            const WrappedStruct args_base{func, params};
+            WrappedStruct args = args_base.copy_params_only();
+            hook_manager::Details hook{.obj = obj,
+                                       .args = &args,
+                                       .ret = {func->find_return_param()},
+                                       .func = {.func = func, .object = obj}};
+
+            const bool block_execution =
+                hook_manager::impl::run_hooks_of_type(data, hook_manager::Type::PRE, hook);
+
+            if (!block_execution) {
+                process_event_ptr(obj, func, params);
+            }
+
+            if (hook.ret.has_value()) {
+                hook.ret.copy_to(reinterpret_cast<uintptr_t>(params));
+            }
+
+            if (!hook_manager::impl::has_post_hooks(data)) {
+                return;
+            }
+
+            if (hook.ret.prop != nullptr && !hook.ret.has_value() && !block_execution) {
+                hook.ret.copy_from(reinterpret_cast<uintptr_t>(params));
+            }
+
+            if (!block_execution) {
+                hook_manager::impl::run_hooks_of_type(data, hook_manager::Type::POST, hook);
+            }
+
+            hook_manager::impl::run_hooks_of_type(data, hook_manager::Type::POST_UNCONDITIONAL,
+                                                  hook);
+
+            return;
+        }
+    } catch (const std::exception& ex) {
+        LOG(ERROR, "An exception occurred during the ProcessEvent hook: {}", ex.what());
+    }
+
+    process_event_ptr(obj, func, params);
+}
+
+void locking_process_event_hook(UObject* obj, UFunction* func, void* params) {
+    const locks::FunctionCall lock{};
+    process_event_hook(obj, func, params);
+}
+
+static_assert(std::is_same_v<decltype(process_event_hook), process_event_func>,
+              "process_event signature is incorrect");
+static_assert(std::is_same_v<decltype(process_event_hook), decltype(locking_process_event_hook)>,
+              "process_event signature is incorrect");
+
+}  // namespace
+
+void BL4Hook::hook_process_event(void) {
+    detour(PROCESS_EVENT_SIG,
+           // If we don't need locks, it's slightly more efficient to detour directly to the
+           // non-locking version
+           locks::FunctionCall::enabled() ? locking_process_event_hook : process_event_hook,
+           &process_event_ptr, "ProcessEvent");
+}
+
+void BL4Hook::process_event(UObject* object, UFunction* func, void* params) const {
+    // When we call it manually, always call the locking version, it will pass right through if
+    // locks are disabled
+    locking_process_event_hook(object, func, params);
+}
+
+#pragma endregion
+
 }  // namespace unrealsdk::game
 
 #endif
