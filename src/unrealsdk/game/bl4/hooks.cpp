@@ -134,8 +134,6 @@ const constinit Pattern<41> PROCESS_EVENT_SIG{
 
 void process_event_hook(UObject* obj, UFunction* func, void* params) {
     try {
-        LOG(INFO, "Object: {} - Func: {}", obj->Name(), func->Name());
-
         auto data = hook_manager::impl::preprocess_hook(L"ProcessEvent", func, obj);
         if (data != nullptr) {
             // Copy args so that hooks can't modify them, for parity with call function
