@@ -14,6 +14,8 @@ void BL4Hook::hook(void) {
     find_gobjects();
     find_gmalloc();
     find_get_path_name();
+
+    find_construct_object();
 }
 
 void BL4Hook::post_init(void) {}

@@ -21,6 +21,7 @@ class BL4Hook : public ThrowingHook {
     static void find_gmalloc(void);
     static void find_get_path_name(void);
 
+    static void find_construct_object(void);
    public:
     void hook(void) override;
     void post_init(void) override;
@@ -29,6 +30,12 @@ class BL4Hook : public ThrowingHook {
     [[nodiscard]] void* u_malloc(size_t len) const override;
     [[nodiscard]] void* u_realloc(void* original, size_t len) const override;
     void u_free(void* data) const override;
+
+    [[nodiscard]] unreal::UObject* construct_object(unreal::UClass* cls,
+                                                    unreal::UObject* outer,
+                                                    const unreal::FName& name,
+                                                    uint64_t flags,
+                                                    unreal::UObject* template_obj) const override;
     void process_event(unreal::UObject* object,
                        unreal::UFunction* func,
                        void* params) const override;

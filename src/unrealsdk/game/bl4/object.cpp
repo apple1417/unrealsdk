@@ -73,6 +73,60 @@ std::wstring BL4Hook::uobject_path_name(const UObject* obj) const {
 
 #pragma endregion
 
+#pragma region ConstructObject
+
+namespace {
+
+struct __declspec(align(16)) FStaticConstructObjectParameters {
+    UClass* Class;
+    UObject* Outer;
+    FName Name;
+    int SetFlags;
+    int InternalSetFlags;
+    bool bCopyTransientsFromClassDefaults;
+    bool bAssumeTemplateIsArchetype;
+    UObject* Template;
+    void* InstanceGraph;
+    void* ExternalPackage;
+    void* PropertyInitCallback;
+    void* SubobjectOverrides;
+};
+
+using construct_obj_func = UObject* (*)(FStaticConstructObjectParameters* params);
+construct_obj_func construct_obj_ptr;
+
+const constinit Pattern<40> CONSTRUCT_OBJECT_PATTERN{
+    "41 56 56 57 55 53 48 81 EC ?? ?? ?? ?? 48 89 CE 48 8B 05 ?? ?? ?? ?? 48 31 E0 48 89 84 24 ?? "
+    "?? ?? ?? 48 8B 39 48 8B 51"};
+
+}  // namespace
+
+void BL4Hook::find_construct_object(void) {
+    construct_obj_ptr = CONSTRUCT_OBJECT_PATTERN.sigscan_nullable<construct_obj_func>();
+    LOG(MISC, "StaticConstructObject: {:p}", reinterpret_cast<void*>(construct_obj_ptr));
+}
+
+UObject* BL4Hook::construct_object(UClass* cls,
+                                   UObject* outer,
+                                   const FName& name,
+                                   uint64_t flags,
+                                   UObject* template_obj) const {
+    if (flags > std::numeric_limits<uint32_t>::max()) {
+        throw std::out_of_range("construct_object flags out of range, only 32-bits are supported");
+    }
+
+    FStaticConstructObjectParameters params;
+    params.Class = cls;
+    params.Outer = outer;
+    params.Name = name;
+    params.SetFlags = static_cast<uint32_t>(flags);
+    params.InternalSetFlags = 0;
+    params.Template = template_obj;
+    return construct_obj_ptr(&params);
+}
+
+#pragma endregion
+
 }  // namespace unrealsdk::game
 
 #endif
