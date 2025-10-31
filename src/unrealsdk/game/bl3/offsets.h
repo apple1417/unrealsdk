@@ -86,6 +86,10 @@ class UProperty : public UField {
 class UStruct : public UField {
     friend class unreal::UStruct;
 
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
+   private:
+    uint8_t UnknownData00[0x10];
+#endif
    public:
     UStruct* SuperField;
     UField* Children;
