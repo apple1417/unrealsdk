@@ -28,6 +28,14 @@ void BL4Hook::find_gobjects(void) {
     LOG(MISC, "GObjects: {:p}", reinterpret_cast<void*>(gobjects_ptr));
 
     gobjects_wrapper = GObjects(gobjects_ptr);
+
+    // wait for gobjects to be initialized
+    while (gobjects_ptr->ObjObjects.Count == 0) {
+        const constexpr auto sleep_time = std::chrono::milliseconds{50};
+        std::this_thread::sleep_for(sleep_time);
+    }
+
+    LOG(MISC, "GObjObjects at {}", gobjects_ptr->ObjObjects.Count);
 }
 
 const unreal::GObjects& BL4Hook::gobjects(void) const {
