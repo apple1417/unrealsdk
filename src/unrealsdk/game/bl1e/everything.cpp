@@ -67,51 +67,50 @@ using load_package_func = UObject* (*)(const UObject* outer, const wchar_t* name
 load_package_func load_package_ptr;
 
 // NOLINTNEXTLINE(modernize-use-using)
-typedef void(__fastcall* process_event_func)(UObject* obj,
-                                             void* /*edx*/,
-                                             UFunction* func,
-                                             void* params,
-                                             void* /*null*/);
+typedef void(__fastcall* process_event_func)(UObject* obj, UFunction* func, void* params, void*);
 
 process_event_func process_event_func_ptr{nullptr};
 
-void __fastcall _hook_process_event(UObject* obj,
-                                    void* edx,
-                                    UFunction* func,
-                                    void* params,
-                                    void* null) {
-    process_event_func_ptr(obj, edx, func, params, null);
+void __fastcall _hook_process_event(UObject* obj, UFunction* func, void* params, void* null) {
+    process_event_func_ptr(obj, func, params, null);
+    static bool once{false};
+
+    if (once || obj->Class()->Name() != L"WillowPlayerController"_fn) {
+        return;
+    }
+
+    once = true;
+    UClass* cls = obj->Class();
+    LOG(INFO, "Class={}", cls->get_path_name());
 }
 
 // NOLINTNEXTLINE(modernize-use-using)
 typedef void(__fastcall* call_function_func)(UObject* obj,
-                                             void* /*edx*/,
                                              FFrame* stack,
                                              void* params,
                                              UFunction* func);
 
 call_function_func call_function_func_ptr{nullptr};
 
-void __fastcall _hook_call_function(UObject* obj,
-                                    void* edx,
-                                    FFrame* stack,
-                                    void* params,
-                                    UFunction* func) {
-    call_function_func_ptr(obj, edx, stack, params, func);
+void __fastcall _hook_call_function(UObject* obj, FFrame* stack, void* params, UFunction* func) {
+    call_function_func_ptr(obj, stack, params, func);
     static int count = 0;
-    ++count;
 
-    //if (count == 100) {
-    //    for (size_t i = 0; i < gobjects().size(); ++i) {
-    //        const UObject* const gobj = gobjects().obj_at(i);
-    //        if (gobj == nullptr) {
-    //            LOG(INFO, L"{:>4} - NULL", i);
-    //        } else {
-    //            LOG(INFO, L"{:>4} - {}", i, gobj->get_path_name());
-    //        }
-    //    }
-    //}
+    // if (count < 25000) {
+    //     LOG(INFO, L"{}, {}", obj->get_path_name(), func->get_path_name());
+    //     ++count;
+    // }
 
+    // if (count == 100) {
+    //     for (size_t i = 0; i < gobjects().size(); ++i) {
+    //         const UObject* const gobj = gobjects().obj_at(i);
+    //         if (gobj == nullptr) {
+    //             LOG(INFO, L"{:>4} - NULL", i);
+    //         } else {
+    //             LOG(INFO, L"{:>4} - {}", i, gobj->get_path_name());
+    //         }
+    //     }
+    // }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -288,7 +287,7 @@ UObject* BL1EHook::load_package(const std::wstring& name, uint32_t flags) const 
 }
 
 void BL1EHook::process_event(UObject* object, UFunction* func, void* params) const {
-    process_event_func_ptr(object, nullptr, func, params, nullptr);
+    process_event_func_ptr(object, func, params, nullptr);
 }
 
 void BL1EHook::uconsole_output_text(const std::wstring& str) const {

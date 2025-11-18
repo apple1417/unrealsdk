@@ -2,6 +2,7 @@
 #define UNREALSDK_GAME_BL1E_OFFSETS_H
 
 #include "unrealsdk/pch.h"
+#include "unrealsdk/game/bl1/offsets.h"
 #include "unrealsdk/game/bl2/offsets.h"
 #include "unrealsdk/unreal/classes/properties/attribute_property.h"
 #include "unrealsdk/unreal/classes/properties/persistent_object_ptr_property.h"
@@ -14,10 +15,8 @@
 #include "unrealsdk/unreal/classes/properties/umulticastdelegateproperty.h"
 #include "unrealsdk/unreal/classes/properties/uobjectproperty.h"
 #include "unrealsdk/unreal/classes/properties/ustructproperty.h"
-#include "unrealsdk/unreal/classes/uconst.h"
 #include "unrealsdk/unreal/classes/uscriptstruct.h"
 #include "unrealsdk/unreal/offsets.h"
-#include "unrealsdk/unreal/structs/fname.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
 
@@ -30,103 +29,61 @@ struct FImplementedInterface;
 namespace unrealsdk::game::bl1e {
 
 #if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
+#pragma pack(push, 4)
 #endif
+
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-private-field"
 #endif
+
 // NOLINTBEGIN(cppcoreguidelines-pro-type-member-init,
 //             readability-identifier-naming,
 //             readability-magic-numbers)
 
-class UStruct;
 class UClass;
+class UStruct;
 
-class UObject {
-   private:
-    uintptr_t* vftable;
+using UObject = bl2::generic::UObject<UClass>;
 
-   public:
-    int32_t InternalIndex;
-    uint64_t ObjectFlags;
-
-   private:
-    void* HashNext;
-    void* HashOuterNext;
-    void* StateFrame;
-    UObject* _Linker;
-    void* _LinkerIndex;
-    int32_t NetIndex;
-
-   public:
-    UObject* Outer;
-    unreal::FName Name;
-    UClass* Class;
-    UObject* ObjectArchetype;
-};
-
+// Size=104
 class UField : public UObject {
    public:
-    // Superfield is considered to be part of UStruct in the rest of the sdk
-    // Luckily, we can just expose it here and it'll all get picked up right
-    UStruct* SuperField;
     UField* Next;
 };
 
+// Size=184b
 class UProperty : public UField {
    public:
-    int32_t ArrayDim;
-    int32_t ElementSize;
-    uint32_t PropertyFlags;
-
-   private:
-    uint8_t UnknownData00[0x14];
-
-   public:
-    int32_t Offset_Internal;
-    UProperty* PropertyLinkNext;
-
-   private:
+    int32_t ArrayDim;        // 104b
+    int32_t ElementSize;     // 108b
+    uint32_t PropertyFlags;  // 112b
+    uint8_t UnknownData00[0x18];
+    int32_t Offset_Internal;      // 140b
+    UProperty* PropertyLinkNext;  // 144b
     uint8_t UnknownData01[0x20];
 };
 
+// Size=208
 class UStruct : public UField {
-   private:
-    uint8_t UnknownData00[0x08];
-
    public:
-    UField* Children;
-    uint16_t PropertySize;
-
-   private:
-    uint8_t UnknownData01[0x1C + 0x02];
-
-   public:
-    UProperty* PropertyLink;
-
-   private:
+    uint8_t UnknownData00[0x8 + 0x8];
+    UStruct* SuperField;    // 120b
+    UField* Children;       // 128b
+    uint16_t PropertySize;  // 136b
+    uint8_t UnknownData01[0x1A + 0x4];
+    UProperty* PropertyLink;  // 168b
     uint8_t UnknownData02[0x10];
-
-   public:
-    unreal::TArray<UObject*> ScriptObjectReferences;
-
-   private:
-    uint8_t UnknownData03[0x04];
+    unreal::TArray<UObject*> ScriptObjectReferences;  // 192b
 };
 
 class UClass : public UStruct {
-   private:
-    uint8_t UnknownData00[0xC0];
-
    public:
-    UObject* ClassDefaultObject;
-
-   private:
-    uint8_t UnknownData01[0x48];
-
-   public:
-    unreal::TArray<unreal::FImplementedInterface> Interfaces;
+    UObject* START;
+    uint8_t UnknownData00[0xFC];
+    UObject* ClassDefaultObject; // 468b
+    UObject* _00[12];
+    unreal::TArray<unreal::FImplementedInterface> Interfaces;  // 572b
 };
 
 using UScriptStruct = unreal::offsets::generic::UScriptStruct<UStruct>;
@@ -158,6 +115,7 @@ using USoftClassProperty = unreal::offsets::generic::USoftClassProperty<UObjectP
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
+
 #if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
 #pragma pack(pop)
 #endif
