@@ -35,7 +35,7 @@ struct FNameEntry {
     int32_t Index;
 
    private:
-    uint8_t UnknownData01[0x04];
+    void* UnknownData01; // need 4 bytes in x86 and 8 in x64
 
    public:
 #else

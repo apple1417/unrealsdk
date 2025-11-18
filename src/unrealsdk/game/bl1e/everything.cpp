@@ -100,6 +100,21 @@ void _hook_call_function(UObject* obj, FFrame* stack, void* params, UFunction* f
         ++count;
     }
 
+    if (count == 5000) {
+        ++count;
+        for (size_t i = 0; i < gnames().size(); ++i) {
+            FNameEntry* entry = gnames().at(i);
+
+            if (entry == nullptr) {
+                LOG(INFO, "{:>4} ~ {}", i, "NULL");
+            } else if (entry->is_wide()) {
+                LOG(INFO, L"{:>4} ~ {}", i, entry->WideName);
+            } else {
+                LOG(INFO, "{:>4} ~ {}", i, entry->AnsiName);
+            }
+        }
+    }
+
     // if (count < 25000) {
     //     LOG(INFO, L"{}, {}", obj->get_path_name(), func->get_path_name());
     //     ++count;
@@ -131,14 +146,13 @@ const constinit Pattern<64> SIG_CALL_FUNCTION{
     "405553565741544155415641574881ECA8040000488D6C242048C74568FEFFFFFF488B05E8A83A024833C5488985700400004D8BF94C894D60498BF04C894500"
 };
 
-const constinit Pattern<39> SIG_GOBJECTS{
-    // "4C 8D 0D 49 BB 82 01 41 B8 56 02 00 00 48 8D 15 68 1E 83 01 48 8D 0D A9 1E 83 01 E8 DC BA 0A 00 4C 8B 05 05 53 4D 02"
-    "4C8D0D49BB820141B856020000488D15681E8301488D0DA91E8301E8DCBA0A004C8B05{05534D02}"
+const constinit Pattern<25> SIG_GOBJECTS{
+    "E8 ?? ?? ?? ?? 4C 8B 05 {????????} 49 8B 0C D8 48 8B 57 0C 48 85 51 10 0F"
 };
 
-const constinit Pattern<37> SIG_GNAMES{
-    // "48 8B 0D 69 97 35 02 48 8B 01 44 8D 04 DD 00 00 00 00 41 B9 08 00 00 00 48 8B D5 FF 50 10 48 89 05 9B 8F 41 02"
-    "488B0D69973502488B01448D04DD0000000041B908000000488BD5FF5010488905{9B8F4102}"
+const constinit Pattern<25> SIG_GNAMES{
+    // E8 ?? ?? ?? ?? 48 8B 05 {?? ?? ?? ??} 48 89 3C D8 49 8B CC FF ?? ?? ?? 75 ??
+    "E8 ?? ?? ?? ?? 48 8B 05 {?? ?? ?? ??} 48 89 3C D8 49 8B CC FF ?? ?? ?? 75 ??"
 };
 
 const constinit Pattern<37> SIG_GMALLOC{
@@ -188,14 +202,14 @@ void BL1EHook::hook_call_function() {
 
 void BL1EHook::find_gobjects() {
     auto gobjects_ptr = read_offset<GObjects::internal_type>(SIG_GOBJECTS.sigscan_nullable());
-    LOG(INFO, "GNames found at {:p}", reinterpret_cast<void*>(gobjects_ptr));
-    gobjects_wrapper = GObjects(gobjects_ptr);
+    LOG(INFO, "GGObjects found at {:p}", reinterpret_cast<void*>(gobjects_ptr));
+    gobjects_wrapper = GObjects{gobjects_ptr};
 }
 
 void BL1EHook::find_gnames() {
-    auto gnames_ptr = read_offset<GNames::internal_type>(SIG_GNAMES.sigscan_nullable());
+    auto* gnames_ptr = read_offset<GNames::internal_type>(SIG_GNAMES.sigscan_nullable());
     LOG(INFO, "GNames found at {:p}", reinterpret_cast<void*>(gnames_ptr));
-    gnames_wrapper = GNames(gnames_ptr);
+    gnames_wrapper = GNames{gnames_ptr};
 }
 
 void BL1EHook::find_gmalloc() {

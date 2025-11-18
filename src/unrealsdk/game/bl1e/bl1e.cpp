@@ -15,21 +15,18 @@ namespace unrealsdk::game {
 void BL1EHook::hook(void) {
     // hook_antidebug();
 
-    std::this_thread::sleep_for(std::chrono::milliseconds{3000});
-
     hook_process_event();
     hook_call_function();
 
+    find_gmalloc();
+    find_gobjects();
+    find_gnames();
     find_fname_init();
     find_fframe_step();
     find_construct_object();
     find_get_path_name();
     find_static_find_object();
     find_load_package();
-
-    find_gmalloc();
-    find_gobjects();
-    find_gnames();
 
     // hexedit_set_command();
     // hexedit_array_limit();
@@ -47,7 +44,7 @@ const constinit Pattern<54> FNAME_INIT_SIG{
 "4055565741544155415641574881ECE00C000048C7442428FEFFFFFF48899C24300D0000488B05456E34024833C448898424D00C0000"
 };
 
-const constinit Pattern<45> GNATIVES_SIG{
+const constinit Pattern<45> GNATIVES_SIG{ // TODO: validate
 "48894424304C8D442430488B4224488BF9488B4A1C488BDA440FB60848FFC048894224418BC14C8D0D{3FDC2301}"
 };
 
