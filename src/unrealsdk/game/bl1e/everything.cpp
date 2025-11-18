@@ -21,15 +21,18 @@ namespace {
 // | GLOBALS |
 ////////////////////////////////////////////////////////////////////////////////
 
+std::recursive_mutex mutex{};
+
 GObjects gobjects_wrapper{};
 GNames gnames_wrapper{};
 
 struct FMalloc;
 struct FMallocVFtable {
+    // TODO: Made the assumption these are using size_t not uint32_t but didn't check it
     void* exec;
-    void*(__thiscall* u_malloc)(FMalloc* self, uint32_t len, uint32_t align);
-    void*(__thiscall* u_realloc)(FMalloc* self, void* original, uint32_t len, uint32_t align);
-    void*(__thiscall* u_free)(FMalloc* self, void* data);
+    void* (*u_malloc)(FMalloc* self, size_t len, size_t align);
+    void* (*u_realloc)(FMalloc* self, void* original, size_t len, size_t align);
+    void* (*u_free)(FMalloc* self, void* data);
 };
 struct FMalloc {
     FMallocVFtable* vftable;
@@ -38,63 +41,64 @@ struct FMalloc {
 FMalloc** gmalloc_ptr{nullptr};
 
 // NOLINTNEXTLINE(modernize-use-using)
-typedef void(__thiscall* get_path_name_func)(const UObject* self,
-                                             const UObject* stop_outer,
-                                             ManagedFString* str);
+typedef void (*get_path_name_func)(const UObject* self,
+                                   const UObject* stop_outer,
+                                   ManagedFString* str);
 
 get_path_name_func get_path_name_ptr{nullptr};
 
 // NOLINTNEXTLINE(modernize-use-using)
-typedef UObject*(__cdecl* static_find_object_func)(const UClass* cls,
-                                                   const UObject* package,
-                                                   const wchar_t* str,
-                                                   uint32_t exact_class);
+typedef UObject* (*static_find_object_func)(const UClass* cls,
+                                            const UObject* package,
+                                            const wchar_t* str,
+                                            uint32_t exact_class);
 
 static_find_object_func static_find_object_ptr{nullptr};
 
 // NOLINTNEXTLINE(modernize-use-using)
-typedef UObject*(__cdecl* construct_obj_func)(UClass* cls,
-                                              UObject* outer,
-                                              FName name,
-                                              uint64_t flags,
-                                              UObject* template_obj,
-                                              void* error_output_device,
-                                              void* instance_graph,
-                                              uint32_t assume_template_is_archetype);
+typedef UObject* (*construct_obj_func)(UClass* cls,
+                                       UObject* outer,
+                                       FName name,
+                                       uint64_t flags,
+                                       UObject* template_obj,
+                                       void* error_output_device,
+                                       void* instance_graph,
+                                       uint32_t assume_template_is_archetype);
 construct_obj_func construct_obj_ptr;
 
 using load_package_func = UObject* (*)(const UObject* outer, const wchar_t* name, uint32_t flags);
 load_package_func load_package_ptr;
 
 // NOLINTNEXTLINE(modernize-use-using)
-typedef void(__fastcall* process_event_func)(UObject* obj, UFunction* func, void* params, void*);
+typedef void (*process_event_func)(UObject* obj, UFunction* func, void* params, void*);
 
 process_event_func process_event_func_ptr{nullptr};
 
-void __fastcall _hook_process_event(UObject* obj, UFunction* func, void* params, void* null) {
+void _hook_process_event(UObject* obj, UFunction* func, void* params, void* null) {
+    std::lock_guard guard{mutex};
     process_event_func_ptr(obj, func, params, null);
-    static bool once{false};
 
-    if (once || obj->Class()->Name() != L"WillowPlayerController"_fn) {
-        return;
+    static int count{0};
+    if (count < 5000) {
+        LOG(INFO, L"{} - {}", obj->get_path_name(), func->get_path_name());
+        ++count;
     }
-
-    once = true;
-    UClass* cls = obj->Class();
-    LOG(INFO, "Class={}", cls->get_path_name());
 }
 
 // NOLINTNEXTLINE(modernize-use-using)
-typedef void(__fastcall* call_function_func)(UObject* obj,
-                                             FFrame* stack,
-                                             void* params,
-                                             UFunction* func);
+typedef void (*call_function_func)(UObject* obj, FFrame* stack, void* params, UFunction* func);
 
 call_function_func call_function_func_ptr{nullptr};
 
-void __fastcall _hook_call_function(UObject* obj, FFrame* stack, void* params, UFunction* func) {
+void _hook_call_function(UObject* obj, FFrame* stack, void* params, UFunction* func) {
+    std::lock_guard guard{mutex};
     call_function_func_ptr(obj, stack, params, func);
-    static int count = 0;
+
+    static int count{0};
+    if (count < 5000) {
+        LOG(INFO, L"{} - {}", obj->get_path_name(), func->get_path_name());
+        ++count;
+    }
 
     // if (count < 25000) {
     //     LOG(INFO, L"{}, {}", obj->get_path_name(), func->get_path_name());
