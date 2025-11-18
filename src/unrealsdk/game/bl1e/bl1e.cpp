@@ -15,18 +15,21 @@ namespace unrealsdk::game {
 void BL1EHook::hook(void) {
     // hook_antidebug();
 
+    std::this_thread::sleep_for(std::chrono::milliseconds{3000});
+
     hook_process_event();
     hook_call_function();
 
-    find_gobjects();
-    find_gnames();
     find_fname_init();
     find_fframe_step();
-    find_gmalloc();
     find_construct_object();
     find_get_path_name();
     find_static_find_object();
     find_load_package();
+
+    find_gmalloc();
+    find_gobjects();
+    find_gnames();
 
     // hexedit_set_command();
     // hexedit_array_limit();
@@ -70,7 +73,7 @@ void BL1EHook::find_fframe_step(void) {
 }
 
 void BL1EHook::fframe_step(FFrame* frame, UObject* obj, void* param) const {
-    ((*fframe_step_gnatives)[*frame->Code++])(obj, frame, param);
+    (*fframe_step_gnatives)[*frame->Code++](obj, frame, param);
 }
 
 namespace {

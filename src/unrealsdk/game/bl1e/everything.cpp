@@ -1,11 +1,12 @@
 #include "unrealsdk/pch.h"
-
 #include "unrealsdk/game/bl1e/bl1e.h"
+
 #include "unrealsdk/hook_manager.h"
 #include "unrealsdk/memory.h"
-
-#include "unrealsdk/unreal/wrappers/gobjects.h"
+#include "unrealsdk/unreal/alignment.h"
+#include "unrealsdk/unreal/structs/fstring.h"
 #include "unrealsdk/unreal/wrappers/gnames.h"
+#include "unrealsdk/unreal/wrappers/gobjects.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW && !defined(UNREALSDK_IMPORTING)
 
@@ -19,6 +20,99 @@ namespace {
 ////////////////////////////////////////////////////////////////////////////////
 // | GLOBALS |
 ////////////////////////////////////////////////////////////////////////////////
+
+GObjects gobjects_wrapper{};
+GNames gnames_wrapper{};
+
+struct FMalloc;
+struct FMallocVFtable {
+    void* exec;
+    void*(__thiscall* u_malloc)(FMalloc* self, uint32_t len, uint32_t align);
+    void*(__thiscall* u_realloc)(FMalloc* self, void* original, uint32_t len, uint32_t align);
+    void*(__thiscall* u_free)(FMalloc* self, void* data);
+};
+struct FMalloc {
+    FMallocVFtable* vftable;
+};
+
+FMalloc** gmalloc_ptr{nullptr};
+
+// NOLINTNEXTLINE(modernize-use-using)
+typedef void(__thiscall* get_path_name_func)(const UObject* self,
+                                             const UObject* stop_outer,
+                                             ManagedFString* str);
+
+get_path_name_func get_path_name_ptr{nullptr};
+
+// NOLINTNEXTLINE(modernize-use-using)
+typedef UObject*(__cdecl* static_find_object_func)(const UClass* cls,
+                                                   const UObject* package,
+                                                   const wchar_t* str,
+                                                   uint32_t exact_class);
+
+static_find_object_func static_find_object_ptr{nullptr};
+
+// NOLINTNEXTLINE(modernize-use-using)
+typedef UObject*(__cdecl* construct_obj_func)(UClass* cls,
+                                              UObject* outer,
+                                              FName name,
+                                              uint64_t flags,
+                                              UObject* template_obj,
+                                              void* error_output_device,
+                                              void* instance_graph,
+                                              uint32_t assume_template_is_archetype);
+construct_obj_func construct_obj_ptr;
+
+using load_package_func = UObject* (*)(const UObject* outer, const wchar_t* name, uint32_t flags);
+load_package_func load_package_ptr;
+
+// NOLINTNEXTLINE(modernize-use-using)
+typedef void(__fastcall* process_event_func)(UObject* obj,
+                                             void* /*edx*/,
+                                             UFunction* func,
+                                             void* params,
+                                             void* /*null*/);
+
+process_event_func process_event_func_ptr{nullptr};
+
+void __fastcall _hook_process_event(UObject* obj,
+                                    void* edx,
+                                    UFunction* func,
+                                    void* params,
+                                    void* null) {
+    process_event_func_ptr(obj, edx, func, params, null);
+}
+
+// NOLINTNEXTLINE(modernize-use-using)
+typedef void(__fastcall* call_function_func)(UObject* obj,
+                                             void* /*edx*/,
+                                             FFrame* stack,
+                                             void* params,
+                                             UFunction* func);
+
+call_function_func call_function_func_ptr{nullptr};
+
+void __fastcall _hook_call_function(UObject* obj,
+                                    void* edx,
+                                    FFrame* stack,
+                                    void* params,
+                                    UFunction* func) {
+    call_function_func_ptr(obj, edx, stack, params, func);
+    static int count = 0;
+    ++count;
+
+    //if (count == 100) {
+    //    for (size_t i = 0; i < gobjects().size(); ++i) {
+    //        const UObject* const gobj = gobjects().obj_at(i);
+    //        if (gobj == nullptr) {
+    //            LOG(INFO, L"{:>4} - NULL", i);
+    //        } else {
+    //            LOG(INFO, L"{:>4} - {}", i, gobj->get_path_name());
+    //        }
+    //    }
+    //}
+
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // | MEMORY SIGNATURES |
@@ -35,14 +129,17 @@ const constinit Pattern<64> SIG_CALL_FUNCTION{
 };
 
 const constinit Pattern<39> SIG_GOBJECTS{
-    "4C8D0D49BB820141B856020000488D15681E8301488D0DA91E8301E8DCBA0A{004C8B0505534D02}"
+    // "4C 8D 0D 49 BB 82 01 41 B8 56 02 00 00 48 8D 15 68 1E 83 01 48 8D 0D A9 1E 83 01 E8 DC BA 0A 00 4C 8B 05 05 53 4D 02"
+    "4C8D0D49BB820141B856020000488D15681E8301488D0DA91E8301E8DCBA0A004C8B05{05534D02}"
 };
 
 const constinit Pattern<37> SIG_GNAMES{
+    // "48 8B 0D 69 97 35 02 48 8B 01 44 8D 04 DD 00 00 00 00 41 B9 08 00 00 00 48 8B D5 FF 50 10 48 89 05 9B 8F 41 02"
     "488B0D69973502488B01448D04DD0000000041B908000000488BD5FF5010488905{9B8F4102}"
 };
 
 const constinit Pattern<37> SIG_GMALLOC{
+    // "48 8B 0D 69 97 35 02 48 8B 01 44 8D 04 DD 00 00 00 00 41 B9 08 00 00 00 48 8B D5 FF 50 10 48 89 05 9B 8F 41 02"
     "488B0D{69973502}488B01448D04DD0000000041B908000000488BD5FF50104889059B8F4102"
 };
 
@@ -77,48 +174,54 @@ void BL1EHook::hexedit_set_command() {}
 void BL1EHook::hexedit_array_limit() {}
 
 void BL1EHook::hook_process_event() {
-    uintptr_t addr = SIG_PROCESS_EVENT.sigscan("ProcessEvent");
-    LOG(INFO, "ProcessEvent found at {:p}", reinterpret_cast<void*>(addr));
+    detour(SIG_PROCESS_EVENT, _hook_process_event, &process_event_func_ptr, "ProcessEvent");
+    LOG(INFO, "ProcessEvent found at {:p}", reinterpret_cast<void*>(process_event_func_ptr));
 }
 
 void BL1EHook::hook_call_function() {
-    uintptr_t addr = SIG_CALL_FUNCTION.sigscan("CallFunction");
-    LOG(INFO, "CallFunction found at {:p}", reinterpret_cast<void*>(addr));
+    detour(SIG_CALL_FUNCTION, _hook_call_function, &call_function_func_ptr, "CallFunction");
+    LOG(INFO, "CallFunction found at {:p}", reinterpret_cast<void*>(call_function_func_ptr));
 }
 
 void BL1EHook::find_gobjects() {
-    uintptr_t addr = SIG_GOBJECTS.sigscan("GObjects");
-    LOG(INFO, "GObjects found at {:p}", reinterpret_cast<void*>(addr));
+    auto gobjects_ptr = read_offset<GObjects::internal_type>(SIG_GOBJECTS.sigscan_nullable());
+    LOG(INFO, "GNames found at {:p}", reinterpret_cast<void*>(gobjects_ptr));
+    gobjects_wrapper = GObjects(gobjects_ptr);
 }
 
 void BL1EHook::find_gnames() {
-    uintptr_t addr = SIG_GNAMES.sigscan("GNames");
-    LOG(INFO, "GNames found at {:p}", reinterpret_cast<void*>(addr));
+    auto gnames_ptr = read_offset<GNames::internal_type>(SIG_GNAMES.sigscan_nullable());
+    LOG(INFO, "GNames found at {:p}", reinterpret_cast<void*>(gnames_ptr));
+    gnames_wrapper = GNames(gnames_ptr);
 }
 
 void BL1EHook::find_gmalloc() {
-    uintptr_t addr = SIG_GMALLOC.sigscan("GMalloc");
-    LOG(INFO, "GMalloc found at {:p}", reinterpret_cast<void*>(addr));
+    gmalloc_ptr = read_offset<FMalloc**>(SIG_GMALLOC.sigscan_nullable());
+    LOG(MISC, "GMalloc*: {:p}", reinterpret_cast<void*>(gmalloc_ptr));
+
+    if (gmalloc_ptr != nullptr) {
+        LOG(MISC, "GMalloc: {:p}", reinterpret_cast<void*>(*gmalloc_ptr));
+    }
 }
 
 void BL1EHook::find_construct_object() {
-    uintptr_t addr = SIG_CONSTRUCT_OBJECT.sigscan("ConstructObject");
-    LOG(INFO, "ConstructObject found at {:p}", reinterpret_cast<void*>(addr));
+    construct_obj_ptr = SIG_CONSTRUCT_OBJECT.sigscan<construct_obj_func>("ConstructObject");
+    LOG(INFO, "ConstructObject found at {:p}", reinterpret_cast<void*>(construct_obj_ptr));
 }
 
 void BL1EHook::find_get_path_name() {
-    uintptr_t addr = SIG_GET_PATH_NAME.sigscan("GetPathName");
-    LOG(INFO, "GetPathName found at {:p}", reinterpret_cast<void*>(addr));
+    get_path_name_ptr = SIG_GET_PATH_NAME.sigscan<get_path_name_func>("GetPathName");
+    LOG(INFO, "GetPathName found at {:p}", reinterpret_cast<void*>(get_path_name_ptr));
 }
 
 void BL1EHook::find_static_find_object() {
-    uintptr_t addr = SIG_STATIC_FIND_OBJECT.sigscan("StaticFindObject");
-    LOG(INFO, "StaticFindObject found at {:p}", reinterpret_cast<void*>(addr));
+    static_find_object_ptr = SIG_STATIC_FIND_OBJECT.sigscan_nullable<static_find_object_func>();
+    LOG(MISC, "StaticFindObject: {:p}", reinterpret_cast<void*>(static_find_object_ptr));
 }
 
 void BL1EHook::find_load_package() {
-    uintptr_t addr = SIG_LOAD_PACKAGE.sigscan("LoadPackage");
-    LOG(INFO, "LoadPackage found at {:p}", reinterpret_cast<void*>(addr));
+    load_package_ptr = SIG_LOAD_PACKAGE.sigscan<load_package_func>("LoadPackage");
+    LOG(INFO, "LoadPackage found at {:p}", reinterpret_cast<void*>(load_package_ptr));
 }
 
 void BL1EHook::inject_console() {}
@@ -135,23 +238,37 @@ bool BL1EHook::is_console_ready() const {
 }
 
 const GObjects& BL1EHook::gobjects() const {
-    throw std::runtime_error{"not implemented"};
+    return gobjects_wrapper;
 }
 
 const GNames& BL1EHook::gnames() const {
-    throw std::runtime_error{"not implemented"};
+    return gnames_wrapper;
 }
 
 void* BL1EHook::u_malloc(size_t len) const {
-    throw std::runtime_error{"not implemented"};
+    if (gmalloc_ptr == nullptr) {
+        throw std::runtime_error("tried allocating memory while gmalloc was still null!");
+    }
+    auto gmalloc = *gmalloc_ptr;
+    auto ret = gmalloc->vftable->u_malloc(gmalloc, len, get_malloc_alignment(len));
+    memset(ret, 0, len);
+    return ret;
 }
 
 void* BL1EHook::u_realloc(void* original, size_t len) const {
-    throw std::runtime_error{"not implemented"};
+    if (gmalloc_ptr == nullptr) {
+        throw std::runtime_error("tried allocating memory while gmalloc was still null!");
+    }
+    auto gmalloc = *gmalloc_ptr;
+    return gmalloc->vftable->u_realloc(gmalloc, original, len, get_malloc_alignment(len));
 }
 
 void BL1EHook::u_free(void* data) const {
-    throw std::runtime_error{"not implemented"};
+    if (gmalloc_ptr == nullptr) {
+        throw std::runtime_error("tried allocating memory while gmalloc was still null!");
+    }
+    auto gmalloc = *gmalloc_ptr;
+    gmalloc->vftable->u_free(gmalloc, data);
 }
 
 UObject* BL1EHook::construct_object(UClass* cls,
@@ -159,27 +276,29 @@ UObject* BL1EHook::construct_object(UClass* cls,
                                     const FName& name,
                                     uint64_t flags,
                                     UObject* template_obj) const {
-    throw std::runtime_error{"not implemented"};
+    return construct_obj_ptr(cls, outer, name, flags, template_obj, nullptr, nullptr, 0);
 }
 
 UObject* BL1EHook::find_object(UClass* cls, const std::wstring& name) const {
-    throw std::runtime_error{"not implemented"};
+    return static_find_object_ptr(cls, nullptr, name.c_str(), 0);
 }
 
 UObject* BL1EHook::load_package(const std::wstring& name, uint32_t flags) const {
-    throw std::runtime_error{"not implemented"};
+    return load_package_ptr(nullptr, name.data(), flags);
 }
 
 void BL1EHook::process_event(UObject* object, UFunction* func, void* params) const {
-    throw std::runtime_error{"not implemented"};
+    process_event_func_ptr(object, nullptr, func, params, nullptr);
 }
 
 void BL1EHook::uconsole_output_text(const std::wstring& str) const {
-    // todo: implement
+    // placeholder because clangformat is assssssssssssssssss
 }
 
 std::wstring BL1EHook::uobject_path_name(const UObject* obj) const {
-    throw std::runtime_error{"not implemented"};
+    ManagedFString str{};
+    get_path_name_ptr(obj, nullptr, &str);
+    return str;
 }
 
 void BL1EHook::fsoftobjectptr_assign(FSoftObjectPtr* ptr, const UObject* obj) const {
