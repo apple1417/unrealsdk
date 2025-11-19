@@ -71,21 +71,24 @@ class UStruct : public UField {
     UStruct* SuperField;    // 120b
     UField* Children;       // 128b
     uint16_t PropertySize;  // 136b
-    uint8_t UnknownData01[0x1A + 0x4];
+    uint8_t UnknownData01[0x1E];
     UProperty* PropertyLink;  // 168b
     uint8_t UnknownData02[0x10];
     unreal::TArray<UObject*> ScriptObjectReferences;  // 192b
 };
 
+// Size=1000 ish ( atleast based on struct size for Core.Class )
 class UClass : public UStruct {
    public:
     UObject* START;
     uint8_t UnknownData00[0xFC];
     UObject* ClassDefaultObject; // 468b
-    UObject* _00[12];
+    uint8_t UnknownData01[0x5E];
     unreal::TArray<unreal::FImplementedInterface> Interfaces;  // 572b
 };
 
+// TODO: Pretty much all of these need to be manually checked since the switch from x86 -> x64 could
+//  have any number of effects on them.
 using UScriptStruct = unreal::offsets::generic::UScriptStruct<UStruct>;
 using UFunction = bl2::generic::UFunction<UStruct>;
 using UConst = unreal::offsets::generic::UConst<UField>;
