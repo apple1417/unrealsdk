@@ -22,114 +22,68 @@ namespace {
 ////////////////////////////////////////////////////////////////////////////////
 
 std::recursive_mutex mutex{};
-
 GObjects gobjects_wrapper{};
 GNames gnames_wrapper{};
 
-struct FMalloc;
 struct FMallocVFtable {
-    // TODO: Made the assumption these are using size_t not uint32_t but didn't check it
     void* exec;
-    void* (*u_malloc)(FMalloc* self, size_t len, size_t align);
-    void* (*u_realloc)(FMalloc* self, void* original, size_t len, size_t align);
-    void* (*u_free)(FMalloc* self, void* data);
+    void* (*u_malloc)(void* self, size_t len, size_t align);
+    void* (*u_realloc)(void* self, void* original, size_t len, size_t align);
+    void* (*u_free)(void* self, void* data);
 };
+
 struct FMalloc {
     FMallocVFtable* vftable;
 };
 
 FMalloc** gmalloc_ptr{nullptr};
 
-// NOLINTNEXTLINE(modernize-use-using)
-typedef void (*get_path_name_func)(const UObject* self,
-                                   const UObject* stop_outer,
-                                   ManagedFString* str);
-
+using get_path_name_func = void (*)(const UObject* self,
+                                    const UObject* stop_outer,
+                                    ManagedFString* str);
 get_path_name_func get_path_name_ptr{nullptr};
 
-// NOLINTNEXTLINE(modernize-use-using)
-typedef UObject* (*static_find_object_func)(const UClass* cls,
-                                            const UObject* package,
-                                            const wchar_t* str,
-                                            uint32_t exact_class);
-
+using static_find_object_func = UObject* (*)(const UClass* cls,
+                                             const UObject* package,
+                                             const wchar_t* str,
+                                             uint32_t exact_class);
 static_find_object_func static_find_object_ptr{nullptr};
 
-// NOLINTNEXTLINE(modernize-use-using)
-typedef UObject* (*construct_obj_func)(UClass* cls,
-                                       UObject* outer,
-                                       FName name,
-                                       uint64_t flags,
-                                       UObject* template_obj,
-                                       void* error_output_device,
-                                       void* instance_graph,
-                                       uint32_t assume_template_is_archetype);
+using construct_obj_func = UObject* (*)(UClass* in_class,
+                                        UObject* in_outer,
+                                        FName in_name,
+                                        UObject::object_flags_type in_flags,
+                                        UObject* in_template,
+                                        void* error,
+                                        void* subobject_root,
+                                        void* in_instance_graph);
 construct_obj_func construct_obj_ptr;
 
 using load_package_func = UObject* (*)(const UObject* outer, const wchar_t* name, uint32_t flags);
 load_package_func load_package_ptr;
 
-// NOLINTNEXTLINE(modernize-use-using)
-typedef void (*process_event_func)(UObject* obj, UFunction* func, void* params, void*);
+////////////////////////////////////////////////////////////////////////////////
+// | PROCESS EVENT |
+////////////////////////////////////////////////////////////////////////////////
 
+using process_event_func = void (*)(UObject* obj, UFunction* func, void* params, void*);
 process_event_func process_event_func_ptr{nullptr};
 
 void _hook_process_event(UObject* obj, UFunction* func, void* params, void* null) {
-    std::lock_guard guard{mutex};
+    const std::lock_guard guard{mutex};
     process_event_func_ptr(obj, func, params, null);
-
-    static int count{0};
-    if (count < 5000) {
-        LOG(INFO, L"{} - {}", obj->get_path_name(), func->get_path_name());
-        ++count;
-    }
 }
 
-// NOLINTNEXTLINE(modernize-use-using)
-typedef void (*call_function_func)(UObject* obj, FFrame* stack, void* params, UFunction* func);
+////////////////////////////////////////////////////////////////////////////////
+// | CALL FUNCTION |
+////////////////////////////////////////////////////////////////////////////////
 
+using call_function_func = void (*)(UObject* obj, FFrame* stack, void* params, UFunction* func);
 call_function_func call_function_func_ptr{nullptr};
 
 void _hook_call_function(UObject* obj, FFrame* stack, void* params, UFunction* func) {
-    std::lock_guard guard{mutex};
+    const std::lock_guard guard{mutex};
     call_function_func_ptr(obj, stack, params, func);
-
-    static int count{0};
-    if (count < 5000) {
-        LOG(INFO, L"{} - {}", obj->get_path_name(), func->get_path_name());
-        ++count;
-    }
-
-    if (count == 5000) {
-        ++count;
-        for (size_t i = 0; i < gnames().size(); ++i) {
-            FNameEntry* entry = gnames().at(i);
-
-            if (entry == nullptr) {
-                LOG(INFO, "{:>4} ~ {}", i, "NULL");
-            } else if (entry->is_wide()) {
-                LOG(INFO, L"{:>4} ~ {}", i, entry->WideName);
-            } else {
-                LOG(INFO, "{:>4} ~ {}", i, entry->AnsiName);
-            }
-        }
-    }
-
-    // if (count < 25000) {
-    //     LOG(INFO, L"{}, {}", obj->get_path_name(), func->get_path_name());
-    //     ++count;
-    // }
-
-    // if (count == 100) {
-    //     for (size_t i = 0; i < gobjects().size(); ++i) {
-    //         const UObject* const gobj = gobjects().obj_at(i);
-    //         if (gobj == nullptr) {
-    //             LOG(INFO, L"{:>4} - NULL", i);
-    //         } else {
-    //             LOG(INFO, L"{:>4} - {}", i, gobj->get_path_name());
-    //         }
-    //     }
-    // }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -137,6 +91,8 @@ void _hook_call_function(UObject* obj, FFrame* stack, void* params, UFunction* f
 ////////////////////////////////////////////////////////////////////////////////
 
 // clang-format off
+
+// TODO: Cleanup these, obviously
 
 const constinit Pattern<68> SIG_PROCESS_EVENT{
     "4055415641574881EC90000000488D6C242048C74560FEFFFFFF48899D900000004889B5980000004889BDA00000004C89A5A8000000488B05130A3A024833C548894568"
@@ -146,18 +102,18 @@ const constinit Pattern<64> SIG_CALL_FUNCTION{
     "405553565741544155415641574881ECA8040000488D6C242048C74568FEFFFFFF488B05E8A83A024833C5488985700400004D8BF94C894D60498BF04C894500"
 };
 
-const constinit Pattern<25> SIG_GOBJECTS{
-    "E8 ?? ?? ?? ?? 4C 8B 05 {????????} 49 8B 0C D8 48 8B 57 0C 48 85 51 10 0F"
+const constinit Pattern<18> SIG_GOBJECTS{
+    "8B 0D ?? ?? ?? ?? 48 8B 15 {????????} 48 83 3C DA 00"
 };
 
 const constinit Pattern<25> SIG_GNAMES{
-    // E8 ?? ?? ?? ?? 48 8B 05 {?? ?? ?? ??} 48 89 3C D8 49 8B CC FF ?? ?? ?? 75 ??
-    "E8 ?? ?? ?? ?? 48 8B 05 {?? ?? ?? ??} 48 89 3C D8 49 8B CC FF ?? ?? ?? 75 ??"
+    "E8 ?? ?? ?? ?? 48 8B 05 {????????} 48 89 3C D8 49 8B CC FF ?? ?? ?? 75 ??"
 };
 
-const constinit Pattern<37> SIG_GMALLOC{
-    // "48 8B 0D 69 97 35 02 48 8B 01 44 8D 04 DD 00 00 00 00 41 B9 08 00 00 00 48 8B D5 FF 50 10 48 89 05 9B 8F 41 02"
-    "488B0D{69973502}488B01448D04DD0000000041B908000000488BD5FF50104889059B8F4102"
+// This is the static initialiser for gmalloc
+const constinit Pattern<14> SIG_GMALLOC{
+    // 33 FF 48 89 3D ?? ?? ?? ?? 48 8B 7C 24 38
+    "33 FF 48 89 3D {????????} 48 8B 7C 24 38"
 };
 
 const constinit Pattern<53> SIG_CONSTRUCT_OBJECT{
