@@ -12,12 +12,16 @@ using namespace unrealsdk::memory;
 
 namespace {
 
+bool should_perform_editor_patches{false};
+
+void block_till_ready(void);
+
 // NOTE
 //  These patches alone *do not* make the editor work. Launching the game with -editor will crash
 //  even after these patches have been applied. This is because there is a file system setup step
-//  required for the editor to launch at all. It needs the Master Shaders from the original game
-//  because it doesn't have them. This is why I think these patches can be done outside of the SDK
-//  since that file copy step will always be required.
+//  required. It needs the Master Shaders from the original game because it doesn't have them. This
+//  is why I think these patches could be done outside of the SDK since that file copy step will
+//  always be required.
 //
 
 // NOP's out a `GIsEditor = false` call that happens at startup; this one prevents the -editor flag
@@ -39,40 +43,21 @@ void hexedit_disable_mmg_upsell(void);
 // callback query to ignore the result.
 void hexedit_allow_savepackage(void);
 
+void perform_hexedits() {
+    hexedit_prevent_iseditor_unsetting();
+    hexedit_disable_mmg_upsell();
+    hexedit_allow_savepackage();
+}
+
 }  // namespace
 
 void BL1EHook::hexedit_editor_access() {
-    constexpr size_t arbitrary_limit = 100;
+    block_till_ready();
 
-    // TODO: A more suitable solution would be similar to steamdrm.cpp for BL1
-    // TODO: The waiting here is unrelated to what we actually want to do in this function...
-    // TODO: A separate DLL for these patch might be more suitable since only mod developers
-    //  actually care about accessing the editor. But we can also just check if the -editor argument
-    //  has been provided and if so conditionally perform these patches.
-    // -
-    // We are just waiting for `void entry(void)` to be decrypted at which point we suspend all
-    // threads and then perform our patches.
-    constexpr Pattern<20> test{"48 83 EC 28 E8 ?? ?? ?? ?? 48 83 C4 28 E9 ?? ?? ?? ?? CC CC"};
-    for (size_t i = 0; i < arbitrary_limit; ++i) {
-        if (test.sigscan_nullable() != 0) {
-            // in order of priority
-            const utils::ThreadSuspender suspend{};
-
-            std::string args{GetCommandLineA()};
-            std::ranges::transform(args, args.begin(), ::tolower);
-
-            if (args.find_first_of(" -editor") == std::string::npos) {
-                LOG(INFO, "-editor argument not provided, skipping editor related patches");
-                return;
-            }
-
-            LOG(INFO, "patching unreal editor");
-            hexedit_prevent_iseditor_unsetting();
-            hexedit_disable_mmg_upsell();
-            hexedit_allow_savepackage();
-            return;
-        }
-        std::this_thread::yield();
+    // this check is required since these patches actually make the -editor flag redundant; It will
+    // always open the editor.
+    if (should_perform_editor_patches) {
+        perform_hexedits();
     }
 }
 
@@ -119,13 +104,12 @@ void hexedit_disable_mmg_upsell(void) {
     // it performs a busy-waiting loop but since the initialisation failed some of the data is bad
     // and that causes a GPF. So just don't let it get into that busy-waiting loop by forcing a jmp.
     // TODO: Don't really want another sigscan just for this since its basically right next to the
-    //  one we just did but also don't want to extend the main signature to be bigger than it is;
-    //  this approach is not ideal either. Would like to atleast check the byte being overwritten.
+    //  one we just did but also don't want to extend the main signature to be bigger than it is.
     unlock_range(code + while_jump_index, 1);
     if (code[while_jump_index] == asm_jmp_zero_bytecode) {
         code[while_jump_index] = asm_jmp_bytecode;
     } else {
-        LOG(ERROR, "expecting 0x74 at while jump index but got 0x{:#}", code[while_jump_index]);
+        LOG(ERROR, "expecting 0x74 at while jump index but got {:x}", code[while_jump_index]);
     }
 }
 
@@ -139,7 +123,8 @@ void hexedit_allow_savepackage(void) {
     //       return FALSE;
     //   }
     //
-    // since the GCallbackQuery is default initialised with a return false; implemntation
+    // since the GCallbackQuery is default initialised with a return 0/false implementation for all
+    //  its virtual functions.
     //
     constexpr Pattern<17> sig_query_callback{"48 8B 01 4C 8B 45 D7 41 8B D7 FF 50 10 85 C0 0F 84"};
     constexpr size_t offset = 15;
@@ -148,6 +133,90 @@ void hexedit_allow_savepackage(void) {
     auto* code = sig_query_callback.sigscan<uint8_t*>("editor save package patch") + offset;
     unlock_range(code, asm_jz_instruction_length);
     std::memset(code, asm_noop, asm_jz_instruction_length);
+}
+
+}  // namespace
+
+////////////////////////////////////////////////////////////////////////////////
+// | BLOCK TILL READY |
+////////////////////////////////////////////////////////////////////////////////
+
+namespace {
+
+//
+// Copied the steamdrm.cpp version from BL1 adapted it a little for BL1E
+//
+
+// the signature matches two things, both are in the same function...
+constexpr Pattern<19> sig_entry_function{
+    "48 8B D8 48 83 38 00 74 ?? 48 8B C8 E8 ?? ?? ?? ?? 84 C0"};
+
+std::atomic ready = false;
+std::mutex ready_mutex{};
+std::condition_variable ready_cv{};
+
+using IsDebugerPresent_func = BOOL(WINAPI*)(void);
+IsDebugerPresent_func IsDebuggerPresent_ptr{nullptr};
+
+BOOL WINAPI IsDebuggerPresent_hook(void) {
+    if (ready.load()) {
+        return IsDebuggerPresent_ptr();
+    }
+
+    // less ideal but should be guaranteed if we hooked before the executable was decrypted
+    if (sig_entry_function.sigscan_nullable() != 0) {
+        LOG(INFO, "entry signature found");
+        std::scoped_lock lock{ready_mutex};
+        ready.store(true);
+        ready_cv.notify_all();
+    }
+
+    return IsDebuggerPresent_ptr();
+}
+
+void block_till_ready(void) {
+    {
+        utils::ThreadSuspender suspender{};
+
+        std::string args{GetCommandLineA()};
+        std::ranges::transform(args, args.begin(), ::tolower);
+        should_perform_editor_patches = (args.find(" -editor") != std::string::npos);
+
+        if (sig_entry_function.sigscan_nullable() != 0) {
+            LOG(INFO, "entry signature already exists");
+            // a bit excessive but might as well try the patches while we still have everything
+            //  suspended.
+            if (should_perform_editor_patches) {
+                should_perform_editor_patches = false;
+                perform_hexedits();
+            }
+            return;
+        }
+
+        MH_STATUS status = MH_OK;
+
+        status = MH_CreateHook(reinterpret_cast<LPVOID>(&IsDebuggerPresent),
+                               reinterpret_cast<LPVOID>(&IsDebuggerPresent_hook),
+                               reinterpret_cast<LPVOID*>(&IsDebuggerPresent_ptr));
+
+        if (status != MH_OK) {
+            LOG(ERROR, "Failed to create IsDebuggerPresent hook: {:x}",
+                static_cast<uint32_t>(status));
+            return;
+        }
+
+        status = MH_EnableHook(reinterpret_cast<LPVOID>(&IsDebuggerPresent));
+        if (status != MH_OK) {
+            LOG(ERROR, "Failed to enable IsDebuggerPresent hook: {:x}",
+                static_cast<uint32_t>(status));
+            return;
+        }
+    }
+
+    std::unique_lock lock{ready_mutex};
+    ready_cv.wait(lock, [] { return ready.load(); });
+    // not going to disable the hook since I want to minimise the chance of the next hooks failing.
+    // We should have more leeway than we will ever need but you never know.
 }
 
 }  // namespace
