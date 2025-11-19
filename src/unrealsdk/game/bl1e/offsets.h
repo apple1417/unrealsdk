@@ -79,11 +79,10 @@ class UStruct : public UField {
 
 // Size=1000 ish ( atleast based on struct size for Core.Class )
 class UClass : public UStruct {
-   public:
-    UObject* START;
-    uint8_t UnknownData00[0xFC];
+public:
+    uint8_t UnknownData00[0x104];
     UObject* ClassDefaultObject; // 468b
-    uint8_t UnknownData01[0x5E];
+    uint8_t UnknownData01[0x60];
     unreal::TArray<unreal::FImplementedInterface> Interfaces;  // 572b
 };
 
