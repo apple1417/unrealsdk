@@ -70,7 +70,7 @@ using process_event_func = void (*)(UObject* obj, UFunction* func, void* params,
 process_event_func process_event_func_ptr{nullptr};
 
 void _hook_process_event(UObject* obj, UFunction* func, void* params, void* null) {
-    const std::lock_guard guard{mutex};
+    const std::scoped_lock guard{mutex};
     process_event_func_ptr(obj, func, params, null);
 }
 
@@ -82,7 +82,7 @@ using call_function_func = void (*)(UObject* obj, FFrame* stack, void* params, U
 call_function_func call_function_func_ptr{nullptr};
 
 void _hook_call_function(UObject* obj, FFrame* stack, void* params, UFunction* func) {
-    const std::lock_guard guard{mutex};
+    const std::scoped_lock guard{mutex};
     call_function_func_ptr(obj, stack, params, func);
 }
 

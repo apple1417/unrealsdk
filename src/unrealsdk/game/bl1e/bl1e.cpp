@@ -15,6 +15,13 @@ namespace unrealsdk::game {
 void BL1EHook::hook(void) {
     // hook_antidebug();
 
+    // do this asap since it messes with early launch functions
+    try {
+        hexedit_editor_access();
+    } catch (const std::exception& err) {
+        LOG(WARNING, "Failed to unlock the editor ~ {}", err.what());
+    }
+
     hook_process_event();
     hook_call_function();
 
