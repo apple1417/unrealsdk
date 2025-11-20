@@ -12,7 +12,9 @@ using namespace unrealsdk::memory;
 
 namespace {
 
+constexpr std::chrono::seconds FALLBACK_DELAY{5};
 bool should_perform_editor_patches{false};
+bool should_use_static_delay{false};
 
 void block_till_ready(void);
 
@@ -55,16 +57,20 @@ void BL1EHook::hexedit_editor_access() {
     block_till_ready();
 
     // this check is required since these patches actually make the -editor flag redundant; It will
-    // always open the editor.
+    // always open the editor if these patches are applied.
     if (should_perform_editor_patches) {
         perform_hexedits();
+    }
+
+    if (should_use_static_delay) {
+        std::this_thread::sleep_for(FALLBACK_DELAY);
     }
 }
 
 namespace {
 
-constexpr size_t asm_call_instruction_length = 6;
-constexpr uint8_t asm_noop = 0x90;
+constexpr size_t ASM_CALL_INSTRUCTION_LENGTH = 6;
+constexpr uint8_t ASM_NOOP = 0x90;
 
 ////////////////////////////////////////////////////////////////////////////////
 // | IMPL |
@@ -79,8 +85,8 @@ void hexedit_prevent_iseditor_unsetting(void) {
     auto* code = preinit_unset_globals.sigscan<uint8_t*>("GIsEditor = false patch");
 
     // MOV  GIsEditor, 0x0
-    unlock_range(code, asm_call_instruction_length);
-    std::memset(code, asm_noop, asm_call_instruction_length);
+    unlock_range(code, ASM_CALL_INSTRUCTION_LENGTH);
+    std::memset(code, ASM_NOOP, ASM_CALL_INSTRUCTION_LENGTH);
 }
 
 void hexedit_disable_mmg_upsell(void) {
@@ -132,7 +138,7 @@ void hexedit_allow_savepackage(void) {
 
     auto* code = sig_query_callback.sigscan<uint8_t*>("editor save package patch") + offset;
     unlock_range(code, asm_jz_instruction_length);
-    std::memset(code, asm_noop, asm_jz_instruction_length);
+    std::memset(code, ASM_NOOP, asm_jz_instruction_length);
 }
 
 }  // namespace
@@ -143,47 +149,49 @@ void hexedit_allow_savepackage(void) {
 
 namespace {
 
-//
-// Copied the steamdrm.cpp version from BL1 adapted it a little for BL1E
-//
-
-// the signature matches two things, both are in the same function...
-constexpr Pattern<19> sig_entry_function{
+// the signature matches two things, both are in the same function; not sure on the name for this
+// function as I don't know a whole lot about the startup process but its probably the same one used
+// in BL1 ___tmainCRTStartup
+constexpr Pattern<19> SIG_ENTRY_FUNCTION{
     "48 8B D8 48 83 38 00 74 ?? 48 8B C8 E8 ?? ?? ?? ?? 84 C0"};
 
 std::atomic ready = false;
 std::mutex ready_mutex{};
 std::condition_variable ready_cv{};
 
-using IsDebugerPresent_func = BOOL(WINAPI*)(void);
-IsDebugerPresent_func IsDebuggerPresent_ptr{nullptr};
+// NOLINTBEGIN(readability-identifier-naming)
 
-BOOL WINAPI IsDebuggerPresent_hook(void) {
-    if (ready.load()) {
-        return IsDebuggerPresent_ptr();
+// GetCommandLineW should be an alternative to this
+using IsDebuggerPresent_func = BOOL(WINAPI*)(void);
+IsDebuggerPresent_func IsDebuggerPresent_ptr{nullptr};
+
+BOOL WINAPI IsDebuggerPresent_hook() {
+    const BOOL res = IsDebuggerPresent_ptr();
+
+    if (ready.load() || SIG_ENTRY_FUNCTION.sigscan_nullable() == 0) {
+        return res;
     }
 
-    // less ideal but should be guaranteed if we hooked before the executable was decrypted
-    if (sig_entry_function.sigscan_nullable() != 0) {
-        LOG(INFO, "entry signature found");
-        std::scoped_lock lock{ready_mutex};
-        ready.store(true);
-        ready_cv.notify_all();
-    }
-
-    return IsDebuggerPresent_ptr();
+    const std::scoped_lock lock{ready_mutex};
+    ready.store(true);
+    ready_cv.notify_all();
+    return res;
 }
 
+// NOLINTEND(readability-identifier-naming)
+
 void block_till_ready(void) {
+    std::unique_lock lock{ready_mutex};
+
     {
-        utils::ThreadSuspender suspender{};
+        const utils::ThreadSuspender suspender{};
 
         std::string args{GetCommandLineA()};
         std::ranges::transform(args, args.begin(), ::tolower);
         should_perform_editor_patches = (args.find(" -editor") != std::string::npos);
 
-        if (sig_entry_function.sigscan_nullable() != 0) {
-            LOG(INFO, "entry signature already exists");
+        if (SIG_ENTRY_FUNCTION.sigscan_nullable() != 0) {
+            LOG(INFO, "Entry signature already exists");
             // a bit excessive but might as well try the patches while we still have everything
             //  suspended.
             if (should_perform_editor_patches) {
@@ -194,29 +202,34 @@ void block_till_ready(void) {
         }
 
         MH_STATUS status = MH_OK;
-
-        status = MH_CreateHook(reinterpret_cast<LPVOID>(&IsDebuggerPresent),
+        const auto hook_func = reinterpret_cast<uintptr_t>(&IsDebuggerPresent);
+        status = MH_CreateHook(reinterpret_cast<LPVOID>(hook_func),
                                reinterpret_cast<LPVOID>(&IsDebuggerPresent_hook),
                                reinterpret_cast<LPVOID*>(&IsDebuggerPresent_ptr));
 
         if (status != MH_OK) {
-            LOG(ERROR, "Failed to create IsDebuggerPresent hook: {:x}",
+            LOG(WARNING, "Failed to create IsDebuggerPresent hook: {:x}",
                 static_cast<uint32_t>(status));
+            should_perform_editor_patches = false;
+            should_use_static_delay = true;
             return;
         }
 
-        status = MH_EnableHook(reinterpret_cast<LPVOID>(&IsDebuggerPresent));
+        status = MH_EnableHook(reinterpret_cast<LPVOID>(hook_func));
         if (status != MH_OK) {
-            LOG(ERROR, "Failed to enable IsDebuggerPresent hook: {:x}",
+            LOG(WARNING, "Failed to enable IsDebuggerPresent hook: {:x}",
                 static_cast<uint32_t>(status));
+            should_perform_editor_patches = false;
+            should_use_static_delay = true;
             return;
         }
     }
 
-    std::unique_lock lock{ready_mutex};
+    should_use_static_delay = false;
     ready_cv.wait(lock, [] { return ready.load(); });
     // not going to disable the hook since I want to minimise the chance of the next hooks failing.
-    // We should have more leeway than we will ever need but you never know.
+    // We should have more leeway than we will ever need but you never know. Its also not a function
+    // that'll matter if it remains hooked.
 }
 
 }  // namespace
