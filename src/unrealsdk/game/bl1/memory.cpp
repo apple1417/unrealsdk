@@ -21,8 +21,8 @@ namespace {
 struct FMalloc;
 struct FMallocVFtable {
     void* exec;
-    void*(__thiscall* u_malloc)(FMalloc* self, uint32_t len, uint32_t align);
-    void*(__thiscall* u_realloc)(FMalloc* self, void* original, uint32_t len, uint32_t align);
+    void*(__thiscall* u_malloc)(FMalloc* self, size_t len, size_t align);
+    void*(__thiscall* u_realloc)(FMalloc* self, void* original, size_t len, size_t align);
     void*(__thiscall* u_free)(FMalloc* self, void* data);
 };
 struct FMalloc {
