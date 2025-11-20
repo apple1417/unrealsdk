@@ -68,6 +68,7 @@ void BL1Hook::wait_for_steam_drm(void) {
             LOG(ERROR, "Failed to create GetStartupInfoA hook: {:x}",
                 static_cast<uint32_t>(status));
 
+            // TODO: would this work considering all the other threads are suspended?
             LOG(ERROR, "Falling back to a static delay");
             std::this_thread::sleep_for(FALLBACK_DELAY);
             return;
