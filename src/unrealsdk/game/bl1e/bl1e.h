@@ -20,21 +20,6 @@ class BL1EHook : public AbstractHook {
     static void find_fname_init(void);
 
     /**
-     * @brief Hooks the antidebug functions and disables them.
-     */
-    static void hook_antidebug(void);
-
-    /**
-     * @brief Hex edits out the protection on the set command.
-     */
-    static void hexedit_set_command(void);
-
-    /**
-     * @brief Hex edits out the `obj dump` array limit.
-     */
-    static void hexedit_array_limit(void);
-
-    /**
      * @brief Hex edits out a few places that prevent launching the game with `-editor` from
      * actually opening the editor.
      * @note These hex edits alone are not enough to actually get the editor to open. There is still
