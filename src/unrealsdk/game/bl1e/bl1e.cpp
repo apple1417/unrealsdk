@@ -65,7 +65,7 @@ const constinit Pattern<33> GNATIVES_SIG{
 #endif
 
 // NOLINTNEXTLINE(modernize-use-using)
-typedef void (UObject::*native_func)(FFrame* stack, void* result);
+using native_func = void (UObject::*)(FFrame* stack, void* result);
 native_func* fframe_step_gnatives{nullptr};
 
 #ifdef __MINGW32__
@@ -79,7 +79,7 @@ void BL1EHook::find_fframe_step(void) {
 }
 
 void BL1EHook::fframe_step(FFrame* frame, UObject* obj, void* param) const {
-    int32_t code = *frame->Code++;
+    const int32_t code = *frame->Code++;
     (obj->*fframe_step_gnatives[code])(frame, param);
 }
 
