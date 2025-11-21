@@ -28,7 +28,7 @@ struct FImplementedInterface;
 
 namespace unrealsdk::game::bl1e {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#if defined(_MSC_VER)
 #pragma pack(push, 4)
 #endif
 
@@ -67,21 +67,21 @@ class UProperty : public UField {
 // Size=208
 class UStruct : public UField {
    public:
-    uint8_t UnknownData00[0x8 + 0x8];
-    UStruct* SuperField;    // 120b
-    UField* Children;       // 128b
-    uint16_t PropertySize;  // 136b
-    uint8_t UnknownData01[0x1E];
-    UProperty* PropertyLink;  // 168b
-    uint8_t UnknownData02[0x10];
+    uint8_t UnknownData00[0x10];
+    UStruct* SuperField;          // 120b
+    UField* Children;             // 128b
+    uint16_t PropertySize;        // 136b
+    uint8_t UnknownData01[0x26];  // explicit padding to avoid compiler warning
+    UProperty* PropertyLink;      // 176b
+    uint8_t UnknownData02[0x8];
     unreal::TArray<UObject*> ScriptObjectReferences;  // 192b
 };
 
 // Size=1000 ish ( atleast based on struct size for Core.Class )
 class UClass : public UStruct {
-public:
+   public:
     uint8_t UnknownData00[0x104];
-    UObject* ClassDefaultObject; // 468b
+    UObject* ClassDefaultObject;  // 468b
     uint8_t UnknownData01[0x60];
     unreal::TArray<unreal::FImplementedInterface> Interfaces;  // 572b
 };
@@ -118,7 +118,7 @@ using USoftClassProperty = unreal::offsets::generic::USoftClassProperty<UObjectP
 #pragma clang diagnostic pop
 #endif
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#if defined(_MSC_VER)
 #pragma pack(pop)
 #endif
 
