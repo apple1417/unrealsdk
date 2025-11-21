@@ -63,44 +63,12 @@ using load_package_func = UObject* (*)(const UObject* outer, const wchar_t* name
 load_package_func load_package_ptr;
 
 ////////////////////////////////////////////////////////////////////////////////
-// | PROCESS EVENT |
-////////////////////////////////////////////////////////////////////////////////
-
-using process_event_func = void (*)(UObject* obj, UFunction* func, void* params, void*);
-process_event_func process_event_func_ptr{nullptr};
-
-void _hook_process_event(UObject* obj, UFunction* func, void* params, void* null) {
-    const std::scoped_lock guard{mutex};
-    process_event_func_ptr(obj, func, params, null);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// | CALL FUNCTION |
-////////////////////////////////////////////////////////////////////////////////
-
-using call_function_func = void (*)(UObject* obj, FFrame* stack, void* params, UFunction* func);
-call_function_func call_function_func_ptr{nullptr};
-
-void _hook_call_function(UObject* obj, FFrame* stack, void* params, UFunction* func) {
-    const std::scoped_lock guard{mutex};
-    call_function_func_ptr(obj, stack, params, func);
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // | MEMORY SIGNATURES |
 ////////////////////////////////////////////////////////////////////////////////
 
 // clang-format off
 
 // TODO: Cleanup these, obviously
-
-const constinit Pattern<68> SIG_PROCESS_EVENT{
-    "4055415641574881EC90000000488D6C242048C74560FEFFFFFF48899D900000004889B5980000004889BDA00000004C89A5A8000000488B05130A3A024833C548894568"
-};
-
-const constinit Pattern<64> SIG_CALL_FUNCTION{
-    "405553565741544155415641574881ECA8040000488D6C242048C74568FEFFFFFF488B05E8A83A024833C5488985700400004D8BF94C894D60498BF04C894500"
-};
 
 const constinit Pattern<18> SIG_GOBJECTS{
     "8B 0D ?? ?? ?? ?? 48 8B 15 {????????} 48 83 3C DA 00"
@@ -146,16 +114,6 @@ void BL1EHook::hexedit_set_command() {}
 
 void BL1EHook::hexedit_array_limit() {}
 
-void BL1EHook::hook_process_event() {
-    detour(SIG_PROCESS_EVENT, _hook_process_event, &process_event_func_ptr, "ProcessEvent");
-    LOG(INFO, "ProcessEvent found at {:p}", reinterpret_cast<void*>(process_event_func_ptr));
-}
-
-void BL1EHook::hook_call_function() {
-    detour(SIG_CALL_FUNCTION, _hook_call_function, &call_function_func_ptr, "CallFunction");
-    LOG(INFO, "CallFunction found at {:p}", reinterpret_cast<void*>(call_function_func_ptr));
-}
-
 void BL1EHook::find_gobjects() {
     auto gobjects_ptr = read_offset<GObjects::internal_type>(SIG_GOBJECTS.sigscan_nullable());
     LOG(INFO, "GGObjects found at {:p}", reinterpret_cast<void*>(gobjects_ptr));
@@ -197,18 +155,12 @@ void BL1EHook::find_load_package() {
     LOG(INFO, "LoadPackage found at {:p}", reinterpret_cast<void*>(load_package_ptr));
 }
 
-void BL1EHook::inject_console() {}
-
 ////////////////////////////////////////////////////////////////////////////////
 // | PUBLIC API |
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma warning(push)
 #pragma warning(disable : 4100)
-
-bool BL1EHook::is_console_ready() const {
-    return false;
-}
 
 const GObjects& BL1EHook::gobjects() const {
     return gobjects_wrapper;
@@ -258,14 +210,6 @@ UObject* BL1EHook::find_object(UClass* cls, const std::wstring& name) const {
 
 UObject* BL1EHook::load_package(const std::wstring& name, uint32_t flags) const {
     return load_package_ptr(nullptr, name.data(), flags);
-}
-
-void BL1EHook::process_event(UObject* object, UFunction* func, void* params) const {
-    process_event_func_ptr(object, func, params, nullptr);
-}
-
-void BL1EHook::uconsole_output_text(const std::wstring& str) const {
-    // placeholder because clangformat is assssssssssssssssss
 }
 
 std::wstring BL1EHook::uobject_path_name(const UObject* obj) const {

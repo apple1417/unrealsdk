@@ -12,6 +12,7 @@ using namespace unrealsdk::memory;
 using namespace unrealsdk::unreal;
 
 namespace unrealsdk::game {
+
 void BL1EHook::hook(void) {
     // hook_antidebug();
 
@@ -51,8 +52,9 @@ const constinit Pattern<54> FNAME_INIT_SIG{
 "4055565741544155415641574881ECE00C000048C7442428FEFFFFFF48899C24300D0000488B05456E34024833C448898424D00C0000"
 };
 
-const constinit Pattern<45> GNATIVES_SIG{ // TODO: validate
-"48894424304C8D442430488B4224488BF9488B4A1C488BDA440FB60848FFC048894224418BC14C8D0D{3FDC2301}"
+// 33 C9 48 39 15 ?? ?? ?? ?? 0F 45 C1 89 05 ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 89 05 ?? ?? ?? ?? C3
+const constinit Pattern<33> GNATIVES_SIG{
+"33 C9 48 39 15 ?? ?? ?? ?? 0F 45 C1 89 05 ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 89 05 {????????} C3"
 };
 
 // clang-format on
@@ -63,8 +65,8 @@ const constinit Pattern<45> GNATIVES_SIG{ // TODO: validate
 #endif
 
 // NOLINTNEXTLINE(modernize-use-using)
-typedef void(__thiscall* fframe_step_func)(UObject*, FFrame*, void*);
-fframe_step_func** fframe_step_gnatives;
+typedef void (UObject::*native_func)(FFrame* stack, void* result);
+native_func* fframe_step_gnatives{nullptr};
 
 #ifdef __MINGW32__
 #pragma GCC diagnostic pop
@@ -72,12 +74,13 @@ fframe_step_func** fframe_step_gnatives;
 }  // namespace
 
 void BL1EHook::find_fframe_step(void) {
-    fframe_step_gnatives = GNATIVES_SIG.sigscan_nullable<fframe_step_func**>();
+    fframe_step_gnatives = read_offset<native_func*>(GNATIVES_SIG.sigscan_nullable());
     LOG(MISC, "GNatives: {:p}", reinterpret_cast<void*>(fframe_step_gnatives));
 }
 
 void BL1EHook::fframe_step(FFrame* frame, UObject* obj, void* param) const {
-    (*fframe_step_gnatives)[*frame->Code++](obj, frame, param);
+    int32_t code = *frame->Code++;
+    (obj->*fframe_step_gnatives[code])(frame, param);
 }
 
 namespace {

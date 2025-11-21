@@ -10,9 +10,10 @@
 
 namespace unrealsdk::game {
 
+// Could probably reuse some of BL1's implementation since there are a few files just copy+pasted
+//  over
 class BL1EHook : public AbstractHook {
    protected:
-
     /**
      * @brief Finds `FName::Init`, and sets up such that `fname_init` may be called.
      */
