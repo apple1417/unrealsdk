@@ -112,7 +112,7 @@ constexpr Pattern<64> CALL_FUNCTION_SIG{
     "405553565741544155415641574881ECA8040000488D6C242048C74568FEFFFFFF488B05E8A83A024833C548898570"
     "0400004D8BF94C894D60498BF04C894500"};
 
-void __fastcall call_function_hook(UObject* obj, FFrame* stack, void* result, UFunction* func) {
+void call_function_hook(UObject* obj, FFrame* stack, void* result, UFunction* func) {
     try {
         auto data = hook_manager::impl::preprocess_hook(L"CallFunction", func, obj);
         if (data != nullptr) {
