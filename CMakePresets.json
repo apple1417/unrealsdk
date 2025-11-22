@@ -123,6 +123,17 @@
       }
     },
     {
+      "name": "_willow64",
+      "hidden": true,
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "UNREALSDK_FLAVOUR": "WILLOW64"
+      }
+    },
+    {
       "name": "_oak",
       "hidden": true,
       "architecture": {
@@ -324,6 +335,26 @@
         "_base",
         "_msvc",
         "_willow",
+        "_release"
+      ]
+    },
+    {
+      "name": "msvc-willow64-debug",
+      "displayName": "Willow64 Debug (MSVC)",
+      "inherits": [
+        "_base",
+        "_msvc",
+        "_willow64",
+        "_debug"
+      ]
+    },
+    {
+      "name": "msvc-willow64-release",
+      "displayName": "Willow64 Release (MSVC)",
+      "inherits": [
+        "_base",
+        "_msvc",
+        "_willow64",
         "_release"
       ]
     },

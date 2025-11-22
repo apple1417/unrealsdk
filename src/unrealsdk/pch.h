@@ -9,6 +9,7 @@
 // `UNREALSDK_FLAVOUR` should be defined to be equal to one of them.
 // NOLINTBEGIN(cppcoreguidelines-macro-usage)
 #define UNREALSDK_FLAVOUR_WILLOW 1
+#define UNREALSDK_FLAVOUR_WILLOW64 1
 #define UNREALSDK_FLAVOUR_OAK 2
 // NOLINTEND(cppcoreguidelines-macro-usage)
 

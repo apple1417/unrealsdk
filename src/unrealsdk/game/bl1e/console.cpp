@@ -13,7 +13,7 @@
 #include "unrealsdk/unreal/find_class.h"
 #include "unrealsdk/unreal/wrappers/bound_function.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW && !defined(UNREALSDK_IMPORTING)
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64 && !defined(UNREALSDK_IMPORTING)
 
 using namespace unrealsdk::unreal;
 

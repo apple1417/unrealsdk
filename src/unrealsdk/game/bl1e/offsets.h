@@ -18,7 +18,7 @@
 #include "unrealsdk/unreal/classes/uscriptstruct.h"
 #include "unrealsdk/unreal/offsets.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
 
 namespace unrealsdk::unreal {
 
@@ -86,8 +86,6 @@ class UClass : public UStruct {
     unreal::TArray<unreal::FImplementedInterface> Interfaces;  // 572b
 };
 
-// TODO: Pretty much all of these need to be manually checked since the switch from x86 -> x64 could
-//  have any number of effects on them.
 using UScriptStruct = unreal::offsets::generic::UScriptStruct<UStruct>;
 using UFunction = bl2::generic::UFunction<UStruct>;
 using UConst = unreal::offsets::generic::UConst<UField>;
