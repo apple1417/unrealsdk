@@ -17,7 +17,11 @@ namespace {
 
 GObjects gobjects_wrapper{};
 
-constexpr Pattern<18> SIG_GOBJECTS{"8B 0D ?? ?? ?? ?? 48 8B 15 {????????} 48 83 3C DA 00"};
+constexpr Pattern<18> SIG_GOBJECTS{
+    "8B0D ????????"        // MOV  this,dword ptr [DAT_1425d95d8]
+    "48 8B 15 {????????}"  // MOV  RDX,qword ptr [BL1E_GObjects]
+    "48 833CDA 00"         // CMP  qword ptr [RDX + RBX*0x8],0x0
+};
 
 }  // namespace
 
@@ -36,7 +40,12 @@ namespace {
 GNames gnames_wrapper{};
 
 constexpr Pattern<25> SIG_GNAMES{
-    "E8 ?? ?? ?? ?? 48 8B 05 {????????} 48 89 3C D8 49 8B CC FF ?? ?? ?? 75 ??"};
+    "E8 ????????"        // CALL  FUN_1401afda0
+    "488B05 {????????}"  // MOV   RAX,qword ptr [GNames_NameHash]
+    "48 89 3C D8"        // MOV   qword ptr [RAX + RBX*0x8],RDI
+    "49 8B CC"           // MOV   this,R12
+    "FF15 ????????"      // CALL  qword ptr [->KERNEL32.DLL::LeaveCriticalSection]
+};
 
 }  // namespace
 

@@ -22,10 +22,12 @@ namespace {
 using process_event_func = void (*)(UObject* obj, UFunction* func, void* params, void* /*null*/);
 process_event_func process_event_ptr;
 
-// TODO: Refactor this
-constexpr Pattern<68> PROCESS_EVENT_SIG{
-    "4055415641574881EC90000000488D6C242048C74560FEFFFFFF48899D900000004889B5980000004889BDA0000000"
-    "4C89A5A8000000488B05130A3A024833C548894568"};
+constexpr Pattern<13> PROCESS_EVENT_SIG{
+    "40 55"           // PUSH  RBP
+    "41 56"           // PUSH  R14
+    "41 57"           // PUSH  R15
+    "4881EC 90000000" // SUB   RSP,0x90
+};
 
 void process_event_hook(UObject* obj, UFunction* func, void* params, void* null) {
     try {
@@ -107,10 +109,17 @@ namespace {
 using call_function_func = void (*)(UObject* obj, FFrame* stack, void* params, UFunction* func);
 call_function_func call_function_ptr;
 
-// TODO: Refactor this
-constexpr Pattern<64> CALL_FUNCTION_SIG{
-    "405553565741544155415641574881ECA8040000488D6C242048C74568FEFFFFFF488B05E8A83A024833C548898570"
-    "0400004D8BF94C894D60498BF04C894500"};
+constexpr Pattern<20> CALL_FUNCTION_SIG{
+    "40 55"            // PUSH  RBP
+    "53"               // PUSH  RBX
+    "56"               // PUSH  RSI
+    "57"               // PUSH  RDI
+    "41 54"            // PUSH  R12
+    "41 55"            // PUSH  R13
+    "41 56"            // PUSH  R14
+    "41 57"            // PUSH  R15
+    "4881EC A8040000"  // SUB   RSP,0x4A8
+};
 
 void call_function_hook(UObject* obj, FFrame* stack, void* result, UFunction* func) {
     try {

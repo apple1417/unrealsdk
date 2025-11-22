@@ -46,31 +46,31 @@ void BL1EHook::post_init(void) {
 
 namespace {
 
-// clang-format off
-
-const constinit Pattern<54> FNAME_INIT_SIG{
-"4055565741544155415641574881ECE00C000048C7442428FEFFFFFF48899C24300D0000488B05456E34024833C448898424D00C0000"
+// 40 55 56 57 41 54 41 55 41 56 41 57 48 81 EC E0 0C 00 00
+constexpr Pattern<19> FNAME_INIT_SIG{
+    "40 55"              // PUSH  RBP
+    "56"                 // PUSH  RSI
+    "57"                 // PUSH  RDI
+    "41 54"              // PUSH  R12
+    "41 55"              // PUSH  R13
+    "41 56"              // PUSH  R14
+    "41 57"              // PUSH  R15
+    "48 81 EC E00C0000"  // SUB   RSP,0xCE0
 };
 
-// 33 C9 48 39 15 ?? ?? ?? ?? 0F 45 C1 89 05 ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 89 05 ?? ?? ?? ?? C3
 const constinit Pattern<33> GNATIVES_SIG{
-"33 C9 48 39 15 ?? ?? ?? ?? 0F 45 C1 89 05 ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 89 05 {????????} C3"
+    "33 C9"                // XOR     ECX,ECX
+    "48 39 15 ????????"    // CMP     qword ptr [BL1E_GNatives]
+    "0F 45 C1"             // CMOVNZ  EAX,ECX
+    "89 05 ????????"       // MOV     dword ptr [DAT_142546260],EAX
+    "48 8B 05 ????????"    // MOV     RAX=>FUN_140144f50,qword ptr
+    "48 89 05 {????????}"  // MOV     qword ptr [BL1E_GNatives]
+    "C3"                   // RET
 };
 
-// clang-format on
-
-#ifdef __MINGW32__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wattributes"  // thiscall on non-class
-#endif
-
-// NOLINTNEXTLINE(modernize-use-using)
 using native_func = void (UObject::*)(FFrame* stack, void* result);
 native_func* fframe_step_gnatives{nullptr};
 
-#ifdef __MINGW32__
-#pragma GCC diagnostic pop
-#endif
 }  // namespace
 
 void BL1EHook::find_fframe_step(void) {
@@ -79,29 +79,20 @@ void BL1EHook::find_fframe_step(void) {
 }
 
 void BL1EHook::fframe_step(FFrame* frame, UObject* obj, void* param) const {
+    // should update the original to be this as well
     const int32_t code = *frame->Code++;
     (obj->*fframe_step_gnatives[code])(frame, param);
 }
 
 namespace {
 
-#ifdef __MINGW32__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wattributes"  // thiscall on non-class
-#endif
-
-// NOLINTNEXTLINE(modernize-use-using)
-typedef void(__thiscall* fname_init_func)(FName* name,
-                                          const wchar_t* str,
-                                          int32_t number,
-                                          int32_t find_type,
-                                          int32_t split_name);
+using fname_init_func = void (*)(FName* name,
+                                 const wchar_t* str,
+                                 int32_t number,
+                                 int32_t find_type,
+                                 int32_t split_name);
 
 fname_init_func fname_init_ptr = nullptr;
-
-#ifdef __MINGW32__
-#pragma GCC diagnostic pop
-#endif
 
 }  // namespace
 

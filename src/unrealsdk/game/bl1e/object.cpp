@@ -27,9 +27,14 @@ using construct_obj_func = UObject* (*)(UClass* in_class,
                                         void* in_instance_graph);
 construct_obj_func construct_obj_ptr;
 
-constexpr Pattern<53> SIG_CONSTRUCT_OBJECT{
-    "488BC44C89401857415641574883EC7048C740C8FEFFFFFF4889580848896810488970204D8BF1488BDA488BF1488B"
-    "BC24C8000000"};
+constexpr Pattern<16> SIG_CONSTRUCT_OBJECT{
+    "48 8B C4"     // MOV   RAX,RSP
+    "4C 89 40 18"  // MOV   qword ptr [RAX + local_res18],param_3
+    "57"           // PUSH  RDI
+    "41 56"        // PUSH  R14
+    "41 57"        // PUSH  R15
+    "48 83 EC 70"  // SUB   RSP,0x70
+};
 
 }  // namespace
 
@@ -67,9 +72,15 @@ using get_path_name_func = void (*)(const UObject* self,
 
 get_path_name_func get_path_name_ptr;
 
-constexpr Pattern<48> SIG_GET_PATH_NAME{
-    "4889742410574883EC20498BF0488BF9483BCA0F84990000004885C90F8490000000488B49404885C97452483BCA74"
-    "4D"};
+constexpr Pattern<25> SIG_GET_PATH_NAME{
+    "48 89 74 24 10"  // MOV   qword ptr [RSP + local_res10],RSI
+    "57"              // PUSH  RDI
+    "48 83 EC 20"     // SUB   RSP,0x20
+    "49 8B F0"        // MOV   RSI,ResultString
+    "48 8B F9"        // MOV   RDI,this
+    "48 3B CA"        // CMP   this,StopOuter
+    "0F84 ????????"   // JZ    LAB_1401c02e2
+};
 
 }  // namespace
 
@@ -97,9 +108,19 @@ using static_find_object_func = UObject* (*)(const UClass* cls,
 
 static_find_object_func static_find_object_ptr;
 
-constexpr Pattern<54> SIG_STATIC_FIND_OBJECT{
-    "4055565741544155415641574883EC7048C7442440FEFFFFFF48899C24B0000000458BE9498BF04C8BFA4C8BE1833D"
-    "2CD73402007413"};
+constexpr Pattern<36> SIG_STATIC_FIND_OBJECT{
+    "40 55"                       // PUSH  RBP
+    "56"                          // PUSH  RSI
+    "57"                          // PUSH  RDI
+    "41 54"                       // PUSH  R12
+    "41 55"                       // PUSH  R13
+    "41 56"                       // PUSH  R14
+    "41 57"                       // PUSH  R15
+    "48 83 EC 70"                 // SUB   RSP,0x70
+    "48 C7 44 24 40 FE FF FF FF"  // MOV   qword ptr [RSP + local_68],-0x2
+    "48 89 9C 24 B0 00 00 00"     // MOV   qword ptr [RSP + local_res8],RBX
+    "45 8B E9"                    // MOV   R13D,ExactClass
+};
 
 }  // namespace
 
@@ -121,8 +142,17 @@ namespace {
 using load_package_func = UObject* (*)(const UObject* outer, const wchar_t* name, uint32_t flags);
 load_package_func load_package_ptr;
 
-constexpr Pattern<43> SIG_LOAD_PACKAGE{
-    "488BC44489401848894808535657415641574883EC6048C740A8FEFFFFFF0F2970C8418BD8488BFA488BF1"};
+constexpr Pattern<22> SIG_LOAD_PACKAGE{
+    "48 8B C4"     // MOV   RAX,RSP
+    "44 89 40 18"  // MOV   dword ptr [RAX + local_res18],LoadFlags
+    "48 89 48 08"  // MOV   qword ptr [RAX + local_res8],InOuter
+    "53"           // PUSH  RBX
+    "56"           // PUSH  RSI
+    "57"           // PUSH  RDI
+    "41 56"        // PUSH  R14
+    "41 57"        // PUSH  R15
+    "48 83 EC 60"  // SUB   RSP,0x60
+};
 
 }  // namespace
 

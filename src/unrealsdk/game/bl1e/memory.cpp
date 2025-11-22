@@ -37,7 +37,9 @@ FMalloc** gmalloc_ptr;
 
 // static initialiser for gmalloc
 const constinit Pattern<14> SIG_GMALLOC{
-    "33 FF 48 89 3D {????????} 48 8B 7C 24 38"
+    "33 FF"              // XOR  EDI,EDI
+    "48893D {????????}"  // MOV  qword ptr [GMalloc_DAT_142519ef0],RDI
+    "488B7C 2438"        // MOV  RDI,qword ptr [RSP + local_res10]
 };
 
 }  // namespace
