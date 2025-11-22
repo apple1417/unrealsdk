@@ -49,8 +49,8 @@ void* BL1EHook::u_malloc(size_t len) const {
         throw std::runtime_error("tried allocating memory while gmalloc was still null!");
     }
 
-    auto fm = *gmalloc_ptr;
-    void* ret = (fm->*fm->vftable->u_malloc)(len, get_malloc_alignment(len));
+    auto gmalloc = *gmalloc_ptr;
+    void* ret = (gmalloc->*gmalloc->vftable->u_malloc)(len, get_malloc_alignment(len));
     std::memset(ret, 0, len);
     return ret;
 }
@@ -59,16 +59,16 @@ void* BL1EHook::u_realloc(void* original, size_t len) const {
     if (gmalloc_ptr == nullptr) {
         throw std::runtime_error("tried allocating memory while gmalloc was still null!");
     }
-    auto fm = *gmalloc_ptr;
-    return (fm->*fm->vftable->u_realloc)(original, len, get_malloc_alignment(len));
+    auto gmalloc = *gmalloc_ptr;
+    return (gmalloc->*gmalloc->vftable->u_realloc)(original, len, get_malloc_alignment(len));
 }
 
 void BL1EHook::u_free(void* data) const {
     if (gmalloc_ptr == nullptr) {
         throw std::runtime_error("tried allocating memory while gmalloc was still null!");
     }
-    auto fm = *gmalloc_ptr;
-    (fm->*fm->vftable->u_free)(data);
+    auto gmalloc = *gmalloc_ptr;
+    (gmalloc->*gmalloc->vftable->u_free)(data);
 }
 
 }  // namespace unrealsdk::game

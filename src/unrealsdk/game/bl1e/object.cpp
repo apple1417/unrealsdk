@@ -17,7 +17,7 @@ namespace unrealsdk::game {
 
 namespace {
 
-using construct_obj_func = UObject* (*)(UClass* in_class,
+using construct_obj_func = UObject* (*)(UClass * in_class,
                                         UObject* in_outer,
                                         FName in_name,
                                         UObject::object_flags_type in_flags,
@@ -57,18 +57,9 @@ UObject* BL1EHook::construct_object(UClass* cls,
 
 namespace {
 
-#ifdef __MINGW32__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wattributes"  // thiscall on non-class
-#endif
-
 using get_path_name_func = void (*)(const UObject* self,
                                     const UObject* stop_outer,
                                     ManagedFString* str);
-
-#ifdef __MINGW32__
-#pragma GCC diagnostic pop
-#endif
 
 get_path_name_func get_path_name_ptr;
 
