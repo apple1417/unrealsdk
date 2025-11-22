@@ -58,7 +58,7 @@ constexpr Pattern<19> FNAME_INIT_SIG{
     "48 81 EC E00C0000"  // SUB   RSP,0xCE0
 };
 
-const constinit Pattern<33> GNATIVES_SIG{
+constexpr Pattern<33> GNATIVES_SIG{
     "33 C9"                // XOR     ECX,ECX
     "48 39 15 ????????"    // CMP     qword ptr [BL1E_GNatives]
     "0F 45 C1"             // CMOVNZ  EAX,ECX

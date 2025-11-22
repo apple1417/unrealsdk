@@ -3,16 +3,14 @@
 
 #include "unrealsdk/pch.h"
 
-#include "unrealsdk/game/abstract_hook.h"
+#include "unrealsdk/game/bl1/bl1.h"
 #include "unrealsdk/game/selector.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64 && !defined(UNREALSDK_IMPORTING)
 
 namespace unrealsdk::game {
 
-// Could probably reuse some of BL1's implementation since there are a few files just copy+pasted
-//  over
-class BL1EHook : public AbstractHook {
+class BL1EHook : public BL1Hook {
    protected:
     /**
      * @brief Finds `FName::Init`, and sets up such that `fname_init` may be called.
@@ -77,16 +75,9 @@ class BL1EHook : public AbstractHook {
      */
     static void find_load_package(void);
 
-    /**
-     * @brief Creates a console and sets the bind (if required), and hooks logging onto it.
-     */
-    static void inject_console(void);
-
    public:
     void hook(void) override;
     void post_init(void) override;
-
-    [[nodiscard]] bool is_console_ready(void) const override;
 
     [[nodiscard]] const unreal::GObjects& gobjects(void) const override;
     [[nodiscard]] const unreal::GNames& gnames(void) const override;
@@ -108,7 +99,6 @@ class BL1EHook : public AbstractHook {
     void process_event(unreal::UObject* object,
                        unreal::UFunction* func,
                        void* params) const override;
-    void uconsole_output_text(const std::wstring& str) const override;
     [[nodiscard]] std::wstring uobject_path_name(const unreal::UObject* obj) const override;
     void ftext_as_culture_invariant(unreal::FText* text,
                                     unreal::TemporaryFString&& str) const override;
