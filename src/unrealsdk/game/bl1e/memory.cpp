@@ -13,30 +13,21 @@ namespace unrealsdk::game {
 
 namespace {
 
-#ifdef __MINGW32__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wattributes"  // thiscall on non-class
-#endif
-
 struct FMalloc;
 struct FMallocVFtable {
     void* exec;
-    void*(__thiscall* u_malloc)(FMalloc* self, size_t len, size_t align);
-    void*(__thiscall* u_realloc)(FMalloc* self, void* original, size_t len, size_t align);
-    void*(__thiscall* u_free)(FMalloc* self, void* data);
+    void* (FMalloc::*u_malloc)(size_t len, size_t align);
+    void* (FMalloc::*u_realloc)(void* original, size_t len, size_t align);
+    void* (FMalloc::*u_free)(void* data);
 };
 struct FMalloc {
     FMallocVFtable* vftable;
 };
 
-#ifdef __MINGW32__
-#pragma GCC diagnostic pop
-#endif
-
 FMalloc** gmalloc_ptr;
 
 // static initialiser for gmalloc
-const constinit Pattern<14> SIG_GMALLOC{
+constexpr Pattern<14> SIG_GMALLOC{
     "33 FF"              // XOR  EDI,EDI
     "48893D {????????}"  // MOV  qword ptr [GMalloc_DAT_142519ef0],RDI
     "488B7C 2438"        // MOV  RDI,qword ptr [RSP + local_res10]
@@ -57,10 +48,10 @@ void* BL1EHook::u_malloc(size_t len) const {
     if (gmalloc_ptr == nullptr) {
         throw std::runtime_error("tried allocating memory while gmalloc was still null!");
     }
-    auto gmalloc = *gmalloc_ptr;
 
-    auto ret = gmalloc->vftable->u_malloc(gmalloc, len, get_malloc_alignment(len));
-    memset(ret, 0, len);
+    auto fm = *gmalloc_ptr;
+    void* ret = (fm->*fm->vftable->u_malloc)(len, get_malloc_alignment(len));
+    std::memset(ret, 0, len);
     return ret;
 }
 
@@ -68,18 +59,16 @@ void* BL1EHook::u_realloc(void* original, size_t len) const {
     if (gmalloc_ptr == nullptr) {
         throw std::runtime_error("tried allocating memory while gmalloc was still null!");
     }
-    auto gmalloc = *gmalloc_ptr;
-
-    return gmalloc->vftable->u_realloc(gmalloc, original, len, get_malloc_alignment(len));
+    auto fm = *gmalloc_ptr;
+    return (fm->*fm->vftable->u_realloc)(original, len, get_malloc_alignment(len));
 }
 
 void BL1EHook::u_free(void* data) const {
     if (gmalloc_ptr == nullptr) {
         throw std::runtime_error("tried allocating memory while gmalloc was still null!");
     }
-    auto gmalloc = *gmalloc_ptr;
-
-    gmalloc->vftable->u_free(gmalloc, data);
+    auto fm = *gmalloc_ptr;
+    (fm->*fm->vftable->u_free)(data);
 }
 
 }  // namespace unrealsdk::game

@@ -18,15 +18,14 @@ namespace unrealsdk::game {
 
 namespace {
 
-// NOLINTNEXTLINE(modernize-use-using)
 using process_event_func = void (*)(UObject* obj, UFunction* func, void* params, void* /*null*/);
 process_event_func process_event_ptr;
 
 constexpr Pattern<13> PROCESS_EVENT_SIG{
-    "40 55"           // PUSH  RBP
-    "41 56"           // PUSH  R14
-    "41 57"           // PUSH  R15
-    "4881EC 90000000" // SUB   RSP,0x90
+    "40 55"            // PUSH  RBP
+    "41 56"            // PUSH  R14
+    "41 57"            // PUSH  R15
+    "4881EC 90000000"  // SUB   RSP,0x90
 };
 
 void process_event_hook(UObject* obj, UFunction* func, void* params, void* null) {

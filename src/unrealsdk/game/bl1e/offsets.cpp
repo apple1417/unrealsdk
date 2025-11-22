@@ -15,7 +15,7 @@ namespace {
 constexpr auto OFFSETS = OFFSET_LIST_FROM_NAMESPACE();
 
 }
-}  // namespace bl1
+}  // namespace bl1e
 
 [[nodiscard]] const OffsetList& BL1EHook::get_offsets(void) const {
     return bl1e::OFFSETS;
