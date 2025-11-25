@@ -1,6 +1,7 @@
 #include "unrealsdk/pch.h"
 
 #include "unrealsdk/game/bl1e/bl1e.h"
+#include "unrealsdk/game/bl1e/offsets.h"
 #include "unrealsdk/logging.h"
 #include "unrealsdk/memory.h"
 #include "unrealsdk/unreal/classes/uobject.h"
@@ -17,7 +18,7 @@ namespace unrealsdk::game {
 
 namespace {
 
-using construct_obj_func = UObject* (*)(UClass * in_class,
+using construct_obj_func = UObject* (*)(UClass* in_class,
                                         UObject* in_outer,
                                         FName in_name,
                                         UObject::object_flags_type in_flags,
@@ -122,38 +123,6 @@ void BL1EHook::find_static_find_object(void) {
 
 UObject* BL1EHook::find_object(UClass* cls, const std::wstring& name) const {
     return static_find_object_ptr(cls, nullptr, name.c_str(), false);
-}
-
-#pragma endregion
-
-#pragma region LoadPackage
-
-namespace {
-
-using load_package_func = UObject* (*)(const UObject* outer, const wchar_t* name, uint32_t flags);
-load_package_func load_package_ptr;
-
-constexpr Pattern<22> SIG_LOAD_PACKAGE{
-    "48 8B C4"     // MOV   RAX,RSP
-    "44 89 40 18"  // MOV   dword ptr [RAX + local_res18],LoadFlags
-    "48 89 48 08"  // MOV   qword ptr [RAX + local_res8],InOuter
-    "53"           // PUSH  RBX
-    "56"           // PUSH  RSI
-    "57"           // PUSH  RDI
-    "41 56"        // PUSH  R14
-    "41 57"        // PUSH  R15
-    "48 83 EC 60"  // SUB   RSP,0x60
-};
-
-}  // namespace
-
-void BL1EHook::find_load_package(void) {
-    load_package_ptr = SIG_LOAD_PACKAGE.sigscan_nullable<load_package_func>();
-    LOG(MISC, "LoadPackage: {:p}", reinterpret_cast<void*>(load_package_ptr));
-}
-
-[[nodiscard]] UObject* BL1EHook::load_package(const std::wstring& name, uint32_t flags) const {
-    return load_package_ptr(nullptr, name.data(), flags);
 }
 
 #pragma endregion

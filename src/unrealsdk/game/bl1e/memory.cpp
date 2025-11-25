@@ -16,9 +16,9 @@ namespace {
 struct FMalloc;
 struct FMallocVFtable {
     void* exec;
-    void* (FMalloc::*u_malloc)(size_t len, size_t align);
-    void* (FMalloc::*u_realloc)(void* original, size_t len, size_t align);
-    void* (FMalloc::*u_free)(void* data);
+    void* (*u_malloc)(FMalloc* self, uint32_t len, uint32_t align);
+    void* (*u_realloc)(FMalloc* self, void* original, uint32_t len, uint32_t align);
+    void (*u_free)(FMalloc* self, void* data);
 };
 struct FMalloc {
     FMallocVFtable* vftable;
@@ -50,7 +50,7 @@ void* BL1EHook::u_malloc(size_t len) const {
     }
 
     auto gmalloc = *gmalloc_ptr;
-    void* ret = (gmalloc->*gmalloc->vftable->u_malloc)(len, get_malloc_alignment(len));
+    void* ret = gmalloc->vftable->u_malloc(gmalloc, len, get_malloc_alignment(len));
     std::memset(ret, 0, len);
     return ret;
 }
@@ -60,7 +60,7 @@ void* BL1EHook::u_realloc(void* original, size_t len) const {
         throw std::runtime_error("tried allocating memory while gmalloc was still null!");
     }
     auto gmalloc = *gmalloc_ptr;
-    return (gmalloc->*gmalloc->vftable->u_realloc)(original, len, get_malloc_alignment(len));
+    return gmalloc->vftable->u_realloc(gmalloc, original, len, get_malloc_alignment(len));
 }
 
 void BL1EHook::u_free(void* data) const {
@@ -68,7 +68,7 @@ void BL1EHook::u_free(void* data) const {
         throw std::runtime_error("tried allocating memory while gmalloc was still null!");
     }
     auto gmalloc = *gmalloc_ptr;
-    (gmalloc->*gmalloc->vftable->u_free)(data);
+    gmalloc->vftable->u_free(gmalloc, data);
 }
 
 }  // namespace unrealsdk::game
