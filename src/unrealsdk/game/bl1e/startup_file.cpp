@@ -24,6 +24,9 @@ namespace {
 bool should_set_startup_linker{false};
 bool startup_file_loaded{false};
 
+std::unordered_set<UObject*> manually_loaded_startup_objects{};
+int32_t startup_export_count{0};
+
 void hook_for_startup_bypass(void);
 
 using load_package_func = UObject* (*)(const UObject* outer, const wchar_t* name, uint32_t flags);
@@ -43,8 +46,18 @@ constexpr Pattern<22> SIG_LOAD_PACKAGE{
 
 UObject* load_package_hook(const UObject* outer, const wchar_t* name, uint32_t flags) {
     constexpr std::wstring_view startup_name{L"Startup"};
-    should_set_startup_linker = !startup_file_loaded && startup_name == name;
+    bool is_startup = !startup_file_loaded && startup_name == name;
+    should_set_startup_linker = is_startup;
     UObject* ptr = load_package_ptr(outer, name, flags);
+
+    if (is_startup) {
+        startup_file_loaded = true;
+        // can remove this, its meaningless logging
+        LOG(INFO, "Startup package loading completed {}/{} objects were loaded manually",
+            manually_loaded_startup_objects.size(), startup_export_count);
+        manually_loaded_startup_objects = {};
+    }
+
     should_set_startup_linker = false;
     return ptr;
 }
@@ -124,6 +137,14 @@ struct ExportTable {
 
     // Not all chunks are allocated Chunk{nullptr, 0} is a common value
     Chunk Chunks[MAX_CHUNKS];
+
+    int32_t total_exports() const noexcept {
+        int32_t count = 0;
+        for (int i = 0; i < MAX_CHUNKS && Chunks[i].Count > 0; i++) {
+            count += Chunks[i].Count;
+        }
+        return count;
+    }
 
     static std::pair<int32_t, int32_t> translate_flat_index(int32_t index) noexcept {
         return std::make_pair(index / MAX_ITEMS_PER_CHUNK,  // What chunk to look in
@@ -255,6 +276,7 @@ UObject* create_export_hook(ULinkerLoad* self, int32_t index) {
     if (should_set_startup_linker && startup_linker == 0) {
         startup_linker = self_intptr;
         should_set_startup_linker = false;
+        startup_export_count = self->ExportTable.total_exports();
     }
 
     if (startup_file_loaded || self_intptr != startup_linker) {
@@ -306,6 +328,7 @@ UObject* create_export_hook(ULinkerLoad* self, int32_t index) {
     // unloaded.
     if (loaded_obj) {
         loaded_obj->ObjectFlags() |= 0x4000;
+        manually_loaded_startup_objects.insert(loaded_obj);
         return loaded_obj;
     }
 
