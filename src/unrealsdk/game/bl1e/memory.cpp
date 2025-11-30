@@ -48,9 +48,9 @@ void* BL1EHook::u_malloc(size_t len) const {
     if (gmalloc_ptr == nullptr) {
         throw std::runtime_error("tried allocating memory while gmalloc was still null!");
     }
-
+    auto ui32_len = static_cast<uint32_t>(len);
     auto gmalloc = *gmalloc_ptr;
-    void* ret = gmalloc->vftable->u_malloc(gmalloc, len, get_malloc_alignment(len));
+    void* ret = gmalloc->vftable->u_malloc(gmalloc, ui32_len, get_malloc_alignment(ui32_len));
     std::memset(ret, 0, len);
     return ret;
 }
@@ -59,8 +59,9 @@ void* BL1EHook::u_realloc(void* original, size_t len) const {
     if (gmalloc_ptr == nullptr) {
         throw std::runtime_error("tried allocating memory while gmalloc was still null!");
     }
+    auto ui32_len = static_cast<uint32_t>(len);
     auto gmalloc = *gmalloc_ptr;
-    return gmalloc->vftable->u_realloc(gmalloc, original, len, get_malloc_alignment(len));
+    return gmalloc->vftable->u_realloc(gmalloc, original, ui32_len, get_malloc_alignment(ui32_len));
 }
 
 void BL1EHook::u_free(void* data) const {
