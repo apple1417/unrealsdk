@@ -14,6 +14,8 @@ using namespace unrealsdk::memory;
 
 namespace unrealsdk::game {
 void BL4Hook::hook(void) {
+    LOG(MISC, "HOOKING BL4...");
+
     hook_antidebug();
     hook_call_function();
     hook_process_event();
@@ -43,11 +45,13 @@ using gnatives_func = void (*)(FFrame* stack, UObject* obj, void* param);
 
 gnatives_func* gnatives_table_ptr;
 
+// 4C 8D 0D ?? ?? ?? ?? 41 FF 14 C1 48 83 C4 ?? 80 7D
+// old 4C 8D 0D ?? ?? ?? ?? 48 89 FA 49 89 F0 41 ?? ?? ?? ??
 const constinit Pattern<17> GNATIVES_PTR{
     "4C 8D 0D {????????}"   // lea     r9, funcs_1414F593E
-    "48 89 FA"              // mov     rdx, rdi
-    "49 89 F0"              // mov     r8, rsi
-    "41 ??????"             // call    ds:(funcs_1414F593E)
+    "41 FF 14 C1"          // call    qword ptr [r9+rax*8]
+    "48 83 C4 ??"          // add     rsp, 28h
+    "80 7D"                // cmp     byte ptr [rbp+arg_0], 0
 };
 
 }  // namespace

@@ -13,33 +13,30 @@ namespace unrealsdk::game {
 
 namespace {
 
-const constexpr Pattern<29> FNAMEPOOL_SIG{
-    "80 3D ???????? 00"  // cmp byte ptr [1512A0C40], 00    <--- Initialized flag
-    "75 ??"              // jne 1411575F3
-    "48 8D 05 ????????"  // lea rax, [1512A0C80]            <--- FNamePool
-    "48 89 CE"           // mov rsi, rcx
-    "48 89 C1"           // mov rcx, rax
-    "89 D7"              // mov edi, edx
-    "E8 ????????"        // call 14114BE40                  <--- Init func
-};
-const constexpr auto FNAMEPOOL_INITIALIZED_OFFSET = 2;
-const constexpr auto FNAMEPOOL_PTR_OFFSET = 12;
+    /*
+    .sdata:000000014001B143 75 13                                   jnz     short loc_14001B158
+.sdata:000000014001B145 48 8D 0D F4 CA 4C 0C                    lea     rcx, stru_14C4E7C40
+.sdata:000000014001B14C E8 DD 65 01 00                          call    sub_14003172E
+    */
+const constexpr Pattern<23> FNAMEPOOL_SIG{
+    "75 ??"  // jne 14001B158
+    "48 8D 0D ????????"  // lea rcx, [stru_14C4E7C40]       <--- FNamePool
+    "E8 ????????"        // call 14003172E                  <--- Init func
+    "C6 05 ?? ?? ?? ?? ?? 83 FF"};
+const constexpr auto FNAMEPOOL_INITIALIZED_OFFSET = 5;
+const constexpr auto FNAMEPOOL_PTR_OFFSET = 10;
 
 FNamePool* name_pool_ptr;
 
-const constexpr Pattern<39> FNAME_FIND_OR_STORE_WSTRING{
-    "41 57"                 // push r15
-    "41 56"                 // push r14
-    "56"                    // push rsi
-    "57"                    // push rdi
-    "53"                    // push rbx
-    "48 81 EC ????0000"     // sub rsp, 00000440
-    "48 89 CE"              // mov rsi, rcx
-    "48 8B 05 ????????"     // mov rax, [15112D940]
-    "48 31 E0"              // xor rax, rsp
-    "48 89 84 24 ????????"  // mov [rsp+00000438], rax
-    "48 63 42 ??"           // movsxd  rax, dword ptr [rdx+08]
-};
+// 41 56 56 57 53 48 81 EC ? ? ? ? 48 89 CE 48 8B 05 ? ? ? ? 48 31 E0 48 89 84 24 ? ? ? ? 31 FF 48 85 D2
+const constexpr Pattern<38> FNAME_FIND_OR_STORE_WSTRING{
+    "41 56 56 57 53 48 81 EC ????????"
+    "48 89 CE"
+    "48 8B 05 ????????"
+    "48 31 E0"
+    "48 89 84 24 ????????"
+    "31 FF"
+    "48 85 D2"};
 
 struct FNameStringView {
     const wchar_t* str;

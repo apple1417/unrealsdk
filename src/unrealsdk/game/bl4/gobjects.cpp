@@ -12,11 +12,16 @@ namespace unrealsdk::game {
 
 namespace {
 
-const constexpr Pattern<18> GOBJECTS_SIG{
-    "48 8D 05 {????????}"  // lea rax, [1513868E0]
-    "48 89 01"             // mov [rcx], rax
-    "B8 FFFFFFFF"          // mov eax, FFFFFFFF
-    "45 84 C0"             // test r8l, r8l
+    // 44 8B 05 ? ? ? ? 8B 15 ? ? ? ? 89 F9
+const constexpr Pattern<15> GOBJECTS_SIG{
+    "44 8B 05 {????????}"  // mov r8d, [1513868E0]
+    "8B 15 {????????}"     // mov edx, [1513868E8]
+    "89 F9"                // mov ecx, edi
+
+    //"48 8D 05 {????????}"  // lea rax, [1513868E0]
+    //"48 89 01"             // mov [rcx], rax
+    //"B8 FFFFFFFF"          // mov eax, FFFFFFFF
+    //"45 84 C0"             // test r8l, r8l
 };
 
 GObjects gobjects_wrapper{};

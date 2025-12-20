@@ -12,13 +12,14 @@ namespace unrealsdk::game {
 
 namespace {
 
-const constexpr Pattern<28> GMALLOC_SIG{
-    "48 8B 0D {????????}"  // mov rcx, [15128CDA0]
-    "48 8B 01"             // mov rax, [rcx]
-    "FF 50 ??"             // call qword ptr [rax+48]
-    "83 7E ?? 00"          // cmp dword ptr [rsi+10], 00
-    "0F85 ????????"        // jne 140E73497
-    "48 8D 5C 24 ??"       // lea rbx, [rsp+30]
+const constexpr Pattern<52> GMALLOC_SIG{
+    "48 8B 0D {????????} 48 85 C9 74 ?? 48 8B 01 48 8B 40 ?? 48 89 FA 41 89 F0 48 83 C4 ?? 5F 5E 48 FF E0 E8 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ?? EB ?? CC 48 89 C8"
+    //"48 8B 0D {????????}"  // mov rcx, [15128CDA0]
+    //"48 8B 01"             // mov rax, [rcx]
+    //"FF 50 ??"             // call qword ptr [rax+48]
+    //"83 7E ?? 00"          // cmp dword ptr [rsi+10], 00
+    //"0F85 ????????"        // jne 140E73497
+    //"48 8D 5C 24 ??"       // lea rbx, [rsp+30]
 };
 
 struct FMalloc;
