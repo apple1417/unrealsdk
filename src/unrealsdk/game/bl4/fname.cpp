@@ -75,7 +75,7 @@ void BL4Hook::find_fname_funcs(void) {
 std::variant<const std::string_view, const std::wstring_view> BL4Hook::fname_get_str(
     const unreal::FName& name) const {
     auto entry = reinterpret_cast<bl4::FNameEntry*>(name_pool_ptr->at(name.index));
-    size_t size = entry->Metadata >> bl4::FNameEntry::META_SIZE_BIT_OFFSET;
+    const size_t size = entry->Metadata >> bl4::FNameEntry::META_SIZE_BIT_OFFSET;
 
     if ((entry->Metadata & FNameEntry::NAME_WIDE_MASK) != 0) {
         return std::wstring_view{&entry->Name.Wide[0], size};
@@ -87,8 +87,8 @@ void BL4Hook::fname_init(FName* name, const wchar_t* str, int32_t number) const 
     const constexpr auto max_ascii_char = L'\x7F';
     const constexpr auto fname_add = 1;
 
-    std::wstring_view wstr_view{str};
-    FNameStringView fname_view{
+    const std::wstring_view wstr_view{str};
+    const FNameStringView fname_view{
         .str = str,
         .len = (uint32_t)wstr_view.size(),
         .non_ascii =

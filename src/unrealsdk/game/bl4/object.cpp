@@ -78,8 +78,7 @@ std::wstring BL4Hook::uobject_path_name(const UObject* obj) const {
 namespace {
 
 // NOLINTBEGIN(readability-identifier-naming)
-// NOLINTNEXTLINE(readability-magic-numbers)
-struct __declspec(align(16)) FStaticConstructObjectParameters {
+struct FStaticConstructObjectParameters {
     UClass* Class{};
     UObject* Outer{};
     FName Name{0, 0};

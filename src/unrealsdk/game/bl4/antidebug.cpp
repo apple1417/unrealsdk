@@ -111,10 +111,11 @@ void BL4Hook::hook_antidebug(void) {
 
     // The symbiote thread watches for us to revert their anti-debug changes.
     // Block it so that we can actually do so.
-    uintptr_t symbiote_entry_point =
+    const uintptr_t symbiote_entry_point =
         unrealsdk::config::get_int("unrealsdk.bl4_debug.symbiote_addr")
             .value_or(SYMBIOTE_ENTRY_POINT_PATTERN.sigscan("symbiote entry point"));
     // Don't care to keep the original around
+    // NOLINTNEXTLINE(misc-const-correctness) // clang-tidy 21 false positive?
     void (*symbiote_ptr)(void) = nullptr;
     detour(symbiote_entry_point, symbiote_hook, &symbiote_ptr, "symbiote thread");
 
