@@ -13,30 +13,31 @@ namespace unrealsdk::game {
 
 namespace {
 
-    /*
-    .sdata:000000014001B143 75 13                                   jnz     short loc_14001B158
-.sdata:000000014001B145 48 8D 0D F4 CA 4C 0C                    lea     rcx, stru_14C4E7C40
-.sdata:000000014001B14C E8 DD 65 01 00                          call    sub_14003172E
-    */
-const constexpr Pattern<23> FNAMEPOOL_SIG{
-    "75 ??"  // jne 14001B158
-    "48 8D 0D ????????"  // lea rcx, [stru_14C4E7C40]       <--- FNamePool
-    "E8 ????????"        // call 14003172E                  <--- Init func
-    "C6 05 ?? ?? ?? ?? ?? 83 FF"};
-const constexpr auto FNAMEPOOL_INITIALIZED_OFFSET = 5;
-const constexpr auto FNAMEPOOL_PTR_OFFSET = 10;
+const constexpr Pattern<24> FNAMEPOOL_SIG{
+    "75 ??"              // jne Borderlands4.exe+1B158
+    "48 8D 0D ????????"  // lea rcx, [Borderlands4.exe+C4E7C40]          <--- FNamePool
+    "E8 ????????"        // call Borderlands4.exe+3172E                  <--- Init func
+    "C6 05 ???????? 01"  // mov byte ptr [Borderlands4.exe+C4E7C08], 01  <--- Initialized flag
+    "83 FF 01"           // cmp edi, 01
+};
+const constexpr auto FNAMEPOOL_PTR_OFFSET = 5;
+const constexpr auto FNAMEPOOL_INITIALIZED_OFFSET = 16;
 
 FNamePool* name_pool_ptr;
 
-// 41 56 56 57 53 48 81 EC ? ? ? ? 48 89 CE 48 8B 05 ? ? ? ? 48 31 E0 48 89 84 24 ? ? ? ? 31 FF 48 85 D2
 const constexpr Pattern<38> FNAME_FIND_OR_STORE_WSTRING{
-    "41 56 56 57 53 48 81 EC ????????"
-    "48 89 CE"
-    "48 8B 05 ????????"
-    "48 31 E0"
-    "48 89 84 24 ????????"
-    "31 FF"
-    "48 85 D2"};
+    "41 56"                 // push r14
+    "56"                    // push rsi
+    "57"                    // push rdi
+    "53"                    // push rbx
+    "48 81 EC ????????"     // sub rsp, 00000438
+    "48 89 CE"              // mov rsi, rcx
+    "48 8B 05 ????????"     // mov rax, [Borderlands4.exe+C372940]
+    "48 31 E0"              // xor rax, rsp
+    "48 89 84 24 ????????"  // mov [rsp+00000430], rax
+    "31 FF"                 // xor edi, edi
+    "48 85 D2"              // test rdx, rdx
+};
 
 struct FNameStringView {
     const wchar_t* str;

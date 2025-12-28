@@ -27,6 +27,7 @@ class BL4Hook : public ThrowingHook {
     static void find_fframe_step(void);
 
     static void inject_console(void);
+
    public:
     void hook(void) override;
     void post_init(void) override;
@@ -37,7 +38,6 @@ class BL4Hook : public ThrowingHook {
     [[nodiscard]] void* u_malloc(size_t len) const override;
     [[nodiscard]] void* u_realloc(void* original, size_t len) const override;
     void u_free(void* data) const override;
-
     [[nodiscard]] unreal::UObject* construct_object(unreal::UClass* cls,
                                                     unreal::UObject* outer,
                                                     const unreal::FName& name,
@@ -55,9 +55,15 @@ class BL4Hook : public ThrowingHook {
                        unreal::UFunction* func,
                        void* params) const override;
     void uconsole_output_text(const std::wstring& str) const override;
-
     [[nodiscard]] std::wstring uobject_path_name(const unreal::UObject* obj) const override;
-
+    /*
+    void ftext_as_culture_invariant(unreal::FText* text,
+                                    unreal::TemporaryFString&& str) const override;
+    void fsoftobjectptr_assign(unreal::FSoftObjectPtr* ptr,
+                               const unreal::UObject* obj) const override;
+    void flazyobjectptr_assign(unreal::FLazyObjectPtr* ptr,
+                               const unreal::UObject* obj) const override;
+    */
     [[nodiscard]] const unreal::offsets::OffsetList& get_offsets(void) const override;
 };
 

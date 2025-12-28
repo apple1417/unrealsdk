@@ -28,7 +28,6 @@ using get_path_name_func = void (*)(const UObject* self,
                                     TStringBuilderBase_wchar_t* str);
 get_path_name_func get_path_name_ptr;
 
-// 41 56 56 57 53 48 81 EC ? ? ? ? 4C 89 C6 48 8B 05 ? ? ? ? 48 31 E0 48 89 84 24 ? ? ? ? 48 85 C9 0F 84
 const constinit Pattern<42> GET_PATH_NAME_PATTERN{
     "41 56"                 // push r14
     "56"                    // push rsi
@@ -36,11 +35,11 @@ const constinit Pattern<42> GET_PATH_NAME_PATTERN{
     "53"                    // push rbx
     "48 81 EC ????????"     // sub rsp, 00000088
     "4C 89 C6"              // mov rsi, r8
-    "48 8B 05 ????????"     // mov rdi, rcx
+    "48 8B 05 ????????"     // mov rax, [Borderlands4.exe+C372940]
     "48 31 E0"              // xor rax, rsp
-    "48 89 84 24 ????????"  // mov [rsp+88h+var_78], rax
+    "48 89 84 24 ????????"  // mov [rsp+00000080], rax
     "48 85 C9"              // test rcx, rcx
-    "0F 84 ????????"        // je 00000001400E6A60
+    "0F84 ????????"         // je Borderlands4.exe+4261FF6
 };
 
 }  // namespace
@@ -78,40 +77,40 @@ std::wstring BL4Hook::uobject_path_name(const UObject* obj) const {
 
 namespace {
 
+// NOLINTBEGIN(readability-identifier-naming)
+// NOLINTNEXTLINE(readability-magic-numbers)
 struct __declspec(align(16)) FStaticConstructObjectParameters {
-    UClass* Class;
-    UObject* Outer;
-    FName Name;
-    int SetFlags;
-    int InternalSetFlags;
-    bool bCopyTransientsFromClassDefaults;
-    bool bAssumeTemplateIsArchetype;
-    UObject* Template;
-    void* InstanceGraph;
-    void* ExternalPackage;
-    void* PropertyInitCallback;
-    void* SubobjectOverrides;
+    UClass* Class{};
+    UObject* Outer{};
+    FName Name{0, 0};
+    uint32_t SetFlags{};
+    int InternalSetFlags{};
+    bool bCopyTransientsFromClassDefaults{};
+    bool bAssumeTemplateIsArchetype{};
+    UObject* Template{};
+    void* InstanceGraph{};
+    void* ExternalPackage{};
+    void* PropertyInitCallback{};
+    void* SubobjectOverrides{};
 };
+// NOLINTEND(readability-identifier-naming)
 
-using construct_obj_func = UObject* (*)(FStaticConstructObjectParameters* params);
+using construct_obj_func = UObject* (*)(FStaticConstructObjectParameters * params);
 construct_obj_func construct_obj_ptr;
 
-// 41 56 56 57 55 53 48 81 EC ?? ?? ?? ?? 48 89 CE 48 8B 05 ?? ?? ?? ?? 48 31 E0 48 89 84 24 ?? ??
-// ?? ?? 48 8B 39 48 8B 51 08
 const constinit Pattern<39> CONSTRUCT_OBJECT_PATTERN{
-    "41 57 41 56 56 57 55 53 48 81 EC ?? ?? ?? ?? 48 89 CE 48 8B 05 ?? ?? ?? ?? 48 31 E0 48 89 84 24 ?? ?? ?? ?? 48 8B 39"
-    //"41 56"                        // push r14
-    //"56"                           // push rsi
-    //"57"                           // push rdi
-    //"55"                           // push rbp
-    //"53"                           // push rbx
-    //"48 81 EC ?? ?? ?? ??"         // sub rsp, 280h
-    //"48 89 CE"                     // mov rsi, rcx
-    //"48 8B 05 ?? ?? ?? ??"         // mov rax, [rip+...]
-    //"48 31 E0"                     // xor rax, rsp
-    //"48 89 84 24 ?? ?? ?? ??"      // mov [rsp+2A8h], rax
-    //"48 8B 39"                     // mov rdi, [rcx]
-    //"48 8B 51 08"                  // mov rdx, [rcx+8]
+    "41 57"                 // push r15
+    "41 56"                 // push r14
+    "56"                    // push rsi
+    "57"                    // push rdi
+    "55"                    // push rbp
+    "53"                    // push rbx
+    "48 81 EC ????????"     // sub rsp, 00000278
+    "48 89 CE"              // mov rsi, rcx
+    "48 8B 05 ????????"     // mov rax, [Borderlands4.exe+C372940]
+    "48 31 E0"              // xor rax, rsp
+    "48 89 84 24 ????????"  // mov [rsp+00000270], rax
+    "48 8B 39"              // mov rdi, [rcx]
 };
 
 }  // namespace
@@ -130,7 +129,7 @@ UObject* BL4Hook::construct_object(UClass* cls,
         throw std::out_of_range("construct_object flags out of range, only 32-bits are supported");
     }
 
-    FStaticConstructObjectParameters params;
+    FStaticConstructObjectParameters params{};
     params.Class = cls;
     params.Outer = outer;
     params.Name = name;
@@ -152,16 +151,17 @@ using static_find_object_safe_func = UObject* (*)(const UClass* cls,
                                                   uint32_t exact_class);
 static_find_object_safe_func static_find_object_ptr;
 
-const constinit Pattern<31> STATIC_FIND_OBJECT_PATTERN{
-    "41 56"                 // push r14
-    "56"                    // push rsi
-    "57"                    // push rdi
-    "53"                    // push rbx
-    "48 83 EC ??"           // sub rsp, 38h
-    "48 8B 05 ????????"     // mov rax, cs:security_cookie
-    "48 31 E0"              // xor rax, rsp
-    "48 89 44 24 ??"        // mov [rsp+58h+var_28], rax
-    "F6 05 ??????????"      // test cs:1513B1940, 1
+const constinit Pattern<23> STATIC_FIND_OBJECT_PATTERN{
+    "41 57"              // push r15
+    "41 56"              // push r14
+    "41 55"              // push r13
+    "41 54"              // push r12
+    "56"                 // push rsi
+    "57"                 // push rdi
+    "55"                 // push rbp
+    "53"                 // push rbx
+    "48 83 EC 28"        // sub rsp, 28
+    "F6 05 ???????? 01"  // test byte ptr [Borderlands4.exe+C5B2940], 01
 };
 
 const constexpr intptr_t ANY_PACKAGE = -1;
@@ -187,23 +187,27 @@ namespace {
 using load_package_func = UObject* (*)(const UObject* outer,
                                        const wchar_t* name,
                                        uint32_t flags,
-                                       void* instancingContext,
-                                       void* reader_override);
+                                       void* instancing_context,
+                                       void* reader_override,
+                                       void* diff_package_path);
 load_package_func load_package_ptr;
 
-// 41 56 56 57 53 48 83 EC ?? 48 8B 05 ?? ?? ?? ?? 48 31 E0 48 89 44 24 ?? F6 05 ?? ?? ?? ?? ??
-const constinit Pattern<26> LOAD_PACKAGE_PATTERN{
+const constinit Pattern<50> LOAD_PACKAGE_PATTERN{
     "41 57"                 // push r15
     "41 56"                 // push r14
+    "41 55"                 // push r13
     "41 54"                 // push r12
     "56"                    // push rsi
     "57"                    // push rdi
     "55"                    // push rbp
     "53"                    // push rbx
-    "48 81 EC ????????"     // sub rsp, 0B0h
-    "4C 89 CB"              // mov rbx, r9
-    "44 89 C6"              // mov esi, r8d
-    "48 89 CF"              // mov rdi, rcx
+    "48 81 EC ????????"     // sub rsp, 00000188
+    "48 8B 05 ????????"     // mov rax, [Borderlands4.exe+C372940]
+    "48 31 E0"              // xor rax, rsp
+    "48 89 84 24 ????????"  // mov [rsp+00000180], rax
+    "48 83 3A 00"           // cmp qword ptr [rdx], 00
+    "0F84 ????????"         // je Borderlands4.exe+2546480
+    "4D 89 CF"              // mov r15, r9
 };
 
 }  // namespace
@@ -214,7 +218,7 @@ void BL4Hook::find_load_package(void) {
 }
 
 [[nodiscard]] UObject* BL4Hook::load_package(const std::wstring& name, uint32_t flags) const {
-    return load_package_ptr(nullptr, name.data(), flags, nullptr, nullptr);
+    return load_package_ptr(nullptr, name.data(), flags, nullptr, nullptr, nullptr);
 }
 
 #pragma endregion

@@ -13,13 +13,22 @@ namespace unrealsdk::game {
 namespace {
 
 const constexpr Pattern<52> GMALLOC_SIG{
-    "48 8B 0D {????????} 48 85 C9 74 ?? 48 8B 01 48 8B 40 ?? 48 89 FA 41 89 F0 48 83 C4 ?? 5F 5E 48 FF E0 E8 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ?? EB ?? CC 48 89 C8"
-    //"48 8B 0D {????????}"  // mov rcx, [15128CDA0]
-    //"48 8B 01"             // mov rax, [rcx]
-    //"FF 50 ??"             // call qword ptr [rax+48]
-    //"83 7E ?? 00"          // cmp dword ptr [rsi+10], 00
-    //"0F85 ????????"        // jne 140E73497
-    //"48 8D 5C 24 ??"       // lea rbx, [rsp+30]
+    "48 8B 0D {????????}"  // mov rcx, [Borderlands4.exe+C4DBF30]
+    "48 85 C9"             // test rcx, rcx
+    "74 ??"                // je Borderlands4.exe+1D843
+    "48 8B 01"             // mov rax, [rcx]
+    "48 8B 40 ??"          // mov rax, [rax+28]
+    "48 89 FA"             // mov rdx, rdi
+    "41 89 F0"             // mov r8d, esi
+    "48 83 C4 ??"          // add rsp, 28
+    "5F"                   // pop rdi
+    "5E"                   // pop rsi
+    "48 FF E0"             // jmp rax
+    "E8 ????????"          // call Borderlands4.exe+5B4E598
+    "48 8B 0D ????????"    // mov rcx, [Borderlands4.exe+C4DBF30]
+    "EB ??"                // jmp Borderlands4.exe+1D82D
+    "CC"                   // int 3
+    "48 89 C8"             // mov rax, rcx
 };
 
 struct FMalloc;

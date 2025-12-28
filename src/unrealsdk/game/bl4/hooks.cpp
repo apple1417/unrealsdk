@@ -19,7 +19,7 @@ namespace {
 using call_function_func = void(UObject* obj, FFrame* stack, void* result, UFunction* func);
 call_function_func* call_function_ptr;
 
-const constinit Pattern<24> CALL_FUNCTION_SIG{
+const constinit Pattern<27> CALL_FUNCTION_SIG{
     "55"              // push rbp
     "41 57"           // push r15
     "41 56"           // push r14
@@ -31,6 +31,7 @@ const constinit Pattern<24> CALL_FUNCTION_SIG{
     "48 83 EC 38"     // sub rsp, 38
     "48 8D 6C 24 ??"  // lea rbp, [rsp+30]
     "4C 89 CE"        // mov rsi, r9
+    "4D 89 C6"        // mov r14, r8
 };
 
 void call_function_hook(UObject* obj, FFrame* stack, void* result, UFunction* func) {
@@ -108,28 +109,25 @@ void BL4Hook::hook_call_function(void) {
 
 #pragma region ProcessEvent
 
-
 namespace {
 
 using process_event_func = void(UObject* obj, UFunction* func, void* params);
 process_event_func* process_event_ptr;
 
-// 55 41 57 41 56 41 55 41 54 56 57 53 48 81 EC ? ? ? ? 48 8D AC 24 ? ? ? ? 48 8B 05 ? ? ? ? 48 31
-// E8 48 89 45
 const constinit Pattern<41> PROCESS_EVENT_SIG{
-    "55"                       // push rbp
-    "41 57"                    // push r15
-    "41 56"                    // push r14
-    "41 55"                    // push r13
-    "41 54"                    // push r12
-    "56"                       // push rsi
-    "57"                       // push rdi
-    "53"                       // push rbx
-    "48 81 EC ?? ?? ?? ??"     // sub rsp, 000000C8
-    "48 8D AC 24 ?? ?? ?? ??"  // lea rbp, [rsp+80h]
-    "48 8B 05 ?? ?? ?? ??"     // mov rax, [rip+0]
-    "48 31 E8"                 // xor rax, rbp
-    "48 89 45 40"              // mov [rbp+40h], rax
+    "55"                    // push rbp
+    "41 57"                 // push r15
+    "41 56"                 // push r14
+    "41 55"                 // push r13
+    "41 54"                 // push r12
+    "56"                    // push rsi
+    "57"                    // push rdi
+    "53"                    // push rbx
+    "48 81 EC ????????"     // sub rsp, 000000C8
+    "48 8D AC 24 ????????"  // lea rbp, [rsp+80h]
+    "48 8B 05 ????????"     // mov rax, [rip+0]
+    "48 31 E8"              // xor rax, rbp
+    "48 89 45 40"           // mov [rbp+40h], rax
 };
 
 void process_event_hook(UObject* obj, UFunction* func, void* params) {
