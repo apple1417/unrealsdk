@@ -3,6 +3,7 @@
 #include "unrealsdk/game/bl4/offsets.h"
 #include "unrealsdk/memory.h"
 #include "unrealsdk/unreal/structs/gnames.h"
+#include "unrealsdk/utils.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2 && !defined(UNREALSDK_IMPORTING)
 
@@ -25,18 +26,16 @@ const constexpr auto FNAMEPOOL_INITIALIZED_OFFSET = 16;
 
 FNamePool* name_pool_ptr;
 
-const constexpr Pattern<38> FNAME_FIND_OR_STORE_WSTRING{
-    "41 56"                 // push r14
+const constexpr Pattern<35> FNAME_FIND_OR_STORE_WSTRING{
     "56"                    // push rsi
     "57"                    // push rdi
     "53"                    // push rbx
-    "48 81 EC ????????"     // sub rsp, 00000438
+    "48 81 EC ????????"     // sub rsp, 00000440
     "48 89 CE"              // mov rsi, rcx
     "48 8B 05 ????????"     // mov rax, [Borderlands4.exe+C372940]
     "48 31 E0"              // xor rax, rsp
-    "48 89 84 24 ????????"  // mov [rsp+00000430], rax
-    "31 FF"                 // xor edi, edi
-    "48 85 D2"              // test rdx, rdx
+    "48 89 84 24 ????????"  // mov [rsp+00000438], rax
+    "48 63 42 08"           // movsxd  rax, dword ptr [rdx+08]
 };
 
 struct FNameStringView {

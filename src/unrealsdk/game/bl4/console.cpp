@@ -161,6 +161,7 @@ void console_command_hook(UObject* console_obj, UnmanagedFString* raw_line) {
 
 bool inject_console_hook(hook_manager::Details& hook) {
     hook_manager::remove_hook(INJECT_CONSOLE_FUNC, INJECT_CONSOLE_TYPE, INJECT_CONSOLE_ID);
+    LOG(INFO, "Injecting console");
 
     auto local_player = hook.obj->get<UObjectProperty>(L"Player"_fn);
     auto viewport = local_player->get<UObjectProperty>(L"ViewportClient"_fn);
@@ -224,7 +225,7 @@ bool inject_console_hook(hook_manager::Details& hook) {
 }  // namespace
 
 void BL4Hook::inject_console(void) {
-    LOG(INFO, "Injecting console");
+    LOG(INFO, "Adding console hook");
     hook_manager::add_hook(INJECT_CONSOLE_FUNC, INJECT_CONSOLE_TYPE, INJECT_CONSOLE_ID,
                            &inject_console_hook);
 }
