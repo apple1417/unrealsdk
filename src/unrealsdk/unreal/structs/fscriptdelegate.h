@@ -17,12 +17,10 @@ class UFunction;
 
 struct FScriptDelegate {
    private:
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-    UObject* object = nullptr;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
+#if UNREALSDK_HAS_NATIVE_WEAK_POINTERS
     FWeakObjectPtr object;
 #else
-#error Unknown SDK flavour
+    UObject* object = nullptr;
 #endif
 
    public:

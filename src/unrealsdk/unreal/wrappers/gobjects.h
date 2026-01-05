@@ -3,12 +3,12 @@
 
 #include "unrealsdk/pch.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
+#if UNREALSDK_GOBJECTS_FORMAT == UNREALSDK_GOBJECTS_FORMAT_FUOBJECTARRAY
 #include "unrealsdk/unreal/structs/gobjects.h"
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#elif UNREALSDK_GOBJECTS_FORMAT == UNREALSDK_GOBJECTS_FORMAT_TARRAY
 #include "unrealsdk/unreal/structs/tarray.h"
 #else
-#error Unknown SDK flavour
+#error Unknown GObjects format
 #endif
 
 namespace unrealsdk::unreal {
@@ -18,12 +18,12 @@ class UObject;
 
 class GObjects {
    public:
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
+#if UNREALSDK_GOBJECTS_FORMAT == UNREALSDK_GOBJECTS_FORMAT_FUOBJECTARRAY
     using internal_type = FUObjectArray*;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#elif UNREALSDK_GOBJECTS_FORMAT == UNREALSDK_GOBJECTS_FORMAT_TARRAY
     using internal_type = TArray<UObject*>*;
 #else
-#error Unknown SDK flavour
+#error Unknown GObjects format
 #endif
 
    private:

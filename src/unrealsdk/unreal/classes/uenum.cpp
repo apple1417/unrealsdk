@@ -11,7 +11,7 @@ namespace unrealsdk::unreal {
 
 UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(UEnum, UNREALSDK_UENUM_FIELDS);
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
+#if UNREALSDK_ENUM_FORMAT == UNREALSDK_ENUM_FORMAT_UE4
 
 std::unordered_map<FName, uint64_t> UEnum::get_names(void) const {
     std::unordered_map<FName, uint64_t> output;
@@ -19,7 +19,7 @@ std::unordered_map<FName, uint64_t> UEnum::get_names(void) const {
     for (size_t i = 0; i < names.size(); i++) {
         auto pair = names.at(i);
 
-        // Oak enums include the enum class name and a namespace separator before the value's name
+        // UE4 enums include the enum class name and a namespace separator before the value's name
         // If we see it, strip it
         const std::wstring str_key{pair.key};
         auto after_colons = str_key.find_first_not_of(L':', str_key.find_first_of(L':'));
@@ -30,7 +30,7 @@ std::unordered_map<FName, uint64_t> UEnum::get_names(void) const {
     return output;
 }
 
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#elif UNREALSDK_ENUM_FORMAT == UNREALSDK_ENUM_FORMAT_UE3
 
 std::unordered_map<FName, uint64_t> UEnum::get_names(void) const {
     std::unordered_map<FName, uint64_t> output;

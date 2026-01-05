@@ -97,17 +97,9 @@ void UObject::post_edit_change_property(const FName& name) const {
 void UObject::post_edit_change_property(UProperty* prop) const {
     FPropertyChangedEvent event{prop};
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-    constexpr auto default_idx = 19;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
-    constexpr auto default_idx = 78;
-#else
-#error Unknown SDK flavour
-#endif
-
     static auto idx =
         config::get_int<size_t>("unrealsdk.uobject_post_edit_change_property_vf_index")
-            .value_or(default_idx);
+            .value_or(UNREALSDK_DEFAULT_POST_EDIT_CHANGE_PROPERTY_VF_IDX);
 
     this->call_virtual_function<void, FPropertyChangedEvent*>(idx, &event);
 }
@@ -117,17 +109,9 @@ void UObject::post_edit_change_chain_property(UProperty* prop,
     FEditPropertyChain edit_chain{chain};
     FPropertyChangedChainEvent event{prop, &edit_chain};
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-    constexpr auto default_idx = 18;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
-    constexpr auto default_idx = 77;
-#else
-#error Unknown SDK flavour
-#endif
-
     static auto idx =
         config::get_int<size_t>("unrealsdk.uobject_post_edit_change_chain_property_vf_index")
-            .value_or(default_idx);  // NOLINT(readability-magic-numbers)
+            .value_or(UNREALSDK_DEFAULT_POST_EDIT_CHANGE_CHAIN_PROPERTY_VF_IDX);
     this->call_virtual_function<void, FPropertyChangedEvent*>(idx, &event);
 }
 

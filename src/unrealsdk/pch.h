@@ -5,13 +5,8 @@
 // This file is purely macros, it doesn't rely on anything else
 #include "unrealsdk/exports.h"
 
-// The flavour macros are used in ifdefs everywhere.
-// `UNREALSDK_FLAVOUR` should be defined to be equal to one of them.
-// NOLINTBEGIN(cppcoreguidelines-macro-usage)
-#define UNREALSDK_FLAVOUR_WILLOW 1
-#define UNREALSDK_FLAVOUR_OAK 2
-#define UNREALSDK_FLAVOUR_OAK2 3
-// NOLINTEND(cppcoreguidelines-macro-usage)
+// Similarly, this is pure macros, and we want to access feature flags everywhere
+#include "unrealsdk/flavour.h"
 
 #define WIN32_LEAN_AND_MEAN
 #define WIN32_NO_STATUS

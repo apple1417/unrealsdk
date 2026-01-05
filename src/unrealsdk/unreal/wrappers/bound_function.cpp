@@ -28,7 +28,7 @@ void validate_no_more_params(UProperty* prop) {
         if ((prop->PropertyFlags() & UProperty::PROP_FLAG_RETURN) != 0) {
             continue;
         }
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#if UNREALSDK_HAS_OPTIONAL_FUNC_PARAMS
         if ((prop->PropertyFlags() & UProperty::PROP_FLAG_OPTIONAL) != 0) {
             continue;
         }

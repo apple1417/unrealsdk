@@ -9,15 +9,6 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
-
 class UFunction;
 class UProperty;
 
@@ -30,21 +21,25 @@ class UStruct : public UField {
     UStruct& operator=(UStruct&&) = delete;
     ~UStruct() = delete;
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
-    using property_size_type = int32_t;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-    using property_size_type = uint16_t;
-#else
-#error Unknown SDK flavour
-#endif
+    using property_size_type = UNREALSDK_USTRUCT_PROPERTY_SIZE_TYPE;
 
     // These fields become member functions, returning a reference into the object.
+#if UNREALSDK_USTRUCT_HAS_ALIGNMENT
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
+#define UNREALSDK_USTRUCT_FIELDS(X)     \
+    X(UStruct*, SuperField)             \
+    X(UField*, Children)                \
+    X(property_size_type, PropertySize) \
+    X(int32_t, MinAlignment)            \
+    X(UProperty*, PropertyLink)
+#else
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define UNREALSDK_USTRUCT_FIELDS(X)     \
     X(UStruct*, SuperField)             \
     X(UField*, Children)                \
     X(property_size_type, PropertySize) \
     X(UProperty*, PropertyLink)
+#endif
 
     UNREALSDK_DEFINE_FIELDS_HEADER(UStruct, UNREALSDK_USTRUCT_FIELDS);
 
@@ -186,14 +181,6 @@ template <>
 struct ClassTraits<UStruct> {
     static inline const wchar_t* const NAME = L"Struct";
 };
-
-#if defined(__clang__) || defined(__MINGW32__)
-#pragma GCC diagnostic pop
-#endif
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

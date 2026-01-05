@@ -18,13 +18,13 @@ struct FImplementedInterface {
     UClass* Class;
 
    private:
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
+#if UNREALSDK_FIMPLEMENTEDINTERFACE_FORMAT == UNREALSDK_FIMPLEMENTEDINTERFACE_FORMAT_UE4
     int32_t PointerOffset;
     bool isNative;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#elif UNREALSDK_FIMPLEMENTEDINTERFACE_FORMAT == UNREALSDK_FIMPLEMENTEDINTERFACE_FORMAT_UE3
     UStructProperty* VFTableProperty;  // May be null (if native?)
 #else
-#error Unknown SDK flavour
+#error Unknown FImplementedInterface format
 #endif
 
     // NOLINTEND(readability-identifier-naming)

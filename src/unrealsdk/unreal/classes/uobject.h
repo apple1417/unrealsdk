@@ -30,13 +30,7 @@ class UObject {
 
     uintptr_t* vftable;
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
-    using object_flags_type = uint32_t;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-    using object_flags_type = uint64_t;
-#else
-#error Unknown SDK flavour
-#endif
+    using object_flags_type = UNREALSDK_UOBJECT_FLAGS_TYPE;
 
     // These fields become member functions, returning a reference into the object.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)

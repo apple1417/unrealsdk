@@ -9,7 +9,17 @@
 
 namespace unrealsdk::unreal {
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#if UNREALSDK_HAS_NATIVE_WEAK_POINTERS
+
+UObject* FScriptDelegate::get_object(void) const {
+    return unrealsdk::gobjects().get_weak_object(&this->object);
+}
+
+void FScriptDelegate::set_object(UObject* obj) {
+    unrealsdk::gobjects().set_weak_object(&this->object, obj);
+}
+
+#else
 
 UObject* FScriptDelegate::get_object(void) const {
     return this->object;
@@ -19,17 +29,6 @@ void FScriptDelegate::set_object(UObject* obj) {
     this->object = obj;
 }
 
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
-
-UObject* FScriptDelegate::get_object(void) const {
-    return unrealsdk::gobjects().get_weak_object(&this->object);
-}
-
-void FScriptDelegate::set_object(UObject* obj) {
-    unrealsdk::gobjects().set_weak_object(&this->object, obj);
-}
-#else
-#error Unknown SDK flavour
 #endif
 
 [[nodiscard]] std::optional<BoundFunction> FScriptDelegate::as_function(void) const {

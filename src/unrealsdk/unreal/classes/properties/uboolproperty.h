@@ -28,13 +28,7 @@ class UBoolProperty : public UProperty {
     UBoolProperty& operator=(UBoolProperty&&) = delete;
     ~UBoolProperty() = delete;
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
-    using field_mask_type = uint8_t;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-    using field_mask_type = uint32_t;
-#else
-#error Unknown SDK flavour
-#endif
+    using field_mask_type = UNREALSDK_UBOOLPROPERTY_FIELD_MASK_TYPE;
 
     // These fields become member functions, returning a reference into the object.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)

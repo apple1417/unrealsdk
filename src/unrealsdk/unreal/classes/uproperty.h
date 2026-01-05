@@ -20,7 +20,7 @@ namespace unrealsdk::unreal {
 
 class UProperty : public UField {
    public:
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#if UNREALSDK_HAS_OPTIONAL_FUNC_PARAMS
     static constexpr auto PROP_FLAG_OPTIONAL = 0x10;
 #endif
     static constexpr auto PROP_FLAG_PARAM = 0x80;
@@ -34,13 +34,7 @@ class UProperty : public UField {
     UProperty& operator=(UProperty&&) = delete;
     ~UProperty() = delete;
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
-    using property_flags_type = uint64_t;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-    using property_flags_type = uint32_t;
-#else
-#error Unknown SDK flavour
-#endif
+    using property_flags_type = UNREALSDK_UPROPERTY_FLAGS_TYPE;
 
     // These fields become member functions, returning a reference into the object.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
