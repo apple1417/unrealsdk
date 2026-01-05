@@ -7,15 +7,6 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
-
 class UFunction : public UStruct {
    public:
     static constexpr auto FUNC_NATIVE = 0x400;
@@ -49,14 +40,6 @@ template <>
 struct ClassTraits<UFunction> {
     static inline const wchar_t* const NAME = L"Function";
 };
-
-#if defined(__clang__) || defined(__MINGW32__)
-#pragma GCC diagnostic pop
-#endif
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

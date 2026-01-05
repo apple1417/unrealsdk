@@ -9,15 +9,6 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
-
 class UProperty : public UField {
    public:
 #if UNREALSDK_HAS_OPTIONAL_FUNC_PARAMS
@@ -52,14 +43,6 @@ template <>
 struct ClassTraits<UProperty> {
     static inline const wchar_t* const NAME = L"Property";
 };
-
-#if defined(__clang__) || defined(__MINGW32__)
-#pragma GCC diagnostic pop
-#endif
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

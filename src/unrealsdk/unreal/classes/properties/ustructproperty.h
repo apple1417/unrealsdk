@@ -1,5 +1,5 @@
-#ifndef PYUNREALSDK_LIBS_UNREALSDK_SRC_UNREALSDK_UNREAL_CLASSES_PROPERTIES_USTRUCTPROPERTY_H
-#define PYUNREALSDK_LIBS_UNREALSDK_SRC_UNREALSDK_UNREAL_CLASSES_PROPERTIES_USTRUCTPROPERTY_H
+#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_USTRUCTPROPERTY_H
+#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_USTRUCTPROPERTY_H
 
 #include "unrealsdk/pch.h"
 
@@ -11,22 +11,7 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
 class UScriptStruct;
-
-namespace offsets::generic {
-
-template <typename T>
-class UStructProperty : public T {
-   public:
-    // NOLINTNEXTLINE(readability-identifier-naming)
-    unreal::UScriptStruct* Struct;
-};
-
-}  // namespace offsets::generic
 
 class UStructProperty : public UProperty {
    public:
@@ -60,10 +45,6 @@ struct ClassTraits<UStructProperty> {
     static inline const wchar_t* const NAME = L"StructProperty";
 };
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
-
 }  // namespace unrealsdk::unreal
 
-#endif /* PYUNREALSDK_LIBS_UNREALSDK_SRC_UNREALSDK_UNREAL_CLASSES_PROPERTIES_USTRUCTPROPERTY_H */
+#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_USTRUCTPROPERTY_H */

@@ -12,21 +12,6 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
-namespace offsets::generic {
-
-template <typename T>
-class UArrayProperty : public T {
-   public:
-    // NOLINTNEXTLINE(readability-identifier-naming)
-    UProperty* Inner;
-};
-
-}  // namespace offsets::generic
-
 class UArrayProperty : public UProperty {
    public:
     UArrayProperty() = delete;
@@ -56,10 +41,6 @@ template <>
 struct ClassTraits<UArrayProperty> {
     static inline const wchar_t* const NAME = L"ArrayProperty";
 };
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

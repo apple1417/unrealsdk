@@ -11,22 +11,7 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
 class UFunction;
-
-namespace offsets::generic {
-
-template <typename T>
-class UDelegateProperty : public T {
-   public:
-    // NOLINTNEXTLINE(readability-identifier-naming)
-    UFunction* Signature;
-};
-
-}  // namespace offsets::generic
 
 class UDelegateProperty : public UProperty {
    public:
@@ -58,10 +43,6 @@ template <>
 struct ClassTraits<UDelegateProperty> {
     static inline const wchar_t* const NAME = L"DelegateProperty";
 };
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

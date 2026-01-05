@@ -28,6 +28,7 @@ class UObject {
     UObject& operator=(UObject&&) = delete;
     ~UObject() = delete;
 
+    // Defining this directly on this type, it should always be here
     uintptr_t* vftable;
 
     using object_flags_type = UNREALSDK_UOBJECT_FLAGS_TYPE;

@@ -6,26 +6,6 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
-
-namespace offsets::generic {
-
-template <typename T>
-class UField : public T {
-   public:
-    // NOLINTNEXTLINE(readability-identifier-naming)
-    UField* Next;
-};
-
-}  // namespace offsets::generic
-
 class UField : public UObject {
    public:
     UField() = delete;
@@ -46,13 +26,6 @@ template <>
 struct ClassTraits<UField> {
     static inline const wchar_t* const NAME = L"Field";
 };
-
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

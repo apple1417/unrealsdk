@@ -10,27 +10,8 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
 class UArrayProperty;
 class UProperty;
-
-namespace offsets::generic {
-
-template <typename T>
-class GenericAttributeProperty : public T {
-   public:
-    // NOLINTBEGIN(readability-identifier-naming)
-
-    UArrayProperty* ModifierStackProperty;
-    GenericAttributeProperty<T>* OtherAttributeProperty;
-
-    // NOLINTEND(readability-identifier-naming)
-};
-
-}  // namespace offsets::generic
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define DEFINE_ATTRIBUTE_PROPERTY(class_name, base_class, fields) \
@@ -79,10 +60,6 @@ template <>
 inline const wchar_t* const ClassTraits<UIntAttributeProperty>::NAME = L"IntAttributeProperty";
 
 #undef DEFINE_ATTRIBUTE_PROPERTY
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

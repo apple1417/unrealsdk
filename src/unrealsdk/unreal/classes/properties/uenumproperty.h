@@ -10,26 +10,7 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
 class UEnum;
-
-namespace offsets::generic {
-
-template <typename T>
-class UEnumProperty : public T {
-   public:
-    // NOLINTBEGIN(readability-identifier-naming)
-
-    UProperty* UnderlyingProp;
-    UEnum* Enum;
-
-    // NOLINTEND(readability-identifier-naming)
-};
-
-}  // namespace offsets::generic
 
 class UEnumProperty : public UProperty {
    public:
@@ -61,10 +42,6 @@ template <>
 struct ClassTraits<UEnumProperty> {
     static inline const wchar_t* const NAME = L"EnumProperty";
 };
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

@@ -10,22 +10,7 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
 class UEnum;
-
-namespace offsets::generic {
-
-template <typename T>
-class UByteProperty : public T {
-   public:
-    // NOLINTNEXTLINE(readability-identifier-naming)
-    UEnum* Enum;
-};
-
-}  // namespace offsets::generic
 
 class UByteProperty : public CopyableProperty<uint8_t> {
    public:
@@ -50,10 +35,6 @@ template <>
 struct ClassTraits<UByteProperty> {
     static inline const wchar_t* const NAME = L"ByteProperty";
 };
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

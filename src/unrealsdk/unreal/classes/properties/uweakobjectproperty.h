@@ -12,10 +12,6 @@ namespace unrealsdk::unreal {
 
 class UObject;
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
 class UWeakObjectProperty : public UObjectProperty {
    public:
     UWeakObjectProperty() = delete;
@@ -40,10 +36,6 @@ template <>
 struct ClassTraits<UWeakObjectProperty> {
     static inline const wchar_t* const NAME = L"WeakObjectProperty";
 };
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

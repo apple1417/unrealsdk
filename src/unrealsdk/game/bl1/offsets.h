@@ -17,6 +17,7 @@
 #include "unrealsdk/unreal/classes/uconst.h"
 #include "unrealsdk/unreal/classes/uscriptstruct.h"
 #include "unrealsdk/unreal/offsets.h"
+#include "unrealsdk/unreal/offsets_generic.h"
 #include "unrealsdk/unreal/structs/fname.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW

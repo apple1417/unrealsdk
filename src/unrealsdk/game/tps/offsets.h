@@ -4,6 +4,7 @@
 #include "unrealsdk/pch.h"
 #include "unrealsdk/game/bl2/offsets.h"
 #include "unrealsdk/unreal/offsets.h"
+#include "unrealsdk/unreal/offsets_generic.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
 

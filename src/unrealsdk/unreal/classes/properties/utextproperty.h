@@ -10,10 +10,6 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
 class UTextProperty : public UProperty {
    public:
     UTextProperty() = delete;
@@ -37,10 +33,6 @@ template <>
 struct ClassTraits<UTextProperty> {
     static inline const wchar_t* const NAME = L"TextProperty";
 };
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

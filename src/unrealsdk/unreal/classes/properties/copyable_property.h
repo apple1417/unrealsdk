@@ -15,10 +15,6 @@ This file describes all properties which can be read/written by a simple copy, a
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
 template <typename T>
 class CopyableProperty : public UProperty {
    public:
@@ -82,10 +78,6 @@ inline const wchar_t* const ClassTraits<UDoubleProperty>::NAME = L"DoublePropert
 
 template <>
 inline const wchar_t* const ClassTraits<UNameProperty>::NAME = L"NameProperty";
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

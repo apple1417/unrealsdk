@@ -10,23 +10,8 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
 class UClass;
 class UObject;
-
-namespace offsets::generic {
-
-template <typename T>
-class UInterfaceProperty : public T {
-   public:
-    // NOLINTNEXTLINE(readability-identifier-naming)
-    UClass* InterfaceClass;
-};
-
-}  // namespace offsets::generic
 
 class UInterfaceProperty : public UProperty {
    public:
@@ -58,10 +43,6 @@ template <>
 struct ClassTraits<UInterfaceProperty> {
     static inline const wchar_t* const NAME = L"InterfaceProperty";
 };
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

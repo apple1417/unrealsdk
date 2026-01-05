@@ -11,24 +11,9 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
 struct FLazyObjectPath;
 struct FSoftObjectPath;
 class UObject;
-
-namespace offsets::generic {
-
-template <typename T>
-class USoftClassProperty : public T {
-   public:
-    // NOLINTNEXTLINE(readability-identifier-naming)
-    UClass* MetaClass;
-};
-
-}  // namespace offsets::generic
 
 class ULazyObjectProperty : public UObjectProperty {
    public:
@@ -124,10 +109,6 @@ template <>
 struct ClassTraits<USoftClassProperty> {
     static inline const wchar_t* const NAME = L"SoftClassProperty";
 };
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

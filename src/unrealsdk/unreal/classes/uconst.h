@@ -7,17 +7,6 @@
 
 namespace unrealsdk::unreal {
 
-namespace offsets::generic {
-
-template <typename T>
-class UConst : public T {
-   public:
-    // NOLINTNEXTLINE(readability-identifier-naming)
-    UnmanagedFString Value;
-};
-
-}  // namespace offsets::generic
-
 class UConst : public UField {
    public:
     UConst() = delete;

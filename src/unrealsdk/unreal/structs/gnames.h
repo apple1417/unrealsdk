@@ -6,14 +6,6 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
-
 // NOLINTNEXTLINE(readability-identifier-naming)
 struct FNameEntry {
     static constexpr auto NAME_SIZE = 1024;
@@ -34,6 +26,14 @@ struct FNameEntry {
 
     UNREALSDK_DEFINE_FIELDS_HEADER(FNameEntry, UNREALSDK_FNAMEENTRY_FIELDS);
 };
+
+#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#pragma pack(push, 0x4)
+#endif
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-private-field"
+#endif
 
 // NOLINTNEXTLINE(readability-identifier-naming)
 struct TStaticIndirectArrayThreadSafeRead_FNameEntry {

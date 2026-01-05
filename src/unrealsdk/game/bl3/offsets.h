@@ -18,6 +18,7 @@
 #include "unrealsdk/unreal/classes/ufield.h"
 #include "unrealsdk/unreal/classes/uscriptstruct.h"
 #include "unrealsdk/unreal/offsets.h"
+#include "unrealsdk/unreal/offsets_generic.h"
 #include "unrealsdk/unreal/structs/fname.h"
 #include "unrealsdk/unreal/structs/fstring.h"
 #include "unrealsdk/unreal/structs/gnames.h"

@@ -12,22 +12,7 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
 class UFunction;
-
-namespace offsets::generic {
-
-template <typename T>
-class UMulticastDelegateProperty : public T {
-   public:
-    // NOLINTNEXTLINE(readability-identifier-naming)
-    UFunction* Signature;
-};
-
-}  // namespace offsets::generic
 
 class UMulticastDelegateProperty : public UProperty {
    public:
@@ -62,10 +47,6 @@ template <>
 struct ClassTraits<UMulticastDelegateProperty> {
     static inline const wchar_t* const NAME = L"MulticastDelegateProperty";
 };
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 
