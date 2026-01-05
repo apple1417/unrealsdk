@@ -27,13 +27,7 @@ struct FNameEntry {
     UNREALSDK_DEFINE_FIELDS_HEADER(FNameEntry, UNREALSDK_FNAMEENTRY_FIELDS);
 };
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 
 // NOLINTNEXTLINE(readability-identifier-naming)
 struct TStaticIndirectArrayThreadSafeRead_FNameEntry {
@@ -79,12 +73,7 @@ struct FNamePool {
     [[nodiscard]] FNameEntry* at(int32_t idx) const;
 };
 
-#if defined(__clang__) || defined(__MINGW32__)
-#pragma GCC diagnostic pop
-#endif
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
 }  // namespace unrealsdk::unreal
 

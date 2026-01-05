@@ -89,6 +89,25 @@
     (UNREALSDK_GOBJECTS_FORMAT != 0        \
      && UNREALSDK_GOBJECTS_FORMAT != UNREALSDK_GOBJECTS_FORMAT_TARRAY)
 
+// This is only somewhat related, but it does depend on architecture which is flavour-specific :)
+
+/**
+ * @fn UNREALSDK_UNREAL_STRUCT_PADDING_PUSH
+ * @brief Pushes any required pragmas to make struct layouts unreal-compatible.
+ */
+/**
+ * @fn UNREALSDK_UNREAL_STRUCT_PADDING_POP
+ * @brief Pops any pragmas set by UNREAKSDK_UNREAL_STRUCT_PADDING_PUSH()
+ */
+#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+// 32-bit msvc aligns everything to 8 by default
+#define UNREALSDK_UNREAL_STRUCT_PADDING_PUSH() _Pragma("pack(push, 0x4)")
+#define UNREALSDK_UNREAL_STRUCT_PADDING_POP() _Pragma("pack(pop)")
+#else
+#define UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
+#define UNREALSDK_UNREAL_STRUCT_PADDING_POP()
+#endif
+
 // NOLINTEND(cppcoreguidelines-macro-usage)
 
 #endif /* UNREALSDK_FLAVOUR_H */

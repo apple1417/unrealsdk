@@ -7,9 +7,7 @@ namespace unrealsdk::unreal {
 
 class UProperty;
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 
 struct FPropertyChangedEvent {
     static constexpr auto CHANGE_TYPE_UNSPECIFIED = 1;
@@ -63,9 +61,7 @@ struct FPropertyChangedChainEvent : public FPropertyChangedEvent {
     FEditPropertyChain* PropertyChain{};
 };
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
 }  // namespace unrealsdk::unreal
 

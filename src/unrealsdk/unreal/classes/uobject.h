@@ -10,9 +10,8 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
+// Keeping this just to be safe about the vftable
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 
 struct FImplementedInterface;
 class UClass;
@@ -156,9 +155,7 @@ struct ClassTraits<UObject> {
     static inline const wchar_t* const NAME = L"Object";
 };
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
 }  // namespace unrealsdk::unreal
 

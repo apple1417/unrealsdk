@@ -32,12 +32,6 @@
 
 namespace unrealsdk::unreal::offsets {
 
-// Since this type is shared between dlls, also force consistent padding between compilers, even
-// though this isn't an unreal type
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
 // NOLINTBEGIN(cppcoreguidelines-macro-usage)
 #define UNREALSDK__DYNAMIC_OFFSET_TYPES(X) \
     X(UArrayProperty)                      \
@@ -74,6 +68,10 @@ namespace unrealsdk::unreal::offsets {
 
 // NOLINTEND(cppcoreguidelines-macro-usage)
 
+// Since this type is shared between dlls, also force consistent padding between compilers, even
+// though this isn't an unreal type
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
+
 struct OffsetList {
     // NOLINTNEXTLINE(readability-identifier-naming)
     UNREALSDK__DYNAMIC_OFFSET_TYPES(UNREALSDK_OFFSETS__DEFINE_OFFSET_LIST_MEMBERS)
@@ -91,6 +89,8 @@ struct OffsetList {
     }
 };
 
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
+
 /**
  * @brief Macro to create a full offset list within the current namespace.
  * @note Assumes all the game specific types are directly accessible - i.e just `UObject` is valid.
@@ -102,10 +102,6 @@ struct OffsetList {
     unrealsdk::unreal::offsets::OffsetList {                                      \
         UNREALSDK__DYNAMIC_OFFSET_TYPES(UNREALSDK_OFFSETS__NESTED_FROM_NAMESPACE) \
     }
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal::offsets
 

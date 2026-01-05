@@ -5,14 +5,7 @@ namespace unrealsdk::unreal {
 
 class UObject;
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 
 #if UNREALSDK_GOBJECTS_FORMAT == UNREALSDK_GOBJECTS_FORMAT_FUOBJECTARRAY
 
@@ -82,6 +75,11 @@ struct FUObjectArray {
     FChunkedFixedUObjectArray ObjObjects;
 
    private:
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-private-field"
+#endif
+
     // TODO HACK: work out a nicer way of doing this
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
     uint8_t UnknownData00[0x178];
@@ -91,6 +89,10 @@ struct FUObjectArray {
 #error Unknown sdk flavour
 #endif
 
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
+
    public:
     std::atomic<int32_t> MasterSerialNumber;
     // NOLINTEND(readability-identifier-naming, readability-magic-numbers)
@@ -98,13 +100,7 @@ struct FUObjectArray {
 
 #endif
 
-#if defined(__clang__) || defined(__MINGW32__)
-#pragma GCC diagnostic pop
-#endif
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
 }  // namespace unrealsdk::unreal
 

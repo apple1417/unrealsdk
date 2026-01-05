@@ -14,9 +14,7 @@ class USoftObjectProperty;
 class WrappedStruct;
 class WrappedArray;
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 
 template <typename Identifier>
 struct TPersistentObjectPtr {
@@ -100,9 +98,7 @@ struct FLazyObjectPath {
 struct FSoftObjectPtr : public TPersistentObjectPtr<FSoftObjectPath> {};
 struct FLazyObjectPtr : public TPersistentObjectPtr<FLazyObjectPath> {};
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
 }  // namespace unrealsdk::unreal
 
