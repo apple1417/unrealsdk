@@ -197,16 +197,12 @@ struct FNameEntry {
     unreal::FNameEntry::name_union Name;
 };
 
-namespace {
-struct FOutputDevice {
+struct FFrame {
    private:
     void* VfTable;
     uint32_t bSuppressEventTag;
     uint32_t bAutoEmitLineTerminator;
-};
-}  // namespace
 
-struct FFrame : public FOutputDevice {
    public:
     UFunction* Node;
     UObject* Object;
