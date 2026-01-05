@@ -57,9 +57,8 @@ void BL4Hook::find_fframe_step(void) {
 }
 
 void BL4Hook::fframe_step(FFrame* frame, UObject* obj, void* param) const {
-    auto curr_native = *frame->Code;
-    frame->Code++;
-
+    auto curr_native = *frame->Code();
+    frame->Code()++;
     gnatives_table_ptr[curr_native](frame, obj, param);
 }
 

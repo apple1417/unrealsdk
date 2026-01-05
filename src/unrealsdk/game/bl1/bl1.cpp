@@ -71,7 +71,9 @@ void BL1Hook::find_fframe_step(void) {
 }
 
 void BL1Hook::fframe_step(FFrame* frame, UObject* obj, void* param) const {
-    ((*fframe_step_gnatives)[*frame->Code++])(obj, frame, param);
+    auto curr_native = *frame->Code();
+    frame->Code()++;
+    ((*fframe_step_gnatives)[curr_native])(obj, frame, param);
 }
 
 #pragma region FName::Init

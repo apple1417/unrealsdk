@@ -101,6 +101,7 @@ using UIntAttributeProperty = unreal::offsets::generic::GenericAttributeProperty
 using USoftClassProperty = unreal::offsets::generic::USoftClassProperty<UObjectProperty>;
 
 class FNameEntry : public bl2::FNameEntry {};
+class FFrame : public bl2::FFrame {};
 
 // NOLINTEND(cppcoreguidelines-pro-type-member-init,
 //           readability-identifier-naming,

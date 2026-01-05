@@ -1,71 +1,27 @@
 #ifndef UNREALSDK_UNREAL_STRUCTS_FFRAME_H
 #define UNREALSDK_UNREAL_STRUCTS_FFRAME_H
 
+#include "unrealsdk/pch.h"
+#include "unrealsdk/unreal/offsets.h"
+
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
-
-class UProperty;
 class UFunction;
 class UObject;
-
 class WrappedStruct;
 
-// NOLINTBEGIN(readability-identifier-naming)
-
-struct FOutParamRec {
-    UProperty* Property;
-    void* PropAddr;
-    FOutParamRec* NextOutParam;
-};
-
-struct FOutputDevice {
-    void* VfTable;
-
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-   private:
-    uint32_t bAllowSuppression;
-
-   public:
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
-    // Intentionally empty
-#else
-#error Unknown SDK flavour
-#endif
-
-    uint32_t bSuppressEventTag;
-    uint32_t bAutoEmitLineTerminator;
-};
-
-struct FFrame : public FOutputDevice {
+struct FFrame {
     static constexpr const auto EXPR_TOKEN_END_FUNCTION_PARAMS = 0x16;
 
-    UFunction* Node;
-    UObject* Object;
-    uint8_t* Code;
-    void* Locals;
+    // These fields become member functions, returning a reference into the object.
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
+#define UNREALSDK_FFRAME_FIELDS(X) \
+    X(UFunction*, Node)            \
+    X(UObject*, Object)            \
+    X(uint8_t*, Code)              \
+    X(FFrame*, PreviousFrame)
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
-   private:
-    UProperty* LastProperty;
-    void* LastPropertyAddress;
-
-   public:
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-    // Intentionally empty
-#else
-#error Unknown SDK flavour
-#endif
-
-    FFrame* PreviousFrame;
-    FOutParamRec* OutParams;
+    UNREALSDK_DEFINE_FIELDS_HEADER(FFrame, UNREALSDK_FFRAME_FIELDS);
 
     /**
      * @brief Extracts the current function args, assuming stopped during the `CallFunction` hook.
@@ -76,16 +32,6 @@ struct FFrame : public FOutputDevice {
      */
     uint8_t* extract_current_args(WrappedStruct& args);
 };
-
-// NOLINTEND(readability-identifier-naming)
-
-#if defined(__clang__) || defined(__MINGW32__)
-#pragma GCC diagnostic pop
-#endif
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

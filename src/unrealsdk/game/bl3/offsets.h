@@ -196,6 +196,33 @@ struct FNameEntry {
     unreal::FNameEntry::name_union Name;
 };
 
+namespace {
+struct FOutputDevice {
+   private:
+    void* VfTable;
+    uint32_t bSuppressEventTag;
+    uint32_t bAutoEmitLineTerminator;
+};
+}  // namespace
+
+struct FFrame : public FOutputDevice {
+   public:
+    UFunction* Node;
+    UObject* Object;
+    uint8_t* Code;
+
+   private:
+    void* Locals;
+    UProperty* LastProperty;
+    void* LastPropertyAddress;
+
+   public:
+    FFrame* PreviousFrame;
+
+   private:
+    void* OutParams;
+};
+
 // NOLINTEND(cppcoreguidelines-pro-type-member-init,
 //           readability-identifier-naming,
 //           readability-magic-numbers)
