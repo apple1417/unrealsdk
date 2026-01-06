@@ -2,14 +2,23 @@
 #define UNREALSDK_UNREAL_CLASSES_UPROPERTY_H
 
 #include "unrealsdk/pch.h"
-
 #include "unrealsdk/unreal/class_traits.h"
-#include "unrealsdk/unreal/classes/ufield.h"
 #include "unrealsdk/unreal/structs/fname.h"
+
+#if UNREALSDK_PROPERTIES_ARE_FFIELD
+#include "unrealsdk/unreal/structs/ffield.h"
+#else
+#include "unrealsdk/unreal/classes/ufield.h"
+#endif
 
 namespace unrealsdk::unreal {
 
+#if UNREALSDK_PROPERTIES_ARE_FFIELD
+class UProperty : public FField {
+#else
 class UProperty : public UField {
+#endif
+
    public:
 #if UNREALSDK_HAS_OPTIONAL_FUNC_PARAMS
     static constexpr auto PROP_FLAG_OPTIONAL = 0x10;

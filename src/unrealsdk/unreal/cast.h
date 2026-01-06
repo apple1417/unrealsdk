@@ -95,7 +95,8 @@ namespace {
  *
  * @param obj The object which failed to cast.
  */
-inline void default_cast_fallback(const UObject* obj) {
+template <typename T>
+inline void default_cast_fallback(const T* obj) {
     throw std::runtime_error("Unknown object type " + (std::string)obj->Class()->Name());
 }
 
@@ -107,6 +108,7 @@ inline void default_cast_fallback(const UObject* obj) {
  * @brief Implementation of cast - kept private as it has less friendly args + template args.
  *
  * @tparam InputType The type of the input object.
+ * @tparam ClassType The type of the working class object.
  * @tparam Function The type of the callback function.
  * @tparam Fallback The type of the fallback function.
  * @tparam include_input_type True if the input type is a valid output type.
@@ -119,6 +121,7 @@ inline void default_cast_fallback(const UObject* obj) {
  * @param fallback The fallback function.
  */
 template <typename InputType,
+          typename ClassType,
           typename Function,
           typename Fallback,
           bool include_input_type,
@@ -126,7 +129,7 @@ template <typename InputType,
           typename ClassTuple,
           size_t i>
 void cast_impl(InputType* obj,
-               const UStruct* working_class,
+               ClassType* working_class,
                const Function& func,
                const Fallback& fallback) {
     // If out of elements
@@ -135,7 +138,7 @@ void cast_impl(InputType* obj,
         if constexpr (check_inherited_types) {
             if (working_class->SuperField() != nullptr) {
                 // Jump back to the start of the tuple, but use the super field
-                return cast_impl<InputType, Function, Fallback, include_input_type,
+                return cast_impl<InputType, ClassType, Function, Fallback, include_input_type,
                                  check_inherited_types, ClassTuple, 0>(
                     obj, working_class->SuperField(), func, fallback);
             }
@@ -164,8 +167,9 @@ void cast_impl(InputType* obj,
         }
 
         // Try the next element
-        return cast_impl<InputType, Function, Fallback, include_input_type, check_inherited_types,
-                         ClassTuple, i + 1>(obj, working_class, func, fallback);
+        return cast_impl<InputType, ClassType, Function, Fallback, include_input_type,
+                         check_inherited_types, ClassTuple, i + 1>(obj, working_class, func,
+                                                                   fallback);
     }
 }
 
@@ -240,16 +244,24 @@ template <typename Options = cast_options<>,
           typename InputType,
           typename Function,
           typename Fallback = std::function<void(InputType*)>>
-void cast(InputType* obj, const Function& func, const Fallback& fallback = default_cast_fallback)
-    requires(std::is_base_of_v<UObject, InputType>)
+void cast(InputType* obj,
+          const Function& func,
+          const Fallback& fallback = default_cast_fallback<InputType>)
+    requires(std::is_base_of_v<UObject, InputType>
+#if UNREALSDK_PROPERTIES_ARE_FFIELD
+             || std::is_base_of_v<FField, InputType>
+#endif
+    )
 {
     if (obj == nullptr) {
         throw std::invalid_argument("Tried to cast null object!");
     }
 
-    return cast_impl<InputType, Function, Fallback, Options::include_input_type_v,
+    auto working_cls = obj->Class();
+    using ClassType = std::remove_cvref_t<decltype(*working_cls->SuperField())>;
+    return cast_impl<InputType, ClassType, Function, Fallback, Options::include_input_type_v,
                      Options::check_inherited_types_v, typename Options::class_tuple_t, 0>(
-        obj, obj->Class(), func, fallback);
+        obj, working_cls, func, fallback);
 }
 
 }  // namespace unrealsdk::unreal

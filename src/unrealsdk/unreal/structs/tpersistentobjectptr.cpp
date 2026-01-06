@@ -40,6 +40,11 @@ const TPersistentObjectPtr<T>* get_addr_from(const WrappedStruct& wrapped_struct
 
 template <typename T>
 const TPersistentObjectPtr<T>* get_addr_from_array(const WrappedArray& array, size_t idx) {
+#if UNREALSDK_PROPERTIES_ARE_FFIELD
+    (void)array;
+    (void)idx;
+    throw std::runtime_error("persistent object ptr from array not implemented");
+#else
     if (!array.type->Class()->inherits(find_class<USoftObjectProperty>())) {
         throw std::invalid_argument("WrappedArray property was of invalid type "
                                     + (std::string)array.type->Class()->Name());
@@ -50,6 +55,7 @@ const TPersistentObjectPtr<T>* get_addr_from_array(const WrappedArray& array, si
 
     auto addr = reinterpret_cast<uintptr_t>(array.base->data) + (array.type->ElementSize() * idx);
     return reinterpret_cast<TPersistentObjectPtr<T>*>(addr);
+#endif
 }
 
 }  // namespace
