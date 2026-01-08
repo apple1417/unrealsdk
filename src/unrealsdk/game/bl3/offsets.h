@@ -94,6 +94,9 @@ class UStruct : public UField {
    public:
     UStruct* SuperField;
     UField* Children;
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
+    UField* ChildProperties;
+#endif
     int32_t PropertySize;
 
    private:
