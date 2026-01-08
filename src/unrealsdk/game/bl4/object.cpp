@@ -1,5 +1,7 @@
 #include "unrealsdk/pch.h"
 #include "unrealsdk/game/bl4/bl4.h"
+#include "unrealsdk/unreal/classes/uobject.h"
+#include "unrealsdk/unreal/classes/uclass.h"
 #include "unrealsdk/memory.h"
 #include "unrealsdk/unrealsdk.h"
 
@@ -91,6 +93,7 @@ struct FStaticConstructObjectParameters {
     void* ExternalPackage{};
     void* PropertyInitCallback{};
     void* SubobjectOverrides{};
+    char _0x50[0x40];
 };
 // NOLINTEND(readability-identifier-naming)
 
@@ -135,6 +138,7 @@ UObject* BL4Hook::construct_object(UClass* cls,
     params.SetFlags = static_cast<uint32_t>(flags);
     params.InternalSetFlags = 0;
     params.Template = template_obj;
+
     return construct_obj_ptr(&params);
 }
 
