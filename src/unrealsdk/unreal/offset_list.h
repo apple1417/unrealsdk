@@ -35,14 +35,6 @@ namespace unrealsdk::unreal::offsets {
 
 // NOLINTBEGIN(cppcoreguidelines-macro-usage)
 
-#if UNREALSDK_PROPERTIES_ARE_FFIELD
-#define UNREALSDK__DYNAMIC_OFFSET_TYPES_FFIELD(X) \
-    X(FFieldClass)                                \
-    X(FField)
-#else
-#define UNREALSDK__DYNAMIC_OFFSET_TYPES_FFIELD(X)
-#endif
-
 #define UNREALSDK__DYNAMIC_OFFSET_TYPES(X) \
     X(UArrayProperty)                      \
     X(UBoolProperty)                       \
@@ -69,7 +61,8 @@ namespace unrealsdk::unreal::offsets {
     X(UStructProperty)                     \
     X(FNameEntry)                          \
     X(FFrame)                              \
-    UNREALSDK__DYNAMIC_OFFSET_TYPES_FFIELD(X)
+    X(FFieldClass)                         \
+    X(FField)
 
 #define UNREALSDK_OFFSETS__DEFINE_OFFSET_LIST_MEMBERS(name) unrealsdk::unreal::name::Offsets name;
 #define UNREALSDK_OFFSETS__NESTED_FROM_TYPE(name) \

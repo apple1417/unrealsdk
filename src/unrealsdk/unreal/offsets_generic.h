@@ -75,6 +75,7 @@ class UField : public T {
    public:
     UField* Next;
 };
+
 template <typename T>
 class UInterfaceProperty : public T {
    public:
@@ -111,6 +112,36 @@ class UStructProperty : public T {
    public:
     // NOLINTNEXTLINE(readability-identifier-naming)
     unreal::UScriptStruct* Struct;
+};
+
+template <typename T>
+struct FField {
+   private:
+    uintptr_t* vftable;
+
+   public:
+    T* Class;
+    UObject* Owner;
+    FField* Next;
+    unreal::FName Name;
+
+   private:
+    uint64_t FlagsPrivate;
+};
+
+template <typename T>
+struct FFieldClass {
+   public:
+    unreal::FName Name;
+
+   private:
+    uint64_t Id;
+    uint64_t CastFlags;
+    uint32_t ClassFlags;
+
+   public:
+    FFieldClass* SuperField;
+    T* DefaultObject;
 };
 
 // NOLINTEND(cppcoreguidelines-pro-type-member-init,

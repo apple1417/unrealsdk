@@ -27,34 +27,9 @@ struct FNameEntry {
     unreal::FNameEntry::name_union Name;
 };
 
-struct FField;
-struct FFieldClass {
-   public:
-    unreal::FName Name;
-
-   private:
-    uint64_t Id;
-    uint64_t CastFlags;
-    uint32_t ClassFlags;
-
-   public:
-    FFieldClass* SuperField;
-    FField* DefaultObject;
-};
-
-struct FField {
-   private:
-    uintptr_t* vftable;
-
-   public:
-    FFieldClass* Class;
-    UObject* Owner;
-    FField* Next;
-    unreal::FName Name;
-
-   private:
-    uint64_t FlagsPrivate;
-};
+struct FFieldClass;
+struct FField : public unreal::offsets::generic::FField<FFieldClass> {};
+struct FFieldClass : public unreal::offsets::generic::FFieldClass<FField> {};
 
 struct UProperty : public FField {
    public:

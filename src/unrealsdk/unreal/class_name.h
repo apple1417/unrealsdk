@@ -62,7 +62,6 @@ const T* validate_type(const UObject* obj) {
     throw_on_wrong_type<T>(obj);
     return reinterpret_cast<const T*>(obj);
 }
-#if UNREALSDK_PROPERTIES_ARE_FFIELD
 template <typename T>
 T* validate_type(FField* obj) {
     throw_on_wrong_type<T>(obj);
@@ -73,7 +72,6 @@ const T* validate_type(const FField* obj) {
     throw_on_wrong_type<T>(obj);
     return reinterpret_cast<const T*>(obj);
 }
-#endif
 
 }  // namespace unrealsdk::unreal
 

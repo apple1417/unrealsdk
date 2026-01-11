@@ -247,11 +247,7 @@ template <typename Options = cast_options<>,
 void cast(InputType* obj,
           const Function& func,
           const Fallback& fallback = default_cast_fallback<InputType>)
-    requires(std::is_base_of_v<UObject, InputType>
-#if UNREALSDK_PROPERTIES_ARE_FFIELD
-             || std::is_base_of_v<FField, InputType>
-#endif
-    )
+    requires(std::is_base_of_v<UObject, InputType> || std::is_base_of_v<FField, InputType>)
 {
     if (obj == nullptr) {
         throw std::invalid_argument("Tried to cast null object!");

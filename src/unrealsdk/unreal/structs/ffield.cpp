@@ -4,8 +4,6 @@
 #include "unrealsdk/unreal/offsets.h"
 #include "unrealsdk/unreal/structs/fname.h"
 
-#if UNREALSDK_PROPERTIES_ARE_FFIELD
-
 namespace unrealsdk::unreal {
 
 UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(FFieldClass, UNREALSDK_FFIELDCLASS_FIELDS);
@@ -16,5 +14,3 @@ UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(FField, UNREALSDK_FFIELD_FIELDS);
 }
 
 }  // namespace unrealsdk::unreal
-
-#endif

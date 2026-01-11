@@ -5,8 +5,6 @@
 #include "unrealsdk/unreal/offsets.h"
 #include "unrealsdk/unreal/structs/fname.h"
 
-#if UNREALSDK_PROPERTIES_ARE_FFIELD
-
 namespace unrealsdk::unreal {
 
 class UObject;
@@ -52,7 +50,5 @@ struct FField {
 UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
 }  // namespace unrealsdk::unreal
-
-#endif
 
 #endif /* UNREALSDK_UNREAL_STRUCTS_FFIELD_H */
