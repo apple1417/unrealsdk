@@ -186,6 +186,8 @@ bool inject_console_hook(hook_manager::Details& hook) {
 
     LOG(MISC, "Injected console");
 
+    // TODO: may be able to replace this loop with find class -> default object
+
     // There isn't really a good path to the input settings class, which should be a singleton, so
     // just search through gobjects for the default object ¯\_(ツ)_/¯
     auto input_settings_fn = L"InputSettings"_fn;
@@ -194,29 +196,39 @@ bool inject_console_hook(hook_manager::Details& hook) {
             continue;
         }
 
-        auto existing_console_key =
-            inner_obj->get<UStructProperty>(L"ConsoleKey"_fn).get<UNameProperty>(L"KeyName"_fn);
-        FName console_key{0, 0};
+        auto wanted_console_key = config::get_str("unrealsdk.console_key");
 
-        if (existing_console_key != L"None"_fn && existing_console_key != L"Undefine"_fn) {
-            LOG(MISC, "Console key is already set to {}", existing_console_key);
-
-            console_key = existing_console_key;
-        } else {
-            std::string wanted_console_key{
-                config::get_str("unrealsdk.console_key").value_or("Tilde")};
-            console_key = FName{wanted_console_key};
-
-            inner_obj->get<UStructProperty>(L"ConsoleKey"_fn)
-                .set<UNameProperty>(L"KeyName"_fn, console_key);
-
-            LOG(MISC, "Set console key to '{}'", wanted_console_key);
-        }
-
-        // Make sure the array version is set to the same
         auto arr = inner_obj->get<UArrayProperty>(L"ConsoleKeys"_fn);
-        arr.resize(1);
-        arr.get_at<UStructProperty>(0).set<UNameProperty>(L"KeyName"_fn, console_key);
+        if (arr.size() > 0) {
+            auto existing_fname = arr.get_at<UStructProperty>(0).get<UNameProperty>(L"KeyName"_fn);
+
+            // It seems we do have tilde as a default console key in this game. Rather than just
+            // accept that like we do in other games (where there's no default), if the user's
+            // specified a key, overwrite it.
+            if (wanted_console_key.has_value()) {
+                FName wanted_fname{std::string{*wanted_console_key}};
+                if (existing_fname == wanted_fname) {
+                    // Or not in this case :)
+                    LOG(MISC, "Console key is already set to {}", existing_fname);
+                } else {
+                    // Technically we might be throwing away other keys in later slots, but you did
+                    // say you wanted this one
+                    arr.resize(1);
+                    arr.get_at<UStructProperty>(0).set<UNameProperty>(L"KeyName"_fn, wanted_fname);
+
+                    LOG(MISC, "Set console key to '{}'", wanted_fname);
+                }
+            } else {
+                LOG(MISC, "Console key is already set to {}", existing_fname);
+            }
+
+        } else {
+            FName wanted_fname{std::string{wanted_console_key.value_or("Tilde")}};
+            arr.resize(1);
+            arr.get_at<UStructProperty>(0).set<UNameProperty>(L"KeyName"_fn, wanted_fname);
+
+            LOG(MISC, "Set console key to '{}'", wanted_fname);
+        }
     }
 
     return false;
