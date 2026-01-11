@@ -1,5 +1,5 @@
 #include "unrealsdk/pch.h"
-
+#include "unrealsdk/unreal/classes/ustruct.h"
 #include "unrealsdk/config.h"
 #include "unrealsdk/game/bl3/offsets.h"
 #include "unrealsdk/game/bl4/offsets.h"
@@ -7,7 +7,7 @@
 #include "unrealsdk/unreal/classes/ufield.h"
 #include "unrealsdk/unreal/classes/ufunction.h"
 #include "unrealsdk/unreal/classes/uproperty.h"
-#include "unrealsdk/unreal/classes/ustruct.h"
+#include "unrealsdk/unreal/find_class.h"
 #include "unrealsdk/unreal/offset_list.h"
 #include "unrealsdk/unreal/offsets.h"
 #include "unrealsdk/unreal/wrappers/bound_function.h"
@@ -71,6 +71,77 @@ utils::IteratorProxy<UStruct::FieldIterator> UStruct::fields(void) const {
 
 #pragma region Property Iterator
 
+// TODO: is this really what we want to be doing?
+#if UNREALSDK_PROPERTIES_ARE_FFIELD
+// Follow the ChildProperties->Next->Next linked list
+// This is split by struct, so this is very similar to the above implementation
+
+UStruct::PropertyIterator::PropertyIterator(void) : this_struct(nullptr), field(nullptr) {}
+UStruct::PropertyIterator::PropertyIterator(const UStruct* this_struct, FField* field)
+    : this_struct(this_struct), field(field) {}
+
+UStruct::PropertyIterator::reference UStruct::PropertyIterator::operator*() const {
+    // Trust that the increment keeps this valid
+    return reinterpret_cast<UProperty*>(this->field);
+}
+
+UStruct::PropertyIterator& UStruct::PropertyIterator::operator++() {
+    auto uprop_cls = find_class<UProperty>();
+
+    if (this->field != nullptr) {
+        do {
+            this->field = this->field->Next();
+            // If we got a field that's not a property, try again
+        } while (this->field != nullptr && !this->field->Class()->inherits(uprop_cls));
+    }
+
+    while (this->field == nullptr && this->this_struct != nullptr) {
+        // Ran out of fields, try the next struct
+        this->this_struct = this->this_struct->SuperField();
+        if (this->this_struct == nullptr) {
+            break;
+        }
+
+        this->field = this->this_struct->ChildProperties();
+
+        // If we got a field that's not a property, try again
+        while (this->field != nullptr && !this->field->Class()->inherits(uprop_cls)) {
+            this->field = this->field->Next();
+        }
+    }
+
+    return *this;
+}
+UStruct::PropertyIterator UStruct::PropertyIterator::operator++(int) {
+    auto tmp = *this;
+    ++(*this);
+    return tmp;
+}
+
+bool UStruct::PropertyIterator::operator==(const UStruct::PropertyIterator& rhs) const {
+    return this->this_struct == rhs.this_struct && this->field == rhs.field;
+};
+bool UStruct::PropertyIterator::operator!=(const UStruct::PropertyIterator& rhs) const {
+    return !(*this == rhs);
+};
+
+utils::IteratorProxy<UStruct::PropertyIterator> UStruct::properties(void) const {
+    PropertyIterator begin{this, this->ChildProperties()};
+
+    // Like in the previous one, a null first property is still wrong, and needs to be incremented
+    // once, but now so is a non-property type
+    UProperty* first = *begin;
+    if (first == nullptr || !first->Class()->inherits(find_class<UProperty>())) {
+        begin++;
+    }
+
+    return {begin, {}};
+}
+
+#else
+// Follow the PropertyLink->PropertyLinkNext->PropertyLinkNext linked list
+// This includes base classes so has a much simpler implementation
+
 UStruct::PropertyIterator::PropertyIterator(void) : prop(nullptr) {}
 UStruct::PropertyIterator::PropertyIterator(UProperty* prop) : prop(prop) {}
 
@@ -98,6 +169,8 @@ bool UStruct::PropertyIterator::operator!=(const UStruct::PropertyIterator& rhs)
 utils::IteratorProxy<UStruct::PropertyIterator> UStruct::properties(void) const {
     return {{this->PropertyLink()}, {}};
 }
+
+#endif
 
 #pragma endregion
 
@@ -143,15 +216,32 @@ size_t UStruct::get_struct_size(void) const {
 #endif
 }
 
-UField* UStruct::find(const FName& name) const {
+#if UNREALSDK_PROPERTIES_ARE_FFIELD
+[[nodiscard]] TFieldVariant<UProperty, UField> UStruct::find(const FName& name) const {
+    for (auto prop : this->properties()) {
+        if (prop->Name() == name) {
+            return {prop};
+        }
+    }
     for (auto field : this->fields()) {
         if (field->Name() == name) {
-            return field;
+            return {field};
         }
     }
 
     throw std::invalid_argument("Couldn't find field " + (std::string)name);
 }
+#else
+TFieldVariantStub<UField> UStruct::find(const FName& name) const {
+    for (auto field : this->fields()) {
+        if (field->Name() == name) {
+            return {field};
+        }
+    }
+
+    throw std::invalid_argument("Couldn't find field " + (std::string)name);
+}
+#endif
 
 UProperty* UStruct::find_prop(const FName& name) const {
     for (auto prop : this->properties()) {
@@ -164,7 +254,11 @@ UProperty* UStruct::find_prop(const FName& name) const {
 }
 
 UFunction* UStruct::find_func_and_validate(const FName& name) const {
-    return validate_type<UFunction>(this->find(name));
+    auto result = this->find(name);
+    if (!result.is_field()) {
+        throw std::invalid_argument("expected function but got property");
+    }
+    return validate_type<UFunction>(result.as_field());
 }
 
 bool UStruct::inherits(const UStruct* base_struct) const {

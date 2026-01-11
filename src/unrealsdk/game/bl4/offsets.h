@@ -27,9 +27,8 @@ struct FNameEntry {
     unreal::FNameEntry::name_union Name;
 };
 
-struct FFieldClass;
+using FFieldClass = unreal::offsets::generic::FFieldClass;
 struct FField : public unreal::offsets::generic::FField<FFieldClass> {};
-struct FFieldClass : public unreal::offsets::generic::FFieldClass<FField> {};
 
 struct UProperty : public FField {
    public:
@@ -44,19 +43,20 @@ struct UProperty : public FField {
    public:
     int32_t Offset_Internal;
 
-   private:
-    unreal::FName RepNotifyFunc;
-
    public:
-    UProperty* PropertyLinkNext;
+    UProperty* PropertyLinkNext;  // not 100% sure
 
    private:
-    UProperty* NextRef;
-    UProperty* DestructorLinkNext;
-    UProperty* PostConstructLinkNext;
+    uint8_t UnknownData00[0x10];
+    UProperty* SomeOtherPropertyLink;  // not 100% sure
+    uint8_t UnknownData01[0x8];
 };
 
-using UArrayProperty = unreal::offsets::generic::UArrayProperty<UProperty>;
+class UArrayProperty : public UProperty {
+   public:
+    uint8_t UnknownData00[0x8];
+    UProperty* Inner;
+};
 using UByteProperty = unreal::offsets::generic::UByteProperty<UProperty>;
 using UDelegateProperty = unreal::offsets::generic::UDelegateProperty<UProperty>;
 using UEnumProperty = unreal::offsets::generic::UEnumProperty<UProperty>;

@@ -5,6 +5,7 @@
 #include "unrealsdk/unreal/classes/ufield.h"
 #include "unrealsdk/unreal/classes/uproperty.h"
 #include "unrealsdk/unreal/structs/tarray.h"
+#include "unrealsdk/unreal/structs/tfieldvariant.h"
 #include "unrealsdk/utils.h"
 
 namespace unrealsdk::unreal {
@@ -23,23 +24,28 @@ class UStruct : public UField {
 
     using property_size_type = UNREALSDK_USTRUCT_PROPERTY_SIZE_TYPE;
 
-    // These fields become member functions, returning a reference into the object.
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
 #if UNREALSDK_USTRUCT_HAS_ALIGNMENT
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_USTRUCT_FIELDS(X)     \
-    X(UStruct*, SuperField)             \
-    X(UField*, Children)                \
-    X(property_size_type, PropertySize) \
-    X(int32_t, MinAlignment)            \
-    X(UProperty*, PropertyLink)
+#define UNREALSDK__USTRUCT_MIN_ALIGNMENT(X) X(int32_t, MinAlignment)
 #else
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
+#define UNREALSDK__USTRUCT_MIN_ALIGNMENT(X)
+#endif
+#if UNREALSDK_PROPERTIES_ARE_FFIELD
+#define UNREALSDK__USTRUCT_CHILD_PROPERTIES(X) X(FField*, ChildProperties)
+#else
+#define UNREALSDK__USTRUCT_CHILD_PROPERTIES(X)
+#endif
+
+    // These fields become member functions, returning a reference into the object.
 #define UNREALSDK_USTRUCT_FIELDS(X)     \
     X(UStruct*, SuperField)             \
     X(UField*, Children)                \
     X(property_size_type, PropertySize) \
-    X(UProperty*, PropertyLink)
-#endif
+    X(UProperty*, PropertyLink)         \
+    UNREALSDK__USTRUCT_MIN_ALIGNMENT(X) \
+    UNREALSDK__USTRUCT_CHILD_PROPERTIES(X)
+
+    // NOLINTEND(cppcoreguidelines-macro-usage)
 
     UNREALSDK_DEFINE_FIELDS_HEADER(UStruct, UNREALSDK_USTRUCT_FIELDS);
 
@@ -76,11 +82,21 @@ class UStruct : public UField {
         using reference = UProperty*;
 
        private:
+#if UNREALSDK_PROPERTIES_ARE_FFIELD
+        const UStruct* this_struct;
+        FField* field;
+#else
         UProperty* prop;
+#endif
 
        public:
         PropertyIterator(void);
+
+#if UNREALSDK_PROPERTIES_ARE_FFIELD
+        PropertyIterator(const UStruct* this_struct, FField* field);
+#else
         PropertyIterator(UProperty* prop);
+#endif
 
         reference operator*() const;
 
@@ -152,7 +168,11 @@ class UStruct : public UField {
      * @param name The name of the child.
      * @return The found child object.
      */
-    [[nodiscard]] UField* find(const FName& name) const;
+#if UNREALSDK_PROPERTIES_ARE_FFIELD
+    [[nodiscard]] TFieldVariant<UProperty, UField> find(const FName& name) const;
+#else
+    [[nodiscard]] TFieldVariantStub<UField> find(const FName& name) const;
+#endif
     [[nodiscard]] UProperty* find_prop(const FName& name) const;
 
     /**

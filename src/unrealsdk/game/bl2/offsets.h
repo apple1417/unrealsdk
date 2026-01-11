@@ -237,9 +237,8 @@ struct FFrame {
     void* OutParams;
 };
 
-struct FFieldClass;
+using FFieldClass = unreal::offsets::generic::FFieldClass;
 struct FField : public unreal::offsets::generic::FField<FFieldClass> {};
-struct FFieldClass : public unreal::offsets::generic::FFieldClass<FField> {};
 
 // NOLINTEND(cppcoreguidelines-pro-type-member-init,
 //           readability-identifier-naming,

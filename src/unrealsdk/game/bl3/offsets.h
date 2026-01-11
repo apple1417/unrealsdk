@@ -44,6 +44,7 @@ namespace unrealsdk::game::bl3 {
 //             readability-magic-numbers)
 
 class UClass;
+struct FField;
 
 class UObject {
    private:
@@ -95,7 +96,7 @@ class UStruct : public UField {
     UStruct* SuperField;
     UField* Children;
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
-    UField* ChildProperties;
+    FField* ChildProperties;
 #endif
     int32_t PropertySize;
 
@@ -223,9 +224,8 @@ struct FFrame {
     void* OutParams;
 };
 
-struct FFieldClass;
+using FFieldClass = unreal::offsets::generic::FFieldClass;
 struct FField : public unreal::offsets::generic::FField<FFieldClass> {};
-struct FFieldClass : public unreal::offsets::generic::FFieldClass<FField> {};
 
 // NOLINTEND(cppcoreguidelines-pro-type-member-init,
 //           readability-identifier-naming,

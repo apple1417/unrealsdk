@@ -80,7 +80,8 @@ using all_unreal_classes = std::tuple<  //
     UUInt16Property,
     UUInt32Property,
     UUInt64Property,
-    UWeakObjectProperty>;
+    UWeakObjectProperty,
+    FField>;
 
 namespace {
 

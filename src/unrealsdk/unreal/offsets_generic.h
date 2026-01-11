@@ -129,19 +129,16 @@ struct FField {
     uint64_t FlagsPrivate;
 };
 
-template <typename T>
 struct FFieldClass {
    public:
     unreal::FName Name;
 
    private:
-    uint64_t Id;
-    uint64_t CastFlags;
-    uint32_t ClassFlags;
+    // Should this really go in generic while it has unknown data... eh
+    uint8_t UnknownData[0x28];
 
    public:
     FFieldClass* SuperField;
-    T* DefaultObject;
 };
 
 // NOLINTEND(cppcoreguidelines-pro-type-member-init,
