@@ -4,6 +4,7 @@
 #include "unrealsdk/pch.h"
 #include "unrealsdk/unreal/offsets.h"
 #include "unrealsdk/unreal/structs/fname.h"
+#include "unrealsdk/unreal/structs/tfieldvariant.h"
 
 namespace unrealsdk::unreal {
 
@@ -32,7 +33,7 @@ struct FField {
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define UNREALSDK_FFIELD_FIELDS(X) \
     X(FFieldClass*, Class)         \
-    X(UObject*, Owner)             \
+    X(FFieldVariant, Owner)        \
     X(FField*, Next)               \
     X(FName, Name)
 
