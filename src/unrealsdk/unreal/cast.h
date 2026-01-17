@@ -33,6 +33,7 @@
 #include "unrealsdk/unreal/classes/uproperty.h"
 #include "unrealsdk/unreal/classes/uscriptstruct.h"
 #include "unrealsdk/unreal/classes/ustruct.h"
+#include "unrealsdk/unreal/structs/ffield.h"
 
 namespace unrealsdk::unreal {
 

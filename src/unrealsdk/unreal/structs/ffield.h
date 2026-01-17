@@ -21,7 +21,7 @@ struct FFieldClass {
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define UNREALSDK_FFIELDCLASS_FIELDS(X) \
     X(FName, Name)                      \
-    X(FFieldClass*, SuperField)         
+    X(FFieldClass*, SuperField)
 
     UNREALSDK_DEFINE_FIELDS_HEADER(FFieldClass, UNREALSDK_FFIELDCLASS_FIELDS);
 

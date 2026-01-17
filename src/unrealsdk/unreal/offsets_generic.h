@@ -15,6 +15,8 @@ class UEnum;
 class UFunction;
 class UProperty;
 class UScriptStruct;
+template <typename FFieldType, typename UObjectType>
+struct TFieldVariant;
 
 namespace offsets::generic {
 
@@ -121,7 +123,7 @@ struct FField {
 
    public:
     T* Class;
-    UObject* Owner;
+    TFieldVariant<FField, UObject>* Owner;
     FField* Next;
     unreal::FName Name;
 

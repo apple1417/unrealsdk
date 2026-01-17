@@ -101,6 +101,8 @@ using USoftClassProperty = unreal::offsets::generic::USoftClassProperty<UObjectP
 
 class FNameEntry : public bl2::FNameEntry {};
 class FFrame : public bl2::FFrame {};
+class FField : public bl2::FField {};
+class FFieldClass : public bl2::FFieldClass {};
 
 // NOLINTEND(cppcoreguidelines-pro-type-member-init,
 //           readability-identifier-naming,

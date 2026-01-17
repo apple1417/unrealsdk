@@ -195,13 +195,13 @@ bool inject_console_hook(hook_manager::Details& hook) {
         if (inner_obj->Class()->Name() != input_settings_fn) {
             continue;
         }
-    
+
         auto wanted_console_key = config::get_str("unrealsdk.console_key");
-    
+
         auto arr = inner_obj->get<UArrayProperty>(L"ConsoleKeys"_fn);
         if (arr.size() > 0) {
             auto existing_fname = arr.get_at<UStructProperty>(0).get<UNameProperty>(L"KeyName"_fn);
-    
+
             // It seems we do have tilde as a default console key in this game. Rather than just
             // accept that like we do in other games (where there's no default), if the user's
             // specified a key, overwrite it.
@@ -215,18 +215,18 @@ bool inject_console_hook(hook_manager::Details& hook) {
                     // say you wanted this one
                     arr.resize(1);
                     arr.get_at<UStructProperty>(0).set<UNameProperty>(L"KeyName"_fn, wanted_fname);
-    
+
                     LOG(MISC, "Set console key to '{}'", wanted_fname);
                 }
             } else {
                 LOG(MISC, "Console key is already set to {}", existing_fname);
             }
-    
+
         } else {
             FName wanted_fname{std::string{wanted_console_key.value_or("Tilde")}};
             arr.resize(1);
             arr.get_at<UStructProperty>(0).set<UNameProperty>(L"KeyName"_fn, wanted_fname);
-    
+
             LOG(MISC, "Set console key to '{}'", wanted_fname);
         }
     }

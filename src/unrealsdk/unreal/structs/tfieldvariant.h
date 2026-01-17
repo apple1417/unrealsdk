@@ -143,16 +143,16 @@ struct TFieldVariantStub {
     TFieldVariantStub(void) = default;
     TFieldVariantStub(std::nullptr_t) {};
     // Cannot define a sane TFieldVariantStub(const FFieldType* field);
-    TFieldVariantStub(const UObjectType* obj) { this = obj; };
-    TFieldVariantStub(const TFieldVariantStub& other) { this = other; };
-    TFieldVariantStub(TFieldVariantStub&& other) noexcept { this = other; };
+    TFieldVariantStub(UObjectType* obj) { *this = obj; };
+    TFieldVariantStub(const TFieldVariantStub& other) { *this = other; };
+    TFieldVariantStub(TFieldVariantStub&& other) noexcept { *this = other; };
 
     TFieldVariantStub& operator=(std::nullptr_t) {
         this->ptr = nullptr;
         return *this;
     }
     // Cannot define a sane TFieldVariantStub& operator=(const FFieldType* field);
-    TFieldVariantStub& operator=(const UObjectType* obj) {
+    TFieldVariantStub& operator=(UObjectType* obj) {
         this->ptr = obj;
         return *this;
     }

@@ -1,8 +1,8 @@
 #include "unrealsdk/pch.h"
 #include "unrealsdk/game/bl4/bl4.h"
-#include "unrealsdk/unreal/classes/uobject.h"
-#include "unrealsdk/unreal/classes/uclass.h"
 #include "unrealsdk/memory.h"
+#include "unrealsdk/unreal/classes/uclass.h"
+#include "unrealsdk/unreal/classes/uobject.h"
 #include "unrealsdk/unrealsdk.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2 && !defined(UNREALSDK_IMPORTING)
@@ -79,11 +79,13 @@ std::wstring BL4Hook::uobject_path_name(const UObject* obj) const {
 
 namespace {
 
-// NOLINTBEGIN(readability-identifier-naming)
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
+// NOLINTBEGIN(readability-identifier-naming, readability-magic-numbers)
+
 struct FStaticConstructObjectParameters {
     UClass* Class{};
     UObject* Outer{};
-    FName Name{0, 0};
+    FName Name;
     uint32_t SetFlags{};
     int InternalSetFlags{};
     bool bCopyTransientsFromClassDefaults{};
@@ -93,9 +95,13 @@ struct FStaticConstructObjectParameters {
     void* ExternalPackage{};
     void* PropertyInitCallback{};
     void* SubobjectOverrides{};
-    char _0x50[0x40];
+
+    // Seems to need some extra space, not sure exactly how big this should be.
+    char dummy[0x40]{};
 };
-// NOLINTEND(readability-identifier-naming)
+
+// NOLINTEND(readability-identifier-naming, readability-magic-numbers)
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
 using construct_obj_func = UObject* (*)(FStaticConstructObjectParameters * params);
 construct_obj_func construct_obj_ptr;
