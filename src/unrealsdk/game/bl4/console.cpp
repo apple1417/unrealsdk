@@ -247,7 +247,7 @@ void BL4Hook::uconsole_output_text(const std::wstring& str) const {
 }
 
 bool BL4Hook::is_console_ready(void) const {
-    return true;
+    return console != nullptr;
 }
 
 }  // namespace unrealsdk::game
