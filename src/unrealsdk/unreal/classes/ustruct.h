@@ -57,13 +57,16 @@ class UStruct : public UField {
         using pointer = UField**;
         using reference = UField*;
 
+        friend class UStruct;
+
        private:
         const UStruct* this_struct;
         UField* field;
 
+        FieldIterator(const UStruct* this_struct, UField* field);
+
        public:
         FieldIterator(void);
-        FieldIterator(const UStruct* this_struct, UField* field);
 
         reference operator*() const;
 
@@ -81,22 +84,24 @@ class UStruct : public UField {
         using pointer = UProperty**;
         using reference = UProperty*;
 
+        friend class UStruct;
+
        private:
-#if UNREALSDK_PROPERTIES_ARE_FFIELD
+#if UNREALSDK_USTRUCT_PROPERTY_ITER == UNREALSDK_USTRUCT_PROPERTY_ITER_PROPERTYLINK
+        UProperty* prop;
+
+        PropertyIterator(UProperty* prop);
+#elif UNREALSDK_USTRUCT_PROPERTY_ITER == UNREALSDK_USTRUCT_PROPERTY_ITER_CHILDPROPERTIES
         const UStruct* this_struct;
         FField* field;
+
+        PropertyIterator(const UStruct* this_struct, FField* field);
 #else
-        UProperty* prop;
+#error Unknown UStruct::properties() iterator type
 #endif
 
        public:
         PropertyIterator(void);
-
-#if UNREALSDK_PROPERTIES_ARE_FFIELD
-        PropertyIterator(const UStruct* this_struct, FField* field);
-#else
-        PropertyIterator(UProperty* prop);
-#endif
 
         reference operator*() const;
 
@@ -114,12 +119,15 @@ class UStruct : public UField {
         using pointer = const UStruct**;
         using reference = const UStruct*;
 
+        friend class UStruct;
+
        private:
         const UStruct* this_struct;
 
+        SuperFieldIterator(const UStruct* this_struct);
+
        public:
         SuperFieldIterator(void);
-        SuperFieldIterator(const UStruct* this_struct);
 
         reference operator*() const;
 

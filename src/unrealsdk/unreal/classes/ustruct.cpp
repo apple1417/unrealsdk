@@ -71,8 +71,7 @@ utils::IteratorProxy<UStruct::FieldIterator> UStruct::fields(void) const {
 
 #pragma region Property Iterator
 
-// TODO: is this really what we want to be doing?
-#if UNREALSDK_PROPERTIES_ARE_FFIELD
+#if UNREALSDK_USTRUCT_PROPERTY_ITER == UNREALSDK_USTRUCT_PROPERTY_ITER_CHILDPROPERTIES
 // Follow the ChildProperties->Next->Next linked list
 // This is split by struct, so this is very similar to the above implementation
 
@@ -138,7 +137,7 @@ utils::IteratorProxy<UStruct::PropertyIterator> UStruct::properties(void) const 
     return {begin, {}};
 }
 
-#else
+#elif UNREALSDK_USTRUCT_PROPERTY_ITER == UNREALSDK_USTRUCT_PROPERTY_ITER_PROPERTYLINK
 // Follow the PropertyLink->PropertyLinkNext->PropertyLinkNext linked list
 // This includes base classes so has a much simpler implementation
 
@@ -170,6 +169,8 @@ utils::IteratorProxy<UStruct::PropertyIterator> UStruct::properties(void) const 
     return {{this->PropertyLink()}, {}};
 }
 
+#else
+#error Unknown UStruct::properties() iterator type
 #endif
 
 #pragma endregion

@@ -39,17 +39,19 @@ struct UProperty : public FField {
    private:
     uint16_t RepIndex;
     uint8_t BlueprintReplicationCondition;
+    uint8_t UnknownData00[1];
 
    public:
     int32_t Offset_Internal;
 
    public:
-    UProperty* PropertyLinkNext;  // not 100% sure
+    UProperty* PropertyLinkNext;
 
    private:
-    uint8_t UnknownData00[0x10];
-    UProperty* SomeOtherPropertyLink;  // not 100% sure
-    uint8_t UnknownData01[0x8];
+    UProperty* NextRef;
+    UProperty* DestructorLinkNext;
+    UProperty* PostConstructLinkNext;
+    unreal::FName RepNotifyFunc;
 };
 
 class UArrayProperty : public UProperty {
