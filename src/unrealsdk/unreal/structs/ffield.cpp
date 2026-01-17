@@ -33,6 +33,13 @@ UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(FField, UNREALSDK_FFIELD_FIELDS);
     return false;
 }
 
+bool FField::is_instance(const FFieldClass* cls) const {
+    return this->Class()->inherits(cls);
+}
+bool FField::is_instance(const UClass* cls) const {
+    return this->Class()->inherits(cls);
+}
+
 [[nodiscard]] std::wstring FField::get_path_name(void) const {
     std::wstring owner_name{};
     this->Owner().cast([&owner_name]<typename T>(T* obj) {

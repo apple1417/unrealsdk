@@ -11,6 +11,7 @@ namespace unrealsdk::unreal {
 
 class UObject;
 class UStruct;
+class UClass;
 struct FField;
 
 UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
@@ -53,6 +54,16 @@ struct FField {
      * @return The full path name.
      */
     [[nodiscard]] std::wstring get_path_name(void) const;
+
+    /**
+     * @brief Checks if this object is an instance of a class.
+     * @note Does not check interfaces, only plain inheritance.
+     *
+     * @param cls The class to check.
+     * @return True if this object is an instance of the given class.
+     */
+    [[nodiscard]] bool is_instance(const FFieldClass* cls) const;
+    [[nodiscard]] bool is_instance(const UClass* cls) const;
 };
 
 template <>
