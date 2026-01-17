@@ -25,7 +25,7 @@
 #include "unrealsdk/unreal/structs/tarray.h"
 #include "unrealsdk/unreal/structs/tpair.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
 
 namespace unrealsdk::unreal {
 
@@ -88,16 +88,9 @@ class UProperty : public UField {
 class UStruct : public UField {
     friend class unreal::UStruct;
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
-   private:
-    uint8_t UnknownData00[0x10];
-#endif
    public:
     UStruct* SuperField;
     UField* Children;
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
-    FField* ChildProperties;
-#endif
     int32_t PropertySize;
 
    private:

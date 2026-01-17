@@ -1,6 +1,7 @@
 #ifndef UNREALSDK_UNREAL_OFFSETS_GENERIC_H
 #define UNREALSDK_UNREAL_OFFSETS_GENERIC_H
 
+#include "unrealsdk/unreal/structs/fname.h"
 #include "unrealsdk/unreal/structs/fstring.h"
 
 // This file contains a number of templates for simpler unreal types, which you can use to define
@@ -13,6 +14,7 @@ class UArrayProperty;
 class UClass;
 class UEnum;
 class UFunction;
+class UObject;
 class UProperty;
 class UScriptStruct;
 template <typename FFieldType, typename UObjectType>
