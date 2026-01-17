@@ -14,6 +14,7 @@ class GObjects;
 class UClass;
 class UFunction;
 class UObject;
+struct FField;
 struct FFrame;
 struct FLazyObjectPtr;
 struct FSoftObjectPtr;
@@ -83,6 +84,7 @@ struct AbstractHook {
                                void* params) const = 0;
     virtual void uconsole_output_text(const std::wstring& str) const = 0;
     [[nodiscard]] virtual std::wstring uobject_path_name(const unreal::UObject* obj) const = 0;
+    [[nodiscard]] virtual std::wstring ffield_path_name(const unreal::FField* field) const = 0;
     virtual void ftext_as_culture_invariant(unreal::FText* text,
                                             unreal::TemporaryFString&& str) const = 0;
     virtual void fsoftobjectptr_assign(unreal::FSoftObjectPtr* ptr,

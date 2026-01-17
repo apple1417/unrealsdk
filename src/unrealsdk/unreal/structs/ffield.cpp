@@ -4,7 +4,7 @@
 #include "unrealsdk/unreal/offset_list.h"
 #include "unrealsdk/unreal/offsets.h"
 #include "unrealsdk/unreal/structs/fname.h"
-#include "unrealsdk/unreal/structs/tfieldvariant.h"
+#include "unrealsdk/unrealsdk.h"
 
 namespace unrealsdk::unreal {
 
@@ -41,13 +41,7 @@ bool FField::is_instance(const UClass* cls) const {
 }
 
 [[nodiscard]] std::wstring FField::get_path_name(void) const {
-    std::wstring owner_name{};
-    this->Owner().cast([&owner_name]<typename T>(T* obj) {
-        if constexpr (!std::is_null_pointer_v<T>) {
-            owner_name = obj->get_path_name();
-        }
-    });
-    return std::format(L"TEMP|{}|{}", owner_name, (std::wstring)this->Name());
+    return unrealsdk::internal::ffield_path_name(this);
 }
 
 }  // namespace unrealsdk::unreal

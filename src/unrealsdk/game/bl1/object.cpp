@@ -106,6 +106,11 @@ std::wstring BL1Hook::uobject_path_name(const UObject* obj) const {
     return str;
 }
 
+std::wstring BL1Hook::ffield_path_name(const unreal::FField* /*field*/) const {
+    throw_version_error("FField:GetPathName not implemented");
+    std::unreachable();
+}
+
 #pragma endregion
 
 #pragma region FindObject

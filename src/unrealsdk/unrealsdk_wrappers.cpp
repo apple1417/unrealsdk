@@ -99,6 +99,14 @@ std::wstring uobject_path_name(const UObject* obj) {
     u_free(ptr);
     return str;
 }
+std::wstring ffield_path_name(const FField* obj) {
+    size_t size{};
+    auto ptr = UNREALSDK_MANGLE(ffield_path_name)(obj, size);
+
+    std::wstring str{ptr, size};
+    u_free(ptr);
+    return str;
+}
 
 void ftext_as_culture_invariant(unreal::FText* text, unreal::TemporaryFString&& str) {
     UNREALSDK_MANGLE(ftext_as_culture_invariant)(text, std::move(str));

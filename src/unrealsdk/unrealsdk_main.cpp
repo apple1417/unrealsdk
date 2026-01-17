@@ -186,6 +186,16 @@ UNREALSDK_CAPI([[nodiscard]] wchar_t*, uobject_path_name, const UObject* obj, si
 
     return mem;
 }
+UNREALSDK_CAPI([[nodiscard]] wchar_t*, ffield_path_name, const FField* obj, size_t& size) {
+    auto name = hook_instance->ffield_path_name(obj);
+    size = name.size();
+
+    // NOLINTNEXTLINE(cppcoreguidelines-no-malloc, cppcoreguidelines-owning-memory)
+    auto mem = reinterpret_cast<wchar_t*>(u_malloc((size + 1) * sizeof(wchar_t)));
+    wcsncpy_s(mem, size + 1, name.data(), size);
+
+    return mem;
+}
 
 UNREALSDK_CAPI(void,
                ftext_as_culture_invariant,

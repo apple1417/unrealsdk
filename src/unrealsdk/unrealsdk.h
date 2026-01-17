@@ -18,6 +18,7 @@ class GObjects;
 class UClass;
 class UFunction;
 class UObject;
+struct FField;
 struct FFrame;
 struct FLazyObjectPtr;
 struct FSoftObjectPtr;
@@ -198,12 +199,13 @@ void process_event(unreal::UObject* object, unreal::UFunction* func, void* param
 void uconsole_output_text(std::wstring_view str);
 
 /**
- * @brief Calls `UObject::PathName` on the given object.
+ * @brief Calls `GetPathName` on the given object/field.
  *
  * @param obj The object to get the name of.
  * @return The object's name
  */
 [[nodiscard]] std::wstring uobject_path_name(const unreal::UObject* obj);
+[[nodiscard]] std::wstring ffield_path_name(const unreal::FField* obj);
 
 /**
  * @brief Calls `FText::AsCultureInvariant`.

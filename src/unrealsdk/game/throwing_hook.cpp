@@ -101,6 +101,10 @@ std::wstring ThrowingHook::uobject_path_name(const unreal::UObject* /*obj*/) con
     throw_version_error("uobject_path_name not implemented");
     unreachable();
 }
+std::wstring ThrowingHook::ffield_path_name(const unreal::FField* /*field*/) const {
+    throw_version_error("ffield_path_name not implemented");
+    unreachable();
+}
 void ThrowingHook::ftext_as_culture_invariant(unreal::FText* /*text*/,
                                               unreal::TemporaryFString&& /*str*/) const {
     throw_version_error("ftext_as_culture_invariant not implemented");

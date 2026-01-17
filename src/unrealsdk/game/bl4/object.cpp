@@ -3,6 +3,8 @@
 #include "unrealsdk/memory.h"
 #include "unrealsdk/unreal/classes/uclass.h"
 #include "unrealsdk/unreal/classes/uobject.h"
+#include "unrealsdk/unreal/structs/ffield.h"
+#include "unrealsdk/unreal/structs/fstring.h"
 #include "unrealsdk/unrealsdk.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2 && !defined(UNREALSDK_IMPORTING)
@@ -16,6 +18,8 @@ namespace unrealsdk::game {
 
 namespace {
 
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
+
 // TODO: May want to move this type into a generic header at some point
 // NOLINTNEXTLINE(readability-identifier-naming)
 struct TStringBuilderBase_wchar_t {
@@ -25,12 +29,14 @@ struct TStringBuilderBase_wchar_t {
     uint32_t is_dynamic;
 };
 
-using get_path_name_func = void (*)(const UObject* self,
-                                    const UObject* stop_outer,
-                                    TStringBuilderBase_wchar_t* str);
-get_path_name_func get_path_name_ptr;
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
-const constinit Pattern<42> GET_PATH_NAME_PATTERN{
+using get_obj_path_name_func = void (*)(const UObject* self,
+                                        const UObject* stop_outer,
+                                        TStringBuilderBase_wchar_t* str);
+get_obj_path_name_func get_obj_path_name_ptr;
+
+const constinit Pattern<42> GET_OBJ_PATH_NAME_PATTERN{
     "41 56"                 // push r14
     "56"                    // push rsi
     "57"                    // push rdi
@@ -44,11 +50,38 @@ const constinit Pattern<42> GET_PATH_NAME_PATTERN{
     "0F84 ????????"         // je Borderlands4.exe+4261FF6
 };
 
+using get_field_path_name_func = ManagedFString* (*)(const FField* self,
+                                                     ManagedFString* ret,
+                                                     UObject* stop_outer);
+get_field_path_name_func get_field_path_name_ptr;
+
+const constinit Pattern<67> GET_FIELD_PATH_NAME_PATTERN{
+    "56"                    // push rsi
+    "57"                    // push rdi
+    "48 81 EC ????????"     // sub rsp, 00000258
+    "48 89 D6"              // mov rsi, rdx
+    "48 8B 05 ????????"     // mov rax, [Borderlands4.exe+C372940]
+    "48 31 E0"              // xor rax, rsp
+    "48 89 84 24 ????????"  // mov [rsp+00000250], rax
+    "48 8D 44 24 ??"        // lea rax, [rsp+50]
+    "C6 40 F8 00"           // mov byte ptr [rax-08], 00
+    "48 89 40 E0"           // mov [rax-20], rax
+    "48 89 40 E8"           // mov [rax-18], rax
+    "48 8D 94 24 ????????"  // lea rdx, [rsp+00000250]
+    "48 89 50 F0"           // mov [rax-10], rdx
+    "48 8D 7C 24 ??"        // lea rdi, [rsp+30]
+    "4C 89 C2"              // mov rdx, r8
+};
+
 }  // namespace
 
 void BL4Hook::find_get_path_name(void) {
-    get_path_name_ptr = GET_PATH_NAME_PATTERN.sigscan_nullable<get_path_name_func>();
-    LOG(MISC, "GetPathName: {:p}", reinterpret_cast<void*>(get_path_name_ptr));
+    get_obj_path_name_ptr = GET_OBJ_PATH_NAME_PATTERN.sigscan_nullable<get_obj_path_name_func>();
+    LOG(MISC, "UObject::GetPathName: {:p}", reinterpret_cast<void*>(get_obj_path_name_ptr));
+
+    get_field_path_name_ptr =
+        GET_FIELD_PATH_NAME_PATTERN.sigscan_nullable<get_field_path_name_func>();
+    LOG(MISC, "FField::GetPathName: {:p}", reinterpret_cast<void*>(get_field_path_name_ptr));
 }
 
 std::wstring BL4Hook::uobject_path_name(const UObject* obj) const {
@@ -63,7 +96,7 @@ std::wstring BL4Hook::uobject_path_name(const UObject* obj) const {
         .is_dynamic = 0,
     };
 
-    get_path_name_ptr(obj, nullptr, &str);
+    get_obj_path_name_ptr(obj, nullptr, &str);
 
     std::wstring output{str.base, (size_t)(str.current - str.base)};
     if (str.is_dynamic != 0) {
@@ -71,6 +104,12 @@ std::wstring BL4Hook::uobject_path_name(const UObject* obj) const {
     }
 
     return output;
+}
+
+std::wstring BL4Hook::ffield_path_name(const FField* field) const {
+    ManagedFString str;
+    get_field_path_name_ptr(field, &str, nullptr);
+    return str;
 }
 
 #pragma endregion
