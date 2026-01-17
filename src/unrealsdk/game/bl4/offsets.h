@@ -171,6 +171,12 @@ class UBoolProperty : public UProperty {
     uint8_t FieldMask;
 };
 
+class FGbxDefPtrProperty : public UProperty {
+   public:
+    UScriptStruct* Struct;
+};
+;
+
 struct FNameEntry {
     static const constexpr auto META_SIZE_BIT_OFFSET = 6;
 
