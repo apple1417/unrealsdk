@@ -88,6 +88,8 @@ class UClass : public UStruct {
 using UScriptStruct = unreal::offsets::generic::UScriptStruct<UStruct>;
 
 class UFunction : public UStruct {
+   private:
+    char _0x00[0x10];
    public:
     uint32_t FunctionFlags;
     uint8_t NumParams;

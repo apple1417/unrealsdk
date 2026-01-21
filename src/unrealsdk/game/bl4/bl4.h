@@ -25,6 +25,7 @@ class BL4Hook : public ThrowingHook {
     static void find_static_find_object(void);
     static void find_load_package(void);
     static void find_fframe_step(void);
+    static void find_ftext_as_culture_invariant(void);
 
     static void inject_console(void);
 
@@ -57,9 +58,10 @@ class BL4Hook : public ThrowingHook {
     void uconsole_output_text(const std::wstring& str) const override;
     [[nodiscard]] std::wstring uobject_path_name(const unreal::UObject* obj) const override;
     [[nodiscard]] std::wstring ffield_path_name(const unreal::FField* field) const override;
-    /*
+ 
     void ftext_as_culture_invariant(unreal::FText* text,
                                     unreal::TemporaryFString&& str) const override;
+    /*
     void fsoftobjectptr_assign(unreal::FSoftObjectPtr* ptr,
                                const unreal::UObject* obj) const override;
     void flazyobjectptr_assign(unreal::FLazyObjectPtr* ptr,

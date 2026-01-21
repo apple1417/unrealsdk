@@ -27,6 +27,7 @@ void BL4Hook::hook(void) {
     find_static_find_object();
     find_load_package();
     find_fframe_step();
+    find_ftext_as_culture_invariant();
 }
 
 void BL4Hook::post_init(void) {
@@ -60,6 +61,52 @@ void BL4Hook::fframe_step(FFrame* frame, UObject* obj, void* param) const {
     auto curr_native = *frame->Code();
     frame->Code()++;
     gnatives_table_ptr[curr_native](frame, obj, param);
+}
+
+#pragma endregion
+
+#pragma region FText::AsCultureInvariant
+
+namespace {
+
+using ftext_as_culture_invariant_func = void (*)(FText* self, const TemporaryFString* str);
+ftext_as_culture_invariant_func ftext_as_culture_invariant_ptr;
+
+const constinit Pattern<50> FTEXT_AS_CULTURE_INVARIANT_PATTERN{
+    "56"           // push rsi
+    "57"           // push rdi
+    "48 83 EC 28"  // sub rsp, 28
+    "48 89 CE"     // mov rsi, rcx
+    "83 7A 08 01"  // cmp dword ptr [rdx+08], 01
+    "7E ??"        // jle Borderlands4.exe+14553C701
+    "48 89 F1"     // mov rcx, rsi
+    "E8 ????????"  // call Borderlands4.exe+14000A394
+    "48 8D 7E 08"  // lea rdi, [rsi+08]
+    "8B 07"        // mov eax, [rdi]
+    "83 C8 02"     // or eax, 02
+    "89 46 08"     // mov [rsi+08], eax
+    "48 89 F0"     // mov rax, rsi
+    "48 83 C4 28"  // add rsp, 28
+    "5F"           // pop rdi
+    "5E"           // pop rsi
+    "C3"           // ret
+    "E8 ????????"  // call Borderlands4.exe+14554C72A
+};
+
+}  // namespace
+
+void BL4Hook::find_ftext_as_culture_invariant(void) {
+    ftext_as_culture_invariant_ptr =
+        FTEXT_AS_CULTURE_INVARIANT_PATTERN.sigscan_nullable<ftext_as_culture_invariant_func>();
+    LOG(MISC, "FText::AsCultureInvariant: {:p}",
+        reinterpret_cast<void*>(ftext_as_culture_invariant_ptr));
+}
+
+// This is fine, since we consume it when calling the native function
+// The rvalue will live for the lifetime of this function call
+// NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved)
+void BL4Hook::ftext_as_culture_invariant(FText* text, TemporaryFString&& str) const {
+    ftext_as_culture_invariant_ptr(text, &str);
 }
 
 #pragma endregion

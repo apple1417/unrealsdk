@@ -37,7 +37,13 @@ FText::operator std::wstring() const {
     return std::wstring{this->operator std::wstring_view()};
 }
 FText::operator std::wstring_view() const {
-    static auto idx = config::get_int("unrealsdk.ftext_get_display_string_vf_index").value_or(2);
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
+    int value = 4;
+#else
+    int value = 2;
+#endif
+    static auto idx =
+        config::get_int("unrealsdk.ftext_get_display_string_vf_index").value_or(value);
 
     auto text_data = this->data.obj;
     if (text_data == nullptr) {
@@ -48,9 +54,11 @@ FText::operator std::wstring_view() const {
 }
 
 FText::~FText() {
+#if UNREALSDK_FLAVOUR != UNREALSDK_FLAVOUR_OAK2
     if (this->data.controller != nullptr) {
         this->data.controller->remove_strong_ref();
     }
+#endif
 }
 
 #else
