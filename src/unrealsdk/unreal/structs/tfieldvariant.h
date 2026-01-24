@@ -137,23 +137,23 @@ struct TFieldVariant {
 template <typename UObjectType>
 struct TFieldVariantStub {
    private:
-    UObjectType* ptr = nullptr;
+    uintptr_t ptr = 0;
 
    public:
     TFieldVariantStub(void) = default;
     TFieldVariantStub(std::nullptr_t) {};
     // Cannot define a sane TFieldVariantStub(const FFieldType* field);
-    TFieldVariantStub(UObjectType* obj) { *this = obj; };
+    TFieldVariantStub(const UObjectType* obj) { *this = obj; };
     TFieldVariantStub(const TFieldVariantStub& other) { *this = other; };
     TFieldVariantStub(TFieldVariantStub&& other) noexcept { *this = other; };
 
     TFieldVariantStub& operator=(std::nullptr_t) {
-        this->ptr = nullptr;
+        this->ptr = 0;
         return *this;
     }
     // Cannot define a sane TFieldVariantStub& operator=(const FFieldType* field);
-    TFieldVariantStub& operator=(UObjectType* obj) {
-        this->ptr = obj;
+    TFieldVariantStub& operator=(const UObjectType* obj) {
+        this->ptr = reinterpret_cast<uintptr_t>(obj);
         return *this;
     }
     TFieldVariantStub& operator=(const TFieldVariantStub& other) = default;
@@ -161,25 +161,29 @@ struct TFieldVariantStub {
 
     ~TFieldVariantStub(void) = default;
 
-    [[nodiscard]] bool operator==(std::nullptr_t) const { return this->ptr == nullptr; }
+    [[nodiscard]] bool operator==(std::nullptr_t) const { return this->ptr == 0; }
     [[nodiscard]] bool operator==(const FField* /*field*/) const { return false; }
-    [[nodiscard]] bool operator==(const UObjectType* obj) const { return this->ptr == obj; }
+    [[nodiscard]] bool operator==(const UObjectType* obj) const {
+        return this->ptr == reinterpret_cast<uintptr_t>(obj);
+    }
     [[nodiscard]] bool operator==(const TFieldVariantStub& other) const {
         return this->ptr == other.ptr;
     }
 
     [[nodiscard]] bool is_field(void) const { return false; }
-    [[nodiscard]] bool is_obj(void) const { return this->ptr != nullptr; }
+    [[nodiscard]] bool is_obj(void) const { return this->ptr != 0; }
 
     [[nodiscard]] FField* as_field(void) const { return nullptr; }
-    [[nodiscard]] UObjectType* as_obj(void) const { return this->ptr; }
+    [[nodiscard]] UObjectType* as_obj(void) const {
+        return reinterpret_cast<UObjectType*>(this->ptr);
+    }
 
     template <typename F>
     void cast(const F& func) const {
-        if (this->ptr == nullptr) {
+        if (this->ptr == 0) {
             func.template operator()<std::nullptr_t>(nullptr);
         } else {
-            func.template operator()<UObjectType>(this->ptr);
+            func.template operator()<UObjectType>(reinterpret_cast<UObjectType*>(this->ptr));
         }
     }
 };
