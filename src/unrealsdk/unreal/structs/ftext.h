@@ -10,6 +10,9 @@ UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 
 struct FTextData {
     uintptr_t* vftable;
+#if UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_RAW_PTR
+    std::atomic<uint32_t> ref_count;
+#endif
 };
 
 struct FText {
@@ -18,7 +21,16 @@ struct FText {
     static const constexpr auto FLAG_INVARIANT_CULTURE = 1 << 1;
     static const constexpr auto FLAG_FROM_NAME_OR_STRING = 1 << 4;
 
+#if UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_TSHAREDPTR
     TSharedPointer<FTextData> data;
+#elif UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_RAW_PTR
+    FTextData* data;
+#elif UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_NOT_IMPLEMENTED
+    // Doesn't really matter what we put here
+#else
+#error Unknown FText format
+#endif
+
     uint32_t flags;
 
    public:

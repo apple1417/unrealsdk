@@ -69,28 +69,18 @@ void BL4Hook::fframe_step(FFrame* frame, UObject* obj, void* param) const {
 
 namespace {
 
-using ftext_as_culture_invariant_func = void (*)(FText* self, const TemporaryFString* str);
+using ftext_as_culture_invariant_func = void (*)(FText* self, const wchar_t* str);
 ftext_as_culture_invariant_func ftext_as_culture_invariant_ptr;
 
-const constinit Pattern<50> FTEXT_AS_CULTURE_INVARIANT_PATTERN{
-    "56"           // push rsi
-    "57"           // push rdi
-    "48 83 EC 28"  // sub rsp, 28
-    "48 89 CE"     // mov rsi, rcx
-    "83 7A 08 01"  // cmp dword ptr [rdx+08], 01
-    "7E ??"        // jle Borderlands4.exe+14553C701
-    "48 89 F1"     // mov rcx, rsi
-    "E8 ????????"  // call Borderlands4.exe+14000A394
-    "48 8D 7E 08"  // lea rdi, [rsi+08]
-    "8B 07"        // mov eax, [rdi]
-    "83 C8 02"     // or eax, 02
-    "89 46 08"     // mov [rsi+08], eax
-    "48 89 F0"     // mov rax, rsi
-    "48 83 C4 28"  // add rsp, 28
-    "5F"           // pop rdi
-    "5E"           // pop rsi
-    "C3"           // ret
-    "E8 ????????"  // call Borderlands4.exe+14554C72A
+const constinit Pattern<30> FTEXT_AS_CULTURE_INVARIANT_PATTERN{
+    "56"                 // push rsi
+    "48 83 EC ??"        // sub rsp, 40
+    "48 89 CE"           // mov rsi, rcx
+    "48 8B 05 ????????"  // mov rax, [Borderlands4.exe+C372940]
+    "48 31 E0"           // xor rax, rsp
+    "48 89 44 24 ??"     // mov [rsp+38], rax
+    "48 89 54 24 ??"     // mov [rsp+28], rdx
+    "31 C0"              // xor eax, eax
 };
 
 }  // namespace
@@ -106,7 +96,7 @@ void BL4Hook::find_ftext_as_culture_invariant(void) {
 // The rvalue will live for the lifetime of this function call
 // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved)
 void BL4Hook::ftext_as_culture_invariant(FText* text, TemporaryFString&& str) const {
-    ftext_as_culture_invariant_ptr(text, &str);
+    ftext_as_culture_invariant_ptr(text, str.data);
 }
 
 #pragma endregion

@@ -76,7 +76,7 @@ class UClass : public UStruct {
     uint8_t UnknownData00[0x70];
 
    public:
-    UObject* ClassDefaultObject;
+    UObject* ClassDefaultObject;  // Validated
 
    private:
     uint8_t UnknownData01[0xA0];
@@ -90,6 +90,7 @@ using UScriptStruct = unreal::offsets::generic::UScriptStruct<UStruct>;
 class UFunction : public UStruct {
    private:
     char _0x00[0x10];
+
    public:
     uint32_t FunctionFlags;
     uint8_t NumParams;
