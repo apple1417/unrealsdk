@@ -119,7 +119,7 @@ class UEnum : public UField {
     int64_t CppForm;
 };
 
-class UProperty : public FField {
+class UProperty : public FField {  // Validated
    public:
     int32_t ArrayDim;
     int32_t ElementSize;
@@ -163,6 +163,7 @@ using UClassProperty = unreal::offsets::generic::UClassProperty<UObjectProperty>
 using UFloatAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<UFloatProperty>;
 using UIntAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<UIntProperty>;
 using USoftClassProperty = unreal::offsets::generic::USoftClassProperty<UObjectProperty>;
+using FGbxDefPtrProperty = unreal::offsets::generic::FGbxDefPtrProperty<UProperty>;  // Validated
 
 class UBoolProperty : public UProperty {
    private:
@@ -173,12 +174,6 @@ class UBoolProperty : public UProperty {
    public:
     uint8_t FieldMask;
 };
-
-class FGbxDefPtrProperty : public UProperty {
-   public:
-    UScriptStruct* Struct;
-};
-;
 
 struct FNameEntry {
     static const constexpr auto META_SIZE_BIT_OFFSET = 6;

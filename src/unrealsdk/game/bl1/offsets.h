@@ -150,6 +150,7 @@ using UClassProperty = unreal::offsets::generic::UClassProperty<UObjectProperty>
 using UFloatAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<UFloatProperty>;
 using UIntAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<UIntProperty>;
 using USoftClassProperty = unreal::offsets::generic::USoftClassProperty<UObjectProperty>;
+using FGbxDefPtrProperty = unreal::offsets::generic::FGbxDefPtrProperty<UProperty>;
 
 class FNameEntry : public bl2::FNameEntry {};
 class FFrame : public bl2::FFrame {};

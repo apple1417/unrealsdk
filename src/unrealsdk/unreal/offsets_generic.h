@@ -145,6 +145,13 @@ struct FFieldClass {
     FFieldClass* SuperField;
 };
 
+template <typename T>
+class FGbxDefPtrProperty : public T {
+   public:
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    unreal::UScriptStruct* Struct;
+};
+
 // NOLINTEND(cppcoreguidelines-pro-type-member-init,
 //           readability-identifier-naming,
 //           readability-magic-numbers)
