@@ -10,20 +10,6 @@
 
 namespace unrealsdk::game {
 
-namespace {
-
-[[noreturn]] inline void unreachable(void) {
-#ifdef __cpp_lib_unreachable
-    std::unreachable();
-#elif defined(_MSC_VER) && !defined(__clang__)
-    __assume(false);
-#else  // GCC, Clang
-    __builtin_unreachable();
-#endif
-}
-
-}  // namespace
-
 void ThrowingHook::hook(void) {
     throw_version_error("hook not implemented");
     unreachable();

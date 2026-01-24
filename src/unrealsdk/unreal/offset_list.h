@@ -6,6 +6,7 @@
 // Note: this header needs to pull in almost all unreal classes, and their offset definitions
 // Refrain from including it in other headers
 #include "unrealsdk/unreal/classes/properties/attribute_property.h"
+#include "unrealsdk/unreal/classes/properties/fgbxdefptrproperty.h"
 #include "unrealsdk/unreal/classes/properties/persistent_object_ptr_property.h"
 #include "unrealsdk/unreal/classes/properties/uarrayproperty.h"
 #include "unrealsdk/unreal/classes/properties/uboolproperty.h"
@@ -17,7 +18,6 @@
 #include "unrealsdk/unreal/classes/properties/umulticastdelegateproperty.h"
 #include "unrealsdk/unreal/classes/properties/uobjectproperty.h"
 #include "unrealsdk/unreal/classes/properties/ustructproperty.h"
-#include "unrealsdk/unreal/classes/properties/fgbxdefptrproperty.h"
 #include "unrealsdk/unreal/classes/uclass.h"
 #include "unrealsdk/unreal/classes/uconst.h"
 #include "unrealsdk/unreal/classes/uenum.h"

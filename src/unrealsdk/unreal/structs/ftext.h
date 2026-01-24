@@ -23,10 +23,10 @@ struct FText {
 
 #if UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_TSHAREDPTR
     TSharedPointer<FTextData> data;
-#elif UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_RAW_PTR
+#elif UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_RAW_PTR \
+    || UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_NOT_IMPLEMENTED
+    // Even if not implemented, we need to define something called data, might as well use this one
     FTextData* data;
-#elif UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_NOT_IMPLEMENTED
-    // Doesn't really matter what we put here
 #else
 #error Unknown FText format
 #endif

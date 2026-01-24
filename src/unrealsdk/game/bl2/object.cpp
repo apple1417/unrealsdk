@@ -10,6 +10,7 @@
 #include "unrealsdk/unreal/structs/fname.h"
 #include "unrealsdk/unreal/structs/fstring.h"
 #include "unrealsdk/unreal/wrappers/bound_function.h"
+#include "unrealsdk/version_error.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW && !defined(UNREALSDK_IMPORTING)
 
@@ -122,7 +123,7 @@ std::wstring BL2Hook::uobject_path_name(const UObject* obj) const {
 
 std::wstring BL2Hook::ffield_path_name(const unreal::FField* /*field*/) const {
     throw_version_error("FField:GetPathName not implemented");
-    std::unreachable();
+    unreachable();
 }
 
 #pragma endregion

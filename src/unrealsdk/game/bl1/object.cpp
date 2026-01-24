@@ -4,6 +4,7 @@
 #include "unrealsdk/logging.h"
 #include "unrealsdk/memory.h"
 #include "unrealsdk/unreal/structs/fstring.h"
+#include "unrealsdk/version_error.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW && !defined(UNREALSDK_IMPORTING)
 
@@ -108,7 +109,7 @@ std::wstring BL1Hook::uobject_path_name(const UObject* obj) const {
 
 std::wstring BL1Hook::ffield_path_name(const unreal::FField* /*field*/) const {
     throw_version_error("FField:GetPathName not implemented");
-    std::unreachable();
+    unreachable();
 }
 
 #pragma endregion
