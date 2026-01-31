@@ -155,7 +155,7 @@ using FGbxDefPtrProperty = unreal::offsets::generic::FGbxDefPtrProperty<UPropert
 class FNameEntry : public bl2::FNameEntry {};
 class FFrame : public bl2::FFrame {};
 
-using FFieldClass = unreal::offsets::generic::FFieldClass;
+struct FFieldClass : public unreal::offsets::generic::FFieldClass {};
 struct FField : public unreal::offsets::generic::FField<FFieldClass> {};
 
 // NOLINTEND(cppcoreguidelines-pro-type-member-init,

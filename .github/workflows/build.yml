@@ -20,6 +20,11 @@ jobs:
           "msvc-willow-release",
           "msvc-oak-release",
           "msvc-oak2-release",
+          # Sanity check nothing's broken in the debug builds.
+          # I think MSVC tends to be the quickest compiler, so we'll use it.
+          "msvc-willow-debug",
+          "msvc-oak-debug",
+          "msvc-oak2-debug",
         ]
 
     steps:
