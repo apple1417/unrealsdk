@@ -256,10 +256,10 @@ UProperty* UStruct::find_prop(const FName& name) const {
 
 UFunction* UStruct::find_func_and_validate(const FName& name) const {
     auto result = this->find(name);
-    if (!result.is_field()) {
+    if (result.is_ffield()) {
         throw std::invalid_argument("expected function but got property");
     }
-    return validate_type<UFunction>(result.as_field());
+    return validate_type<UFunction>(result.as_uobject());
 }
 
 bool UStruct::inherits(const UStruct* base_struct) const {

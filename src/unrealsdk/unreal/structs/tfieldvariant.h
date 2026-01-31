@@ -93,10 +93,10 @@ struct TFieldVariant {
      *
      * @return True if it holds an object of the relevant type.
      */
-    [[nodiscard]] bool is_field(void) const {
+    [[nodiscard]] bool is_ffield(void) const {
         return this->ptr != 0 && (this->ptr & IS_OBJ_FLAG) == 0;
     }
-    [[nodiscard]] bool is_obj(void) const {
+    [[nodiscard]] bool is_uobject(void) const {
         return this->ptr != 0 && (this->ptr & IS_OBJ_FLAG) != 0;
     }
 
@@ -105,11 +105,11 @@ struct TFieldVariant {
      *
      * @return The contained pointer, or nullptr if the wrong type.
      */
-    [[nodiscard]] FFieldType* as_field(void) const {
-        return is_field() ? reinterpret_cast<FFieldType*>(this->ptr) : nullptr;
+    [[nodiscard]] FFieldType* as_ffield(void) const {
+        return is_ffield() ? reinterpret_cast<FFieldType*>(this->ptr) : nullptr;
     }
-    [[nodiscard]] UObjectType* as_obj(void) const {
-        return is_obj() ? reinterpret_cast<UObjectType*>(this->ptr & ~IS_OBJ_FLAG) : nullptr;
+    [[nodiscard]] UObjectType* as_uobject(void) const {
+        return is_uobject() ? reinterpret_cast<UObjectType*>(this->ptr & ~IS_OBJ_FLAG) : nullptr;
     }
 
     /**
@@ -170,11 +170,11 @@ struct TFieldVariantStub {
         return this->ptr == other.ptr;
     }
 
-    [[nodiscard]] bool is_field(void) const { return false; }
-    [[nodiscard]] bool is_obj(void) const { return this->ptr != 0; }
+    [[nodiscard]] bool is_ffield(void) const { return false; }
+    [[nodiscard]] bool is_uobject(void) const { return this->ptr != 0; }
 
-    [[nodiscard]] FField* as_field(void) const { return nullptr; }
-    [[nodiscard]] UObjectType* as_obj(void) const {
+    [[nodiscard]] FField* as_ffield(void) const { return nullptr; }
+    [[nodiscard]] UObjectType* as_uobject(void) const {
         return reinterpret_cast<UObjectType*>(this->ptr);
     }
 
