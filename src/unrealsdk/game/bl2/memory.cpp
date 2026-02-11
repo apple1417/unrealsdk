@@ -49,12 +49,14 @@ void BL2Hook::find_gmalloc(void) {
     LOG(MISC, "GMalloc: {:p}", reinterpret_cast<void*>(gmalloc));
 }
 void* BL2Hook::u_malloc(size_t len) const {
-    auto ret = gmalloc->vftable->u_malloc(gmalloc, len, get_malloc_alignment(len));
+    auto ui32_len = static_cast<uint32_t>(len);
+    auto ret = gmalloc->vftable->u_malloc(gmalloc, ui32_len, get_malloc_alignment(ui32_len));
     memset(ret, 0, len);
     return ret;
 }
 void* BL2Hook::u_realloc(void* original, size_t len) const {
-    return gmalloc->vftable->u_realloc(gmalloc, original, len, get_malloc_alignment(len));
+    auto ui32_len = static_cast<uint32_t>(len);
+    return gmalloc->vftable->u_realloc(gmalloc, original, ui32_len, get_malloc_alignment(ui32_len));
 }
 void BL2Hook::u_free(void* data) const {
     gmalloc->vftable->u_free(gmalloc, data);

@@ -56,8 +56,8 @@ void* BL1Hook::u_malloc(size_t len) const {
         throw std::runtime_error("tried allocating memory while gmalloc was still null!");
     }
     auto gmalloc = *gmalloc_ptr;
-
-    auto ret = gmalloc->vftable->u_malloc(gmalloc, len, get_malloc_alignment(len));
+    auto ui32_len = static_cast<uint32_t>(len);
+    auto ret = gmalloc->vftable->u_malloc(gmalloc, ui32_len, get_malloc_alignment(ui32_len));
     memset(ret, 0, len);
     return ret;
 }
@@ -67,8 +67,8 @@ void* BL1Hook::u_realloc(void* original, size_t len) const {
         throw std::runtime_error("tried allocating memory while gmalloc was still null!");
     }
     auto gmalloc = *gmalloc_ptr;
-
-    return gmalloc->vftable->u_realloc(gmalloc, original, len, get_malloc_alignment(len));
+    auto ui32_len = static_cast<uint32_t>(len);
+    return gmalloc->vftable->u_realloc(gmalloc, original, ui32_len, get_malloc_alignment(ui32_len));
 }
 
 void BL1Hook::u_free(void* data) const {
