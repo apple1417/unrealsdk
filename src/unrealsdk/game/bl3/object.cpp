@@ -98,11 +98,6 @@ std::wstring BL3Hook::uobject_path_name(const UObject* obj) const {
     return str;
 }
 
-std::wstring BL3Hook::ffield_path_name(const unreal::FField* /*field*/) const {
-    throw_version_error("FField:GetPathName not implemented");
-    unreachable();
-}
-
 #pragma endregion
 
 #pragma region StaticFindObject

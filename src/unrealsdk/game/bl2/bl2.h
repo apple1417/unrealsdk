@@ -124,13 +124,6 @@ class BL2Hook : public AbstractHook {
                        void* params) const override;
     void uconsole_output_text(const std::wstring& str) const override;
     [[nodiscard]] std::wstring uobject_path_name(const unreal::UObject* obj) const override;
-    [[nodiscard]] std::wstring ffield_path_name(const unreal::FField* field) const override;
-    void ftext_as_culture_invariant(unreal::FText* text,
-                                    unreal::TemporaryFString&& str) const override;
-    void fsoftobjectptr_assign(unreal::FSoftObjectPtr* ptr,
-                               const unreal::UObject* obj) const override;
-    void flazyobjectptr_assign(unreal::FLazyObjectPtr* ptr,
-                               const unreal::UObject* obj) const override;
     [[nodiscard]] const unreal::offsets::OffsetList& get_offsets(void) const override;
 };
 

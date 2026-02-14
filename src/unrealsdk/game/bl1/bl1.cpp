@@ -134,15 +134,6 @@ void BL1Hook::fname_init(unreal::FName* name, const wchar_t* str, int32_t number
 
 #pragma endregion
 
-#pragma region FText::AsCultureInvariant
-
-void BL1Hook::ftext_as_culture_invariant(unreal::FText* /*text*/,
-                                         TemporaryFString&& /*str*/) const {
-    throw_version_error("FTexts are not implemented in UE3");
-}
-
-#pragma endregion
-
 }  // namespace unrealsdk::game
 
 #endif

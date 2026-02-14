@@ -5,12 +5,12 @@
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2 && !defined(UNREALSDK_IMPORTING)
 
+#include "unrealsdk/game/abstract_hook.h"
 #include "unrealsdk/game/selector.h"
-#include "unrealsdk/game/throwing_hook.h"
 
 namespace unrealsdk::game {
 
-class BL4Hook : public ThrowingHook {
+class BL4Hook : public AbstractHook {
    protected:
     static void hook_antidebug(void);
     static void hook_call_function(void);

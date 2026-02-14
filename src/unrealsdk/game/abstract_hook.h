@@ -57,41 +57,40 @@ struct AbstractHook {
     virtual void post_init(void) {};
 
     // Inner methods accessed by the global wrappers in `unrealsdk.h` - see there for documentation
-    [[nodiscard]] virtual bool is_console_ready(void) const = 0;
+    [[nodiscard]] virtual bool is_console_ready(void) const;
 
-    [[nodiscard]] virtual const unreal::GObjects& gobjects(void) const = 0;
-    [[nodiscard]] virtual void* u_malloc(size_t len) const = 0;
-    [[nodiscard]] virtual void* u_realloc(void* original, size_t len) const = 0;
-    virtual void u_free(void* data) const = 0;
-    [[nodiscard]] virtual unreal::UObject* construct_object(
-        unreal::UClass* cls,
-        unreal::UObject* outer,
-        const unreal::FName& name,
-        uint64_t flags,
-        unreal::UObject* template_obj) const = 0;
+    [[nodiscard]] virtual const unreal::GObjects& gobjects(void) const;
+    [[nodiscard]] virtual void* u_malloc(size_t len) const;
+    [[nodiscard]] virtual void* u_realloc(void* original, size_t len) const;
+    virtual void u_free(void* data) const;
+    [[nodiscard]] virtual unreal::UObject* construct_object(unreal::UClass* cls,
+                                                            unreal::UObject* outer,
+                                                            const unreal::FName& name,
+                                                            uint64_t flags,
+                                                            unreal::UObject* template_obj) const;
     [[nodiscard]] virtual unreal::UObject* find_object(unreal::UClass* cls,
-                                                       const std::wstring& name) const = 0;
+                                                       const std::wstring& name) const;
     [[nodiscard]] virtual unreal::UObject* load_package(const std::wstring& name,
-                                                        uint32_t flags) const = 0;
+                                                        uint32_t flags) const;
 
-    virtual void fname_init(unreal::FName* name, const wchar_t* str, int32_t number) const = 0;
+    virtual void fname_init(unreal::FName* name, const wchar_t* str, int32_t number) const;
     [[nodiscard]] virtual std::variant<const std::string_view, const std::wstring_view>
-    fname_get_str(const unreal::FName& name) const = 0;
+    fname_get_str(const unreal::FName& name) const;
 
-    virtual void fframe_step(unreal::FFrame* frame, unreal::UObject* obj, void* param) const = 0;
+    virtual void fframe_step(unreal::FFrame* frame, unreal::UObject* obj, void* param) const;
     virtual void process_event(unreal::UObject* object,
                                unreal::UFunction* func,
-                               void* params) const = 0;
-    virtual void uconsole_output_text(const std::wstring& str) const = 0;
-    [[nodiscard]] virtual std::wstring uobject_path_name(const unreal::UObject* obj) const = 0;
-    [[nodiscard]] virtual std::wstring ffield_path_name(const unreal::FField* field) const = 0;
+                               void* params) const;
+    virtual void uconsole_output_text(const std::wstring& str) const;
+    [[nodiscard]] virtual std::wstring uobject_path_name(const unreal::UObject* obj) const;
+    [[nodiscard]] virtual std::wstring ffield_path_name(const unreal::FField* field) const;
     virtual void ftext_as_culture_invariant(unreal::FText* text,
-                                            unreal::TemporaryFString&& str) const = 0;
+                                            unreal::TemporaryFString&& str) const;
     virtual void fsoftobjectptr_assign(unreal::FSoftObjectPtr* ptr,
-                                       const unreal::UObject* obj) const = 0;
+                                       const unreal::UObject* obj) const;
     virtual void flazyobjectptr_assign(unreal::FLazyObjectPtr* ptr,
-                                       const unreal::UObject* obj) const = 0;
-    [[nodiscard]] virtual const unreal::offsets::OffsetList& get_offsets(void) const = 0;
+                                       const unreal::UObject* obj) const;
+    [[nodiscard]] virtual const unreal::offsets::OffsetList& get_offsets(void) const;
 };
 
 #pragma endregion
