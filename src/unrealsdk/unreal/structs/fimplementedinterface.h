@@ -13,9 +13,11 @@ namespace unrealsdk::unreal {
 class UStructProperty;
 class UClass;
 
+// TODO: This one requires changing pyunrealsdk if we want to use TPointer. So will leave this one
+//  as is since it is currently naturally aligned.
 struct FImplementedInterface {
     // NOLINTBEGIN(readability-identifier-naming)
-    TPointer<UClass> Class;
+    UClass* Class;
 
    private:
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
@@ -23,7 +25,7 @@ struct FImplementedInterface {
     bool isNative;
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
     || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
-    TPointer<UStructProperty> VFTableProperty;  // May be null (if native?)
+    UStructProperty* VFTableProperty;  // May be null (if native?)
 #else
 #error Unknown SDK flavour
 #endif
