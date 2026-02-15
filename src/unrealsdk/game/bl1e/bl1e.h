@@ -10,6 +10,7 @@
 
 namespace unrealsdk::game {
 
+// TODO: This only inherits from this because I am 2lazy to copy the console.cpp file over
 class BL1EHook : public BL1Hook {
    protected:
     /**
