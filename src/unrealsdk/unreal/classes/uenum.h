@@ -29,7 +29,7 @@ class UEnum : public UField {
     UEnum& operator=(UEnum&&) = delete;
     ~UEnum() = delete;
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
     using names_type = TArray<FName>;
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
     using names_type = TArray<TPair<FName, uint64_t> >;

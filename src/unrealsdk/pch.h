@@ -9,8 +9,8 @@
 // `UNREALSDK_FLAVOUR` should be defined to be equal to one of them.
 // NOLINTBEGIN(cppcoreguidelines-macro-usage)
 #define UNREALSDK_FLAVOUR_WILLOW 1
-#define UNREALSDK_FLAVOUR_WILLOW64 1
-#define UNREALSDK_FLAVOUR_OAK 2
+#define UNREALSDK_FLAVOUR_WILLOW64 2
+#define UNREALSDK_FLAVOUR_OAK 3
 // NOLINTEND(cppcoreguidelines-macro-usage)
 
 #define WIN32_LEAN_AND_MEAN
@@ -92,18 +92,65 @@ static_assert(std::numeric_limits<double>::is_iec559 && std::numeric_limits<doub
 using float32_t = float;
 using float64_t = double;
 
-// 4 byte aligned pointer regardless of architecture
+namespace unrealsdk {
+
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+static constexpr auto EXPECTED_POINTER_ALIGNMENT = 4;
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+static constexpr auto EXPECTED_POINTER_ALIGNMENT = sizeof(void*);
+#endif
+
+// N Byte aligned pointer wrapper structure
 template <class T>
-struct alignas(4) TPointer {
-    static constexpr auto ptr_size = sizeof(void*);
-    uint8_t data[ptr_size];
+struct alignas(EXPECTED_POINTER_ALIGNMENT) TPointer {
+    static constexpr auto PTR_SIZE = sizeof(void*);
+    std::array<uint8_t, PTR_SIZE> block;
+
+    TPointer() noexcept { set<std::nullptr_t>(nullptr); }
+    TPointer(std::nullptr_t) noexcept { set<std::nullptr_t>(nullptr); }
 
     template <class R = T>
     R* get() const noexcept {
         void* ptr{};
-        std::memcpy(&ptr, &data, ptr_size);
+        std::memcpy(&ptr, block.data(), PTR_SIZE);
         return static_cast<R*>(ptr);
     }
+
+    template <class U>
+    void set(const U* ptr) noexcept {
+        std::memcpy(block.data(), &ptr, PTR_SIZE);
+    }
+
+    TPointer& operator=(const T* ptr) noexcept {
+        set(ptr);
+        return *this;
+    }
+
+    template <class U = T>
+        requires(!std::is_void_v<U>)
+    const U& operator*(int /*tag*/) const noexcept {
+        return *get();
+    }
+
+    template <class U = T>
+        requires(!std::is_void_v<U>)
+    U& operator*(int /*tag*/) noexcept {
+        return *get();
+    };
+
+    TPointer operator++() noexcept {
+        TPointer self = *this;
+        set(get() + 1);
+        return self;
+    }
+
+    TPointer operator++(int) noexcept {
+        set(get() + 1);
+        return *this;
+    }
+
+    operator const T*() const noexcept { return get(); }
+    operator T*() noexcept { return get(); }
 
     bool operator==(std::nullptr_t) const noexcept { return get() == nullptr; }
     bool operator!=(std::nullptr_t) const noexcept { return get() != nullptr; }
@@ -111,23 +158,29 @@ struct alignas(4) TPointer {
     bool operator!=(auto ptr) const noexcept { return get() != ptr; }
 
     template <class R = T>
-    R* operator->() const noexcept {
-        return get();
+    const R* operator->() const noexcept {
+        return get<R>();
+    }
+
+    template <class R = T>
+    R* operator->() noexcept {
+        return get<R>();
     }
 };
 
-// any pointer
+// generic any pointer
 using Pointer = TPointer<void>;
+
+}  // namespace unrealsdk
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
 
-// todo: re-enable this check
-// static_assert(sizeof(uintptr_t) == sizeof(uint32_t),
-//               "Expected 32 bit pointers for Willow SDK flavour");
+static_assert(sizeof(uintptr_t) == sizeof(uint32_t),
+              "Expected 32 bit pointers for Willow SDK flavour");
 
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
 static_assert(sizeof(uintptr_t) == sizeof(uint64_t),
-              "Expected 64 bit pointers for Oak SDK flavour");
+              "Expected 64 bit pointers for current flavour");
 #else
 #error Unknown sdk flavour
 #endif

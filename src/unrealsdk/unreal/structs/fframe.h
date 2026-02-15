@@ -21,15 +21,15 @@ class WrappedStruct;
 // NOLINTBEGIN(readability-identifier-naming)
 
 struct FOutParamRec {
-    UProperty* Property;
-    void* PropAddr;
-    FOutParamRec* NextOutParam;
+    TPointer<UProperty> Property;
+    Pointer PropAddr;
+    TPointer<FOutParamRec> NextOutParam;
 };
 
 struct FOutputDevice {
-    void* VfTable;
+    Pointer VfTable;
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
    private:
     uint32_t bAllowSuppression;
 
@@ -47,10 +47,10 @@ struct FOutputDevice {
 struct FFrame : public FOutputDevice {
     static constexpr const auto EXPR_TOKEN_END_FUNCTION_PARAMS = 0x16;
 
-    UFunction* Node;
-    UObject* Object;
-    uint8_t* Code;
-    void* Locals;
+    TPointer<UFunction> Node;
+    TPointer<UObject> Object;
+    TPointer<uint8_t> Code;
+    Pointer Locals;
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
    private:
@@ -58,14 +58,15 @@ struct FFrame : public FOutputDevice {
     void* LastPropertyAddress;
 
    public:
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
+    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
     // Intentionally empty
 #else
 #error Unknown SDK flavour
 #endif
 
-    FFrame* PreviousFrame;
-    FOutParamRec* OutParams;
+    TPointer<FFrame> PreviousFrame;
+    TPointer<FOutParamRec> OutParams;
 
     /**
      * @brief Extracts the current function args, assuming stopped during the `CallFunction` hook.

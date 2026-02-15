@@ -23,9 +23,12 @@ generic or concrete type.
 
 #define DEBUG_CASTER_GAMES(X, ...) \
     X(bl1, __VA_ARGS__)            \
-    X(bl1e, __VA_ARGS__)           \
     X(bl2, __VA_ARGS__)            \
     X(tps, __VA_ARGS__)
+
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+
+#define DEBUG_CASTER_GAMES(X, ...) X(bl1e, __VA_ARGS__)
 
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
 

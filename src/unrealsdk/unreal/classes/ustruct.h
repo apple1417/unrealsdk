@@ -32,7 +32,8 @@ class UStruct : public UField {
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
     using property_size_type = int32_t;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
+    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
     using property_size_type = uint16_t;
 #else
 #error Unknown SDK flavour

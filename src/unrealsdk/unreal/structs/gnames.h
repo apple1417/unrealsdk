@@ -27,7 +27,8 @@ struct FNameEntry {
 
    public:
     FNameEntry* HashNext;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
+    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
    private:
     uint8_t UnknownData00[0x08];
 
@@ -35,7 +36,7 @@ struct FNameEntry {
     int32_t Index;
 
    private:
-    void* UnknownData01;  // need 4 bytes in x86 and 8 in x64
+    Pointer UnknownData01;
 
    public:
 #else

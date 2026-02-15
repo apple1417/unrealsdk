@@ -138,7 +138,8 @@ size_t UStruct::get_struct_size(void) const {
     auto bl3_struct = reinterpret_cast<const unrealsdk::game::bl3::UStruct*>(this);
     return (bl3_struct->PropertySize + bl3_struct->MinAlignment - 1)
            & ~(bl3_struct->MinAlignment - 1);
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
+    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
     return this->PropertySize();
 #else
 #error Unknown SDK flavour

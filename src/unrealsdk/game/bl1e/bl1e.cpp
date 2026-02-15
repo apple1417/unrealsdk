@@ -79,9 +79,7 @@ void BL1EHook::find_fframe_step(void) {
 }
 
 void BL1EHook::fframe_step(FFrame* frame, UObject* obj, void* param) const {
-    // should update the original to be this as well
-    const int32_t code = *frame->Code++;
-    (obj->*fframe_step_gnatives[code])(frame, param);
+    (obj->*fframe_step_gnatives[*frame->Code++])(frame, param);
 }
 
 namespace {

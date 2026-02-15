@@ -17,8 +17,8 @@ class UFunction;
 
 struct FScriptDelegate {
    private:
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-    UObject* object = nullptr;
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+    TPointer<UObject> object{nullptr};
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
     FWeakObjectPtr object;
 #else

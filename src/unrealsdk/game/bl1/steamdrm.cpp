@@ -3,7 +3,8 @@
 #include "unrealsdk/memory.h"
 #include "unrealsdk/utils.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW && !defined(UNREALSDK_IMPORTING)
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
+    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64 && !defined(UNREALSDK_IMPORTING)
 
 using namespace unrealsdk::utils;
 using namespace unrealsdk::memory;

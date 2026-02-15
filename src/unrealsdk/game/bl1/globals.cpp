@@ -6,7 +6,8 @@
 #include "unrealsdk/unreal/wrappers/gnames.h"
 #include "unrealsdk/unreal/wrappers/gobjects.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW && !defined(UNREALSDK_IMPORTING)
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
+    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64 && !defined(UNREALSDK_IMPORTING)
 
 using namespace unrealsdk::memory;
 using namespace unrealsdk::unreal;

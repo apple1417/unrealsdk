@@ -53,7 +53,8 @@ FText::~FText() {
     }
 }
 
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
+    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
 
 FText::FText(std::string_view /* str */) : data(), flags() {
     (void)this;

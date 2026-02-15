@@ -93,7 +93,7 @@ void UObject::post_edit_change_property(const FName& name) const {
 void UObject::post_edit_change_property(UProperty* prop) const {
     FPropertyChangedEvent event{prop};
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
     constexpr auto default_idx = 19;
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
     constexpr auto default_idx = 78;
@@ -113,7 +113,7 @@ void UObject::post_edit_change_chain_property(UProperty* prop,
     FEditPropertyChain edit_chain{chain};
     FPropertyChangedChainEvent event{prop, &edit_chain};
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
     constexpr auto default_idx = 18;
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
     constexpr auto default_idx = 77;

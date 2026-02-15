@@ -21,7 +21,8 @@ struct FImplementedInterface {
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
     int32_t PointerOffset;
     bool isNative;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
+    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
     TPointer<UStructProperty> VFTableProperty;  // May be null (if native?)
 #else
 #error Unknown SDK flavour

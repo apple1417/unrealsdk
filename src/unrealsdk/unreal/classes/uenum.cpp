@@ -30,7 +30,8 @@ std::unordered_map<FName, uint64_t> UEnum::get_names(void) const {
     return output;
 }
 
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
+    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
 
 std::unordered_map<FName, uint64_t> UEnum::get_names(void) const {
     std::unordered_map<FName, uint64_t> output;

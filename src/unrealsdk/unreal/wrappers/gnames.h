@@ -5,7 +5,7 @@
 
 #include "unrealsdk/unreal/structs/gnames.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
 #include "unrealsdk/unreal/structs/tarray.h"
 #endif
 
@@ -15,7 +15,8 @@ class GNames {
    public:
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
     using internal_type = TStaticIndirectArrayThreadSafeRead_FNameEntry*;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
+    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
     using internal_type = TArray<FNameEntry*>*;
 #else
 #error Unknown SDK flavour

@@ -9,14 +9,14 @@
 
 namespace unrealsdk::unreal {
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
 
 UObject* FScriptDelegate::get_object(void) const {
-    return this->object;
+    return this->object.get();
 }
 
 void FScriptDelegate::set_object(UObject* obj) {
-    this->object = obj;
+    this->object.set(obj);
 }
 
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK

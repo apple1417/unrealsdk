@@ -6,7 +6,8 @@
 #include "unrealsdk/unreal/structs/fframe.h"
 #include "unrealsdk/version_error.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW && !defined(UNREALSDK_IMPORTING)
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
+    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64 && !defined(UNREALSDK_IMPORTING)
 
 using namespace unrealsdk::memory;
 using namespace unrealsdk::unreal;
@@ -71,7 +72,7 @@ void BL1Hook::find_fframe_step(void) {
 }
 
 void BL1Hook::fframe_step(FFrame* frame, UObject* obj, void* param) const {
-    ((*fframe_step_gnatives)[*frame->Code++])(obj, frame, param);
+    (*fframe_step_gnatives)[*frame->Code++](obj, frame, param);
 }
 
 #pragma region FName::Init
