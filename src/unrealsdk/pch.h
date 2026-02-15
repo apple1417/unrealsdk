@@ -92,6 +92,22 @@ static_assert(std::numeric_limits<double>::is_iec559 && std::numeric_limits<doub
 using float32_t = float;
 using float64_t = double;
 
+// 4 byte aligned pointer regardless of architecture
+struct alignas(4) Pointer {
+    static constexpr auto ptr_size = sizeof(void*);
+    uint8_t data[ptr_size];
+
+    template <class T = void>
+    T* get() const noexcept {
+        void* ptr{};
+        std::memcpy(&ptr, &data, ptr_size);
+        return static_cast<T*>(ptr);
+    }
+
+    bool operator==(std::nullptr_t) const noexcept { return get() == nullptr; }
+    bool operator!=(std::nullptr_t) const noexcept { return get() != nullptr; }
+};
+
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
 
 // todo: re-enable this check

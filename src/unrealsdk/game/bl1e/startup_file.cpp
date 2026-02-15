@@ -81,10 +81,6 @@ namespace {
 // | CLASS / STRUCTURES |
 ////////////////////////////////////////////////////////////////////////////////
 
-#if defined(_MSC_VER)
-#pragma pack(push, 4)
-#endif
-
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-private-field"
@@ -100,61 +96,30 @@ struct FObjectResource {
 };
 
 struct FObjectExport : FObjectResource {
-    int32_t ClassIndex;
-    int32_t SuperIndex;
-    int32_t ArchetypeIndex;
-    int64_t ObjectFlags;
-    int32_t SerialSize;
-    int32_t SerialOffset;
-    int32_t ScriptSerializationStartOffset;
-    int32_t ScriptSerializationEndOffset;
-    UObject* _Object;
-    int32_t _iHashNext;
-    int32_t ExportFlags;
-    TArray<int32_t> GenerationNetObjectCount;
-    int32_t PackageGuid[4];
-    int32_t PackageFlags;
+    int32_t ClassIndex;  // 12b
+    uint8_t UnknownData00[0x20];
+    Pointer _Object;  // 48b
+    uint8_t UnknownData01[0x2C];
 };
 
 struct ULinkerLoad;
 struct FObjectImport : FObjectResource {
-    FName ClassPackage;
-    FName ClassName;
-    UObject* XObject;
-    ULinkerLoad* SourceLinker;
-    int32_t SourceIndex;
+    uint8_t UnknownData00[0x24];
 };
 
 struct ExportTable {
-    // I believe this is: (256 * 256) / sizeof(FObjectImport)
     static constexpr int32_t MAX_ITEMS_PER_CHUNK = 655;
-    // guessing this is the limit, didn't actually check; Startup file has 34528 exports
-    static constexpr int32_t MAX_CHUNKS = 64;
-
+    static constexpr int32_t MAX_CHUNKS = 64;  // idk what the actual limit is
     struct Chunk {
-        FObjectExport* Data;
+        Pointer Data;
         int32_t Count;
     };
-
     // Not all chunks are allocated Chunk{nullptr, 0} is a common value
     Chunk Chunks[MAX_CHUNKS];
 
-    int32_t total_exports() const noexcept {
-        int32_t count = 0;
-        for (int i = 0; i < MAX_CHUNKS && Chunks[i].Count > 0; i++) {
-            count += Chunks[i].Count;
-        }
-        return count;
-    }
-
-    static std::pair<int32_t, int32_t> translate_flat_index(int32_t index) noexcept {
-        return std::make_pair(index / MAX_ITEMS_PER_CHUNK,  // What chunk to look in
-                              index % MAX_ITEMS_PER_CHUNK   // Index in the chunk
-        );
-    }
-
     FObjectExport* at(int32_t flat_index) const {
-        const auto& [chunk, index] = translate_flat_index(flat_index);
+        const int32_t chunk = flat_index / MAX_ITEMS_PER_CHUNK;
+        const int32_t index = flat_index % MAX_ITEMS_PER_CHUNK;
 
         if (chunk >= MAX_CHUNKS) {
             throw std::runtime_error(std::format("invalid chunk {} >= {}", chunk, MAX_CHUNKS));
@@ -165,23 +130,22 @@ struct ExportTable {
                 std::format("invalid index {} >= {}", index, MAX_ITEMS_PER_CHUNK));
         }
 
-        return &Chunks[chunk].Data[index];
+        return &Chunks[chunk].Data.get<FObjectExport>()[index];
     }
 };
 
-struct ULinkerLoad : bl1e::UObject {
-    UObject* LinkerRoot;
-    uint8_t UnknownData00[144];
+struct ULinkerLoad {
+    uint8_t UnknownData00[0xF8];
     TArray<FName> NameMap;            // 248
     TArray<FObjectImport> ImportMap;  // 264
     ExportTable ExportTable;          // 280
 
     ULinkerLoad() = delete;
+    ~ULinkerLoad() = delete;
     ULinkerLoad(const ULinkerLoad&) = delete;
     ULinkerLoad(ULinkerLoad&&) = delete;
     ULinkerLoad& operator=(const ULinkerLoad&) = delete;
     ULinkerLoad& operator=(ULinkerLoad&&) = delete;
-    ~ULinkerLoad() = delete;
 };
 
 // NOLINTEND(cppcoreguidelines-pro-type-member-init,
@@ -190,10 +154,6 @@ struct ULinkerLoad : bl1e::UObject {
 
 #if defined(__clang__)
 #pragma clang diagnostic pop
-#endif
-
-#if defined(_MSC_VER)
-#pragma pack(pop)
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
