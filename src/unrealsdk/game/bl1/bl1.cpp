@@ -6,8 +6,9 @@
 #include "unrealsdk/unreal/structs/fframe.h"
 #include "unrealsdk/version_error.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
-    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64 && !defined(UNREALSDK_IMPORTING)
+#if (UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW       \
+     || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64) \
+    && !defined(UNREALSDK_IMPORTING)
 
 using namespace unrealsdk::memory;
 using namespace unrealsdk::unreal;
