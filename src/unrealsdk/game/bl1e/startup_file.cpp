@@ -1,5 +1,6 @@
 #include "unrealsdk/pch.h"
 
+#include "unrealsdk/config.h"
 #include "unrealsdk/game/bl1e/bl1e.h"
 #include "unrealsdk/game/bl1e/offsets.h"
 #include "unrealsdk/logging.h"
@@ -24,9 +25,6 @@ namespace {
 bool should_set_startup_linker{false};
 bool startup_file_loaded{false};
 
-std::unordered_set<UObject*> manually_loaded_startup_objects{};
-int32_t startup_export_count{0};
-
 void hook_for_startup_bypass(void);
 
 using load_package_func = UObject* (*)(const UObject* outer, const wchar_t* name, uint32_t flags);
@@ -45,17 +43,20 @@ constexpr Pattern<22> SIG_LOAD_PACKAGE{
 };
 
 UObject* load_package_hook(const UObject* outer, const wchar_t* name, uint32_t flags) {
+    static auto bypass_startup_file =
+        config::get_bool("unrealsdk.bypass_startup_file").value_or(false);
+
+    if (!bypass_startup_file) {
+        return load_package_ptr(outer, name, flags);
+    }
+
     constexpr std::wstring_view startup_name{L"Startup"};
-    bool is_startup = !startup_file_loaded && startup_name == name;
+    const bool is_startup = !startup_file_loaded && startup_name == name;
     should_set_startup_linker = is_startup;
     UObject* ptr = load_package_ptr(outer, name, flags);
 
     if (is_startup) {
         startup_file_loaded = true;
-        // can remove this, its meaningless logging
-        LOG(INFO, "Startup package loading completed {}/{} objects were loaded manually",
-            manually_loaded_startup_objects.size(), startup_export_count);
-        manually_loaded_startup_objects = {};
     }
 
     should_set_startup_linker = false;
@@ -246,6 +247,7 @@ constexpr Pattern<46> SIG_GET_EXPORT_PATH_NAME{
     "48 C7 45 30 FE FF FF FF"  // MOV   qword ptr [RBP + local_58],-0x2
 };
 
+// NOLINTBEGIN(readability-identifier-naming)
 using create_export_func = UObject* (*)(ULinkerLoad* self, int32_t index);
 create_export_func create_export_ptr{nullptr};
 
@@ -264,6 +266,7 @@ using static_load_object_func = UObject* (*)(UClass* ObjectClass,
                                              void* Sandbox,
                                              bool bAllowObjectReconciliation);
 static_load_object_func static_load_object_ptr{nullptr};
+// NOLINTEND(readability-identifier-naming)
 
 UObject* create_export_hook(ULinkerLoad* self, int32_t index) {
     static uintptr_t startup_linker{0};
@@ -272,11 +275,10 @@ UObject* create_export_hook(ULinkerLoad* self, int32_t index) {
     // so that we can forward it to load the object from its actual package. But since this function
     // gets called with different linkers ( even when loading the startup file ) we only want to
     // effect the startup linker everything else should fallthrough normally.
-    const uintptr_t self_intptr = reinterpret_cast<uintptr_t>(self);
+    auto self_intptr = reinterpret_cast<uintptr_t>(self);
     if (should_set_startup_linker && startup_linker == 0) {
         startup_linker = self_intptr;
         should_set_startup_linker = false;
-        startup_export_count = self->ExportTable.total_exports();
     }
 
     if (startup_file_loaded || self_intptr != startup_linker) {
@@ -315,7 +317,7 @@ UObject* create_export_hook(ULinkerLoad* self, int32_t index) {
 
     // If prefixed with "Startup." remove it
     constexpr std::wstring_view startup_name = L"Startup.";
-    std::wstring_view obj_path{storage.data, storage.data + storage.count};
+    const std::wstring_view obj_path{storage.data, storage.data + storage.count};
     size_t offset{0};
     if (obj_path.starts_with(startup_name)) {
         offset = startup_name.size();
@@ -326,9 +328,9 @@ UObject* create_export_hook(ULinkerLoad* self, int32_t index) {
 
     // Not sure if these need to be kept alive or not, think normally the startup objects are never
     // unloaded.
-    if (loaded_obj) {
-        loaded_obj->ObjectFlags() |= 0x4000;
-        manually_loaded_startup_objects.insert(loaded_obj);
+    if (loaded_obj != nullptr) {
+        constexpr auto keep_alive_willow = 0x4000;
+        loaded_obj->ObjectFlags() |= keep_alive_willow;
         return loaded_obj;
     }
 
