@@ -71,6 +71,7 @@
 // This file is mostly just here so that the `LOG` macro is automatically available everywhere
 // It only includes library headers, so is also ok to include
 #include "unrealsdk/logging.h"
+#include "unrealsdk/tpointer.h"
 
 using std::int16_t;
 using std::int32_t;
@@ -91,87 +92,6 @@ static_assert(std::numeric_limits<double>::is_iec559 && std::numeric_limits<doub
 
 using float32_t = float;
 using float64_t = double;
-
-namespace unrealsdk {
-
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
-static constexpr auto EXPECTED_POINTER_ALIGNMENT = 4;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
-static constexpr auto EXPECTED_POINTER_ALIGNMENT = sizeof(void*);
-#endif
-
-// N Byte aligned pointer wrapper structure
-template <class T>
-struct alignas(EXPECTED_POINTER_ALIGNMENT) TPointer {
-    static constexpr auto PTR_SIZE = sizeof(void*);
-    std::array<uint8_t, PTR_SIZE> block;
-
-    TPointer() noexcept { set<std::nullptr_t>(nullptr); }
-    TPointer(std::nullptr_t) noexcept { set<std::nullptr_t>(nullptr); }
-
-    template <class R = T>
-    R* get() const noexcept {
-        void* ptr{};
-        std::memcpy(&ptr, block.data(), PTR_SIZE);
-        return static_cast<R*>(ptr);
-    }
-
-    template <class U>
-    void set(const U* ptr) noexcept {
-        std::memcpy(block.data(), &ptr, PTR_SIZE);
-    }
-
-    TPointer& operator=(const T* ptr) noexcept {
-        set(ptr);
-        return *this;
-    }
-
-    template <class U = T>
-        requires(!std::is_void_v<U>)
-    const U& operator*(int /*tag*/) const noexcept {
-        return *get();
-    }
-
-    template <class U = T>
-        requires(!std::is_void_v<U>)
-    U& operator*(int /*tag*/) noexcept {
-        return *get();
-    };
-
-    TPointer operator++() noexcept {
-        TPointer self = *this;
-        set(get() + 1);
-        return self;
-    }
-
-    TPointer operator++(int) noexcept {
-        set(get() + 1);
-        return *this;
-    }
-
-    operator const T*() const noexcept { return get(); }
-    operator T*() noexcept { return get(); }
-
-    bool operator==(std::nullptr_t) const noexcept { return get() == nullptr; }
-    bool operator!=(std::nullptr_t) const noexcept { return get() != nullptr; }
-    bool operator==(auto ptr) const noexcept { return get() == ptr; }
-    bool operator!=(auto ptr) const noexcept { return get() != ptr; }
-
-    template <class R = T>
-    const R* operator->() const noexcept {
-        return get<R>();
-    }
-
-    template <class R = T>
-    R* operator->() noexcept {
-        return get<R>();
-    }
-};
-
-// generic any pointer
-using Pointer = TPointer<void>;
-
-}  // namespace unrealsdk
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
 

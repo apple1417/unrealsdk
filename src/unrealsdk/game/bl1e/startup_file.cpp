@@ -117,7 +117,7 @@ struct ExportTable {
     // Not all chunks are allocated Chunk{nullptr, 0} is a common value
     Chunk Chunks[MAX_CHUNKS];
 
-    FObjectExport* at(int32_t flat_index) const {
+    FObjectExport* at(int32_t flat_index) {
         const int32_t chunk = flat_index / MAX_ITEMS_PER_CHUNK;
         const int32_t index = flat_index % MAX_ITEMS_PER_CHUNK;
 

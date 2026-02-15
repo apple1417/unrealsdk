@@ -1,6 +1,8 @@
 #ifndef UNREALSDK_UNREAL_STRUCTS_FFRAME_H
 #define UNREALSDK_UNREAL_STRUCTS_FFRAME_H
 
+#include "unrealsdk/pch.h"
+
 namespace unrealsdk::unreal {
 
 #if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
