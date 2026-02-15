@@ -109,6 +109,11 @@ void BL4Hook::hook_antidebug(void) {
     auto [base, size] = get_exe_range();
     remove_no_access_pages(base, size);
 
+    // Note that disabling symbiote is known to cause a crash on SQ - hence disabled by default
+    if (!unrealsdk::config::get_bool("unrealsdk.bl4_debug.enabled").value_or(false)) {
+        return;
+    }
+
     // The symbiote thread watches for us to revert their anti-debug changes.
     // Block it so that we can actually do so.
     const uintptr_t symbiote_entry_point =

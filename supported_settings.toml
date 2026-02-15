@@ -61,8 +61,13 @@ uobject_post_edit_change_property_vf_index = -1
 uobject_post_edit_change_chain_property_vf_index = -1
 
 [unrealsdk.bl4_debug]
-# BL4 has some annoying anti-debug features which these flags can help get around. They're only
-# really useful while developing the SDK itself.
+# These flags can be used to try disable some of the anti-debug features in BL4. These aren't really
+# complete, as of writing this we can attach a debugger, but are unable to breakpoint or use any
+# actual debugger features.
+# Yes, developing the BL4 support without having a debugger was incredibly annoying.
+
+# Enable anti-debug patches. Note this is known to cause a crash on SQ.
+enabled = false
 
 # After applying all anti-debug patches, wait for a debugger to attach before continuing SDK init.
 wait_for_debugger = false
