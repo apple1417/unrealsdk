@@ -93,20 +93,31 @@ using float32_t = float;
 using float64_t = double;
 
 // 4 byte aligned pointer regardless of architecture
-struct alignas(4) Pointer {
+template <class T>
+struct alignas(4) TPointer {
     static constexpr auto ptr_size = sizeof(void*);
     uint8_t data[ptr_size];
 
-    template <class T = void>
-    T* get() const noexcept {
+    template <class R = T>
+    R* get() const noexcept {
         void* ptr{};
         std::memcpy(&ptr, &data, ptr_size);
-        return static_cast<T*>(ptr);
+        return static_cast<R*>(ptr);
     }
 
     bool operator==(std::nullptr_t) const noexcept { return get() == nullptr; }
     bool operator!=(std::nullptr_t) const noexcept { return get() != nullptr; }
+    bool operator==(auto ptr) const noexcept { return get() == ptr; }
+    bool operator!=(auto ptr) const noexcept { return get() != ptr; }
+
+    template <class R = T>
+    R* operator->() const noexcept {
+        return get();
+    }
 };
+
+// any pointer
+using Pointer = TPointer<void>;
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
 

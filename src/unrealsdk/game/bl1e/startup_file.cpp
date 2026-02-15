@@ -98,7 +98,7 @@ struct FObjectResource {
 struct FObjectExport : FObjectResource {
     int32_t ClassIndex;  // 12b
     uint8_t UnknownData00[0x20];
-    Pointer _Object;  // 48b
+    TPointer<UObject> _Object;  // 48b
     uint8_t UnknownData01[0x2C];
 };
 
@@ -111,7 +111,7 @@ struct ExportTable {
     static constexpr int32_t MAX_ITEMS_PER_CHUNK = 655;
     static constexpr int32_t MAX_CHUNKS = 64;  // idk what the actual limit is
     struct Chunk {
-        Pointer Data;
+        TPointer<FObjectExport> Data;
         int32_t Count;
     };
     // Not all chunks are allocated Chunk{nullptr, 0} is a common value
@@ -130,7 +130,7 @@ struct ExportTable {
                 std::format("invalid index {} >= {}", index, MAX_ITEMS_PER_CHUNK));
         }
 
-        return &Chunks[chunk].Data.get<FObjectExport>()[index];
+        return &Chunks[chunk].Data.get()[index];
     }
 };
 

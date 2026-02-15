@@ -21,16 +21,10 @@
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
 
 namespace unrealsdk::unreal {
-
 struct FImplementedInterface;
-
 }
 
 namespace unrealsdk::game::bl1e {
-
-#if defined(_MSC_VER)
-#pragma pack(push, 4)
-#endif
 
 #if defined(__clang__)
 #pragma clang diagnostic push
@@ -49,7 +43,7 @@ using UObject = bl2::generic::UObject<UClass>;
 // Size=104
 class UField : public UObject {
    public:
-    UField* Next;
+    TPointer<UField> Next;
 };
 
 // Size=184b
@@ -59,8 +53,8 @@ class UProperty : public UField {
     int32_t ElementSize;     // 108b
     uint32_t PropertyFlags;  // 112b
     uint8_t UnknownData00[0x18];
-    int32_t Offset_Internal;      // 140b
-    UProperty* PropertyLinkNext;  // 144b
+    int32_t Offset_Internal;               // 140b
+    TPointer<UProperty> PropertyLinkNext;  // 144b
     uint8_t UnknownData01[0x20];
 };
 
@@ -68,20 +62,20 @@ class UProperty : public UField {
 class UStruct : public UField {
    public:
     uint8_t UnknownData00[0x10];
-    UStruct* SuperField;          // 120b
-    UField* Children;             // 128b
-    uint16_t PropertySize;        // 136b
-    uint8_t UnknownData01[0x26];  // explicit padding to avoid compiler warning
-    UProperty* PropertyLink;      // 176b
+    TPointer<UStruct> SuperField;      // 120b
+    TPointer<UField> Children;         // 128b
+    uint16_t PropertySize;             // 136b
+    uint8_t UnknownData01[0x26];       // explicit padding to avoid compiler warning
+    TPointer<UProperty> PropertyLink;  // 176b
     uint8_t UnknownData02[0x8];
-    unreal::TArray<UObject*> ScriptObjectReferences;  // 192b
+    unreal::TArray<TPointer<UObject>> ScriptObjectReferences;  // 192b
 };
 
 // Size=1000 ish ( atleast based on struct size for Core.Class )
 class UClass : public UStruct {
    public:
     uint8_t UnknownData00[0x104];
-    UObject* ClassDefaultObject;  // 468b
+    TPointer<UObject> ClassDefaultObject;  // 468b
     uint8_t UnknownData01[0x60];
     unreal::TArray<unreal::FImplementedInterface> Interfaces;  // 572b
 };
@@ -114,10 +108,6 @@ using USoftClassProperty = unreal::offsets::generic::USoftClassProperty<UObjectP
 //           readability-magic-numbers)
 #if defined(__clang__)
 #pragma clang diagnostic pop
-#endif
-
-#if defined(_MSC_VER)
-#pragma pack(pop)
 #endif
 
 }  // namespace unrealsdk::game::bl1e

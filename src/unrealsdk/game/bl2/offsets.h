@@ -31,7 +31,8 @@ struct FImplementedInterface;
 
 namespace unrealsdk::game::bl2 {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
+    && UNREALSDK_FLAVOUR != UNREALSDK_FLAVOUR_WILLOW64
 #pragma pack(push, 0x4)
 #endif
 #if defined(__clang__)
@@ -51,17 +52,18 @@ namespace generic {
 template <typename UClass>
 class UObject {
    private:
-    uintptr_t* vftable;
-    void* HashNext;
+    Pointer vftable;
+    Pointer HashNext;
 
    public:
-    uint64_t ObjectFlags;
+    uint32_t ObjectFlags;
+    uint32_t ObjectFlagsUpper;
 
    private:
-    void* HashOuterNext;
-    void* StateFrame;
-    UObject<UClass>* _Linker;
-    void* _LinkerIndex;
+    Pointer HashOuterNext;
+    Pointer StateFrame;
+    TPointer<UObject<UClass>> _Linker;
+    Pointer _LinkerIndex;
 
    public:
     int32_t InternalIndex;
@@ -70,12 +72,12 @@ class UObject {
     int32_t NetIndex;
 
    public:
-    UObject<UClass>* Outer;
+    TPointer<UObject<UClass>> Outer;
     unreal::FName Name;
-    UClass* Class;
+    TPointer<UClass> Class;
 
    private:
-    UObject<UClass>* ObjectArchetype;
+    TPointer<UObject<UClass>> ObjectArchetype;
 };
 
 template <typename T>
@@ -96,7 +98,7 @@ class UFunction : public T {
 
    private:
     uint8_t UnknownData00[0x6];
-    void* Func;
+    Pointer Func;
 };
 
 template <typename T>
@@ -127,7 +129,7 @@ class UProperty : public UField {
 
    public:
     int32_t Offset_Internal;
-    unreal::UProperty* PropertyLinkNext;
+    TPointer<unreal::UProperty> PropertyLinkNext;
 
    private:
     uint8_t UnknownData01[0x18];
@@ -138,20 +140,20 @@ class UStruct : public UField {
     uint8_t UnknownData00[0x8];
 
    public:
-    UStruct* SuperField;
-    UField* Children;
+    TPointer<UStruct> SuperField;
+    TPointer<UField> Children;
     uint16_t PropertySize;
 
    private:
     uint8_t UnknownData01[0x1A];
 
    public:
-    UProperty* PropertyLink;
+    TPointer<UProperty> PropertyLink;
 
    private:
     uint8_t UnknownData02[0x10];
 
-    unreal::TArray<UObject*> ScriptObjectReferences;
+    unreal::TArray<TPointer<UObject>> ScriptObjectReferences;
 };
 
 class UClass : public UStruct {
@@ -166,7 +168,7 @@ class UClass : public UStruct {
     uint8_t UnknownData00[0xCC];
 
    public:
-    UObject* ClassDefaultObject;
+    TPointer<UObject> ClassDefaultObject;
 
    private:
     uint8_t UnknownData01[0x48];
@@ -204,7 +206,8 @@ using USoftClassProperty = unreal::offsets::generic::USoftClassProperty<UObjectP
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
+    && UNREALSDK_FLAVOUR != UNREALSDK_FLAVOUR_WILLOW64
 #pragma pack(pop)
 #endif
 

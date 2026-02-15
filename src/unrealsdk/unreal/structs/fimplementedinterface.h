@@ -5,7 +5,8 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
+    && UNREALSDK_FLAVOUR != UNREALSDK_FLAVOUR_WILLOW64
 #pragma pack(push, 0x4)
 #endif
 
@@ -14,15 +15,14 @@ class UClass;
 
 struct FImplementedInterface {
     // NOLINTBEGIN(readability-identifier-naming)
-
-    UClass* Class;
+    TPointer<UClass> Class;
 
    private:
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
     int32_t PointerOffset;
     bool isNative;
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-    UStructProperty* VFTableProperty;  // May be null (if native?)
+    TPointer<UStructProperty> VFTableProperty;  // May be null (if native?)
 #else
 #error Unknown SDK flavour
 #endif
@@ -38,7 +38,8 @@ struct FImplementedInterface {
     [[nodiscard]] size_t get_pointer_offset(void) const;
 };
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
+    && UNREALSDK_FLAVOUR != UNREALSDK_FLAVOUR_WILLOW64
 #pragma pack(pop)
 #endif
 
