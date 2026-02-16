@@ -208,7 +208,7 @@ constexpr Pattern<46> SIG_GET_EXPORT_PATH_NAME{
 };
 
 // NOLINTBEGIN(readability-identifier-naming)
-using create_export_func = UObject* (*)(ULinkerLoad* self, int32_t index);
+using create_export_func = UObject* (*)(ULinkerLoad * self, int32_t index);
 create_export_func create_export_ptr{nullptr};
 
 using get_export_path_name_func = void (*)(ULinkerLoad* self,
@@ -218,7 +218,7 @@ using get_export_path_name_func = void (*)(ULinkerLoad* self,
                                            bool bResolveForcedExports);
 get_export_path_name_func get_export_path_name_ptr{nullptr};
 
-using static_load_object_func = UObject* (*)(UClass* ObjectClass,
+using static_load_object_func = UObject* (*)(UClass * ObjectClass,
                                              UObject* InOuter,
                                              wchar_t* InName,
                                              wchar_t* Filename,
