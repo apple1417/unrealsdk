@@ -6,8 +6,6 @@
 
 namespace unrealsdk {
 
-constexpr auto TPOINTER_SIZE = sizeof(void*);
-
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
 constexpr auto TPOINTER_ALIGNMENT = 4;
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
@@ -29,12 +27,11 @@ class alignas(Alignment) TPointer {
     // template shenanigans (because I am notoriously shit at writing templates)
     //
    private:
-    std::array<std::uint8_t, TPOINTER_SIZE> block{};
+    std::array<std::uint8_t, sizeof(void*)> storage{};
 
    public:
     TPointer() noexcept { set(nullptr); }
-    TPointer(std::nullptr_t) noexcept { set(nullptr); }
-    TPointer(const T* ptr) noexcept { set(ptr); }
+    explicit TPointer(T* ptr) noexcept { set(ptr); }
     ~TPointer() noexcept = default;
 
     /**
@@ -43,7 +40,7 @@ class alignas(Alignment) TPointer {
      */
     T* get() const noexcept {
         void* ptr{};
-        std::memcpy(&ptr, block.data(), block.size());
+        std::memcpy(&ptr, storage.data(), storage.size());
         return static_cast<T*>(ptr);
     }
 
@@ -51,44 +48,53 @@ class alignas(Alignment) TPointer {
      * @brief overwrites the stored pointer with the provided.
      * @param ptr the pointer to store
      */
-    void set(const T* ptr) noexcept { std::memcpy(block.data(), &ptr, block.size()); }
+    void set(T* ptr) noexcept { std::memcpy(storage.data(), &ptr, storage.size()); }
 
-    TPointer& operator=(const T* ptr) noexcept {
+    TPointer& operator=(T* ptr) noexcept {
         set(ptr);
         return *this;
     }
 
-    bool operator==(std::nullptr_t /*tag*/) const noexcept { return get() == nullptr; }
-    bool operator!=(std::nullptr_t /*tag*/) const noexcept { return get() != nullptr; }
     bool operator==(const void* rhs) const noexcept { return get() == rhs; }
     bool operator!=(const void* rhs) const noexcept { return get() != rhs; }
 
-    T* operator->() const noexcept { return get(); }
+    auto* operator->() const noexcept
+        requires(!std::is_void_v<T>)
+    {
+        return get();
+    }
 
-    template <class U = T>
-        requires(!std::is_void_v<U>)
-    const U& operator*() const noexcept {
+    const auto& operator*() const noexcept
+        requires(!std::is_void_v<T>)
+    {
         return *get();
     }
 
-    template <class U = T>
-        requires(!std::is_void_v<U>)
-    U& operator*() noexcept {
+    auto& operator*() noexcept
+        requires(!std::is_void_v<T>)
+    {
         return *get();
     }
 
-    TPointer operator++() noexcept {
+    TPointer& operator++() noexcept
+        requires(!std::is_void_v<T>)
+    {
         set(get() + 1);
         return *this;
     }
 
-    TPointer operator++(int /*tag*/) noexcept {
+    TPointer operator++(int) noexcept
+        requires(!std::is_void_v<T>)
+    {
         TPointer old_value = *this;
         set(get() + 1);
         return old_value;
     }
 };
 
+/**
+ * @brief generic alias for void pointers
+ */
 using Pointer = TPointer<void>;
 
 }  // namespace unrealsdk
