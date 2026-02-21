@@ -30,8 +30,7 @@ class UBoolProperty : public UProperty {
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
     using field_mask_type = uint8_t;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
-    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+#elif defined(UNREALSDK_FEAT_WILLOW_COMMON)
     using field_mask_type = uint32_t;
 #else
 #error Unknown SDK flavour

@@ -27,8 +27,7 @@ struct FNameEntry {
 
    public:
     FNameEntry* HashNext;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
-    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+#elif defined(UNREALSDK_FEAT_WILLOW_COMMON)
    private:
     uint8_t UnknownData00[0x08];
 

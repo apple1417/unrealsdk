@@ -36,8 +36,7 @@ class UProperty : public UField {
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
     using property_flags_type = uint64_t;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
-    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+#elif defined(UNREALSDK_FEAT_WILLOW_COMMON)
     using property_flags_type = uint32_t;
 #else
 #error Unknown SDK flavour
