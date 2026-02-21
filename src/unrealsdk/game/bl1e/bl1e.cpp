@@ -14,7 +14,9 @@ using namespace unrealsdk::unreal;
 namespace unrealsdk::game {
 
 void BL1EHook::hook(void) {
+    // i have not seen a need for this yet
     // hook_antidebug();
+    wait_for_steam_drm();
 
     // do this asap since it messes with early launch functions
     try {
@@ -35,9 +37,6 @@ void BL1EHook::hook(void) {
     find_get_path_name();
     find_static_find_object();
     find_load_package();
-
-    // hexedit_set_command();
-    // hexedit_array_limit();
 }
 
 void BL1EHook::post_init(void) {

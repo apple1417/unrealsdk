@@ -72,6 +72,19 @@ class BL1EHook : public AbstractHook {
      */
     static void inject_console(void);
 
+    /**
+     * @brief blocks all threads until the steam drm unpacker has finished.
+     */
+    static void wait_for_steam_drm(void);
+
+    /**
+     * @brief Hex edits out a few places that prevent launching the game with `-editor` from
+     * actually opening the editor.
+     * @note These hex edits alone are not enough to actually get the editor to open. There is still
+     * a file copy step needed to get into the editor without that it will just crash at startup.
+     */
+    static void hexedit_editor_access(void);
+
    public:
     void hook(void) override;
     void post_init(void) override;

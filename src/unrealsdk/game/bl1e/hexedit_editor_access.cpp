@@ -16,8 +16,6 @@ constexpr std::chrono::seconds FALLBACK_DELAY{5};
 bool should_perform_editor_patches{false};
 bool should_use_static_delay{false};
 
-void block_till_ready(void);
-
 // NOTE
 //  These patches alone *do not* make the editor work. Launching the game with -editor will crash
 //  even after these patches have been applied. This is because there is a file system setup step
@@ -54,7 +52,6 @@ void perform_hexedits() {
 }  // namespace
 
 void BL1EHook::hexedit_editor_access() {
-    block_till_ready();
 
     // this check is required since these patches actually make the -editor flag redundant; It will
     // always open the editor if these patches are applied.
@@ -150,7 +147,7 @@ void hexedit_allow_savepackage(void) {
 namespace {
 
 // the signature matches two things, both are in the same function; not sure on the name for this
-// function as I don't know a whole lot about the startup process but its probably the same one used
+// function as I don't know a lot about the startup process but its probably the same one used
 // in BL1 ___tmainCRTStartup
 constexpr Pattern<19> SIG_ENTRY_FUNCTION{
     "48 8B D8 48 83 38 00 74 ?? 48 8B C8 E8 ?? ?? ?? ?? 84 C0"};
@@ -180,7 +177,9 @@ BOOL WINAPI IsDebuggerPresent_hook() {
 
 // NOLINTEND(readability-identifier-naming)
 
-void block_till_ready(void) {
+}  // namespace
+
+void BL1EHook::wait_for_steam_drm(void) {
     std::unique_lock lock{ready_mutex};
 
     {
@@ -188,7 +187,7 @@ void block_till_ready(void) {
 
         std::string args{GetCommandLineA()};
         std::ranges::transform(args, args.begin(), ::tolower);
-        should_perform_editor_patches = (args.find(" -editor") != std::string::npos);
+        should_perform_editor_patches = (args.rfind(" -editor") != std::string::npos);
 
         if (SIG_ENTRY_FUNCTION.sigscan_nullable() != 0) {
             LOG(INFO, "Entry signature already exists");
@@ -231,8 +230,6 @@ void block_till_ready(void) {
     // We should have more leeway than we will ever need but you never know. Its also not a function
     // that'll matter if it remains hooked.
 }
-
-}  // namespace
 
 }  // namespace unrealsdk::game
 

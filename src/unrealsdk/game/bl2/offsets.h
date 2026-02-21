@@ -21,7 +21,7 @@
 #include "unrealsdk/unreal/structs/fname.h"
 #include "unrealsdk/unreal/structs/tarray.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+#if defined(UNREALSDK_FEAT_WILLOW_COMMON)
 
 namespace unrealsdk::unreal {
 
