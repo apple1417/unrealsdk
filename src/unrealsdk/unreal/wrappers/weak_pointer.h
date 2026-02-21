@@ -3,11 +3,7 @@
 
 #include "unrealsdk/pch.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
-#define UNREALSDK_EMULATED_WEAK_POINTER
-#endif
-
-#ifdef UNREALSDK_EMULATED_WEAK_POINTER
+#ifdef UNREALSDK_FEAT_EMULATED_WEAK_POINTER
 #include "unrealsdk/unreal/structs/fname.h"
 #else
 #include "unrealsdk/unreal/structs/fweakobjectptr.h"
@@ -30,7 +26,7 @@ you retrieve it. However, it *should* be safe under a hook, since the GC shouldn
 */
 struct WeakPointer {
    private:
-#ifdef UNREALSDK_EMULATED_WEAK_POINTER
+#ifdef UNREALSDK_FEAT_EMULATED_WEAK_POINTER
     // The main way this works is just to store the object's index into gobjects, which we can
     // safely retrieve. A problem with this is another object might get put into the same index
     // though, so we also copy a bunch of other information that should help "uniquely" identify it.

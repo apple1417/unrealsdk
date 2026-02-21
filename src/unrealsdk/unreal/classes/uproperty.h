@@ -20,7 +20,7 @@ namespace unrealsdk::unreal {
 
 class UProperty : public UField {
    public:
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+#ifdef UNREALSDK_FEAT_OPTIONAL_FUNCTION_PARAMETERS
     static constexpr auto PROP_FLAG_OPTIONAL = 0x10;
 #endif
     static constexpr auto PROP_FLAG_PARAM = 0x80;

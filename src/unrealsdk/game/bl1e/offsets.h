@@ -65,7 +65,7 @@ class UStruct : public UField {
     TPointer<UStruct> SuperField;      // 120b
     TPointer<UField> Children;         // 128b
     uint16_t PropertySize;             // 136b
-    uint8_t UnknownData01[0x26];       // explicit padding to avoid compiler warning
+    uint8_t UnknownData01[0x26];
     TPointer<UProperty> PropertyLink;  // 176b
     uint8_t UnknownData02[0x8];
     unreal::TArray<TPointer<UObject>> ScriptObjectReferences;  // 192b

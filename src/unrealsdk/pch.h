@@ -68,6 +68,9 @@
 #include <unordered_set>
 #include <utility>
 
+// this is just a series of defines based around the current flavour
+#include "unrealsdk/feature_defines.h"
+
 // This file is mostly just here so that the `LOG` macro is automatically available everywhere
 // It only includes library headers, so is also ok to include
 #include "unrealsdk/logging.h"

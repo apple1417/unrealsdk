@@ -31,8 +31,7 @@ struct FImplementedInterface;
 
 namespace unrealsdk::game::bl2 {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
-    && UNREALSDK_FLAVOUR != UNREALSDK_FLAVOUR_WILLOW64
+#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
 #pragma pack(push, 0x4)
 #endif
 #if defined(__clang__)
@@ -48,7 +47,18 @@ class UProperty;
 
 namespace generic {
 
+struct ObjectFlagsInternal {
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+    uint64_t Bits;
+#else
+    uint32_t Lower;
+    uint32_t Upper;
+#endif
+};
+
 // This is generic just so that we can reuse it in bl1+tps, but swap out the type of Class
+// The usage of TPointer is for enhanced keeping the 4 byte alignment requirement but also keeps
+// the 'actual' type known, the runtime will cast it regardless.
 template <typename UClass>
 class UObject {
    private:
@@ -56,8 +66,7 @@ class UObject {
     Pointer HashNext;
 
    public:
-    uint32_t ObjectFlags;
-    uint32_t ObjectFlagsUpper;
+    ObjectFlagsInternal ObjectFlags;
 
    private:
     Pointer HashOuterNext;
@@ -206,8 +215,7 @@ using USoftClassProperty = unreal::offsets::generic::USoftClassProperty<UObjectP
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
-    && UNREALSDK_FLAVOUR != UNREALSDK_FLAVOUR_WILLOW64
+#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
 #pragma pack(pop)
 #endif
 

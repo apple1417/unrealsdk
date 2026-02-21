@@ -6,10 +6,10 @@
 
 namespace unrealsdk {
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
-constexpr auto TPOINTER_ALIGNMENT = 4;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
-constexpr auto TPOINTER_ALIGNMENT = sizeof(void*);
+#ifdef UNREALSDK_FEAT_VIRTUAL_POINTER_ALIGNMENT
+constexpr auto TPOINTER_ALIGNMENT = UNREALSDK_FEAT_VIRTUAL_POINTER_ALIGNMENT;
+#else
+constexpr auto TPOINTER_ALIGNMENT = alignof(void*);
 #endif
 
 /**
@@ -17,17 +17,21 @@ constexpr auto TPOINTER_ALIGNMENT = sizeof(void*);
  * requirement. Only reason for this is because UE3 expects 4 byte aligned pointers on x64 which
  * means we cannot store/use a pointer as that will create an 8 byte alignment requirement.
  * @tparam T The pointer type stored i.e., TPointer<void> stores a void*
- * @tparam Alignment The alignment requirement for the pointer storage
- * @note not married to the name
  */
-template <class T, auto Alignment = TPOINTER_ALIGNMENT>
-class alignas(Alignment) TPointer {
+template <class T>
+class alignas(TPOINTER_ALIGNMENT) TPointer {
     //
     // would prefer if this was just a simple get/set container and not have to do any of the
-    // template shenanigans (because I am notoriously shit at writing templates)
+    // template shenanigans (because I am notoriously shit at writing templates). Might also be a
+    // slight overhead for native aligned pointers so would want to avoid using this if possible
+    // for when pointers are naturally aligned.
     //
    private:
+#ifdef UNREALSDK_FEAT_VIRTUAL_POINTER_ALIGNMENT
     std::array<std::uint8_t, sizeof(void*)> storage{};
+#else
+    T* storage{};
+#endif
 
    public:
     TPointer() noexcept { set(nullptr); }
@@ -39,16 +43,26 @@ class alignas(Alignment) TPointer {
      * @return the created pointer.
      */
     T* get() const noexcept {
+#ifdef UNREALSDK_FEAT_VIRTUAL_POINTER_ALIGNMENT
         void* ptr{};
         std::memcpy(&ptr, storage.data(), storage.size());
         return static_cast<T*>(ptr);
+#else
+        return storage;
+#endif
     }
 
     /**
      * @brief overwrites the stored pointer with the provided.
      * @param ptr the pointer to store
      */
-    void set(T* ptr) noexcept { std::memcpy(storage.data(), &ptr, storage.size()); }
+    void set(T* ptr) noexcept {
+#ifdef UNREALSDK_FEAT_VIRTUAL_POINTER_ALIGNMENT
+        std::memcpy(storage.data(), &ptr, storage.size());
+#else
+        storage = ptr;
+#endif
+    }
 
     TPointer& operator=(T* ptr) noexcept {
         set(ptr);

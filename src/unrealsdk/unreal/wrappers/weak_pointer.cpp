@@ -6,7 +6,7 @@
 
 namespace unrealsdk::unreal {
 
-#ifdef UNREALSDK_EMULATED_WEAK_POINTER
+#ifdef UNREALSDK_FEAT_EMULATED_WEAK_POINTER
 WeakPointer::WeakPointer(const UObject* obj) : WeakPointer() {
     *this = obj;
 }

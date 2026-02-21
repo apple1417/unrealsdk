@@ -5,8 +5,7 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
-    && UNREALSDK_FLAVOUR != UNREALSDK_FLAVOUR_WILLOW64
+#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
 #pragma pack(push, 0x4)
 #endif
 
@@ -41,8 +40,7 @@ struct FImplementedInterface {
     [[nodiscard]] size_t get_pointer_offset(void) const;
 };
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
-    && UNREALSDK_FLAVOUR != UNREALSDK_FLAVOUR_WILLOW64
+#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
 #pragma pack(pop)
 #endif
 
