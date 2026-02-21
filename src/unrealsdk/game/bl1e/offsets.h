@@ -62,9 +62,9 @@ class UProperty : public UField {
 class UStruct : public UField {
    public:
     uint8_t UnknownData00[0x10];
-    TPointer<UStruct> SuperField;      // 120b
-    TPointer<UField> Children;         // 128b
-    uint16_t PropertySize;             // 136b
+    TPointer<UStruct> SuperField;  // 120b
+    TPointer<UField> Children;     // 128b
+    uint16_t PropertySize;         // 136b
     uint8_t UnknownData01[0x26];
     TPointer<UProperty> PropertyLink;  // 176b
     uint8_t UnknownData02[0x8];

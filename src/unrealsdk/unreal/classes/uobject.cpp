@@ -93,7 +93,7 @@ void UObject::post_edit_change_property(const FName& name) const {
 void UObject::post_edit_change_property(UProperty* prop) const {
     FPropertyChangedEvent event{prop};
 
-#if defined(UNREALSDK_FEAT_WILLOW_COMMON)
+#ifdef UNREALSDK_FEAT_WILLOW_COMMON
     constexpr auto default_idx = 19;
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
     constexpr auto default_idx = 78;

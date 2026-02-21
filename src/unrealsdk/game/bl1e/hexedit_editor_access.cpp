@@ -52,7 +52,6 @@ void perform_hexedits() {
 }  // namespace
 
 void BL1EHook::hexedit_editor_access() {
-
     // this check is required since these patches actually make the -editor flag redundant; It will
     // always open the editor if these patches are applied.
     if (should_perform_editor_patches) {

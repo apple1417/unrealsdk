@@ -21,7 +21,7 @@
 #include "unrealsdk/unreal/structs/fname.h"
 #include "unrealsdk/unreal/structs/tarray.h"
 
-#if defined(UNREALSDK_FEAT_WILLOW_COMMON)
+#ifdef UNREALSDK_FEAT_WILLOW_COMMON
 
 namespace unrealsdk::unreal {
 
