@@ -3,7 +3,6 @@
 
 #include "unrealsdk/pch.h"
 
-#include "unrealsdk/game/bl1/bl1.h"
 #include "unrealsdk/game/selector.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64 && !defined(UNREALSDK_IMPORTING)
@@ -11,20 +10,12 @@
 namespace unrealsdk::game {
 
 // TODO: This only inherits from this because I am 2lazy to copy the console.cpp file over
-class BL1EHook : public BL1Hook {
+class BL1EHook : public AbstractHook {
    protected:
     /**
      * @brief Finds `FName::Init`, and sets up such that `fname_init` may be called.
      */
     static void find_fname_init(void);
-
-    /**
-     * @brief Hex edits out a few places that prevent launching the game with `-editor` from
-     * actually opening the editor.
-     * @note These hex edits alone are not enough to actually get the editor to open. There is still
-     * a file copy step needed to get into the editor without that it will just crash at startup.
-     */
-    static void hexedit_editor_access(void);
 
     /**
      * @brief Hooks `UObject::ProcessEvent` and points it at the hook manager.
@@ -76,9 +67,16 @@ class BL1EHook : public BL1Hook {
      */
     static void find_load_package(void);
 
+    /**
+     * @brief Creates a console and sets the bind (if required), and hooks logging onto it.
+     */
+    static void inject_console(void);
+
    public:
     void hook(void) override;
     void post_init(void) override;
+
+    [[nodiscard]] bool is_console_ready(void) const override;
 
     [[nodiscard]] const unreal::GObjects& gobjects(void) const override;
     [[nodiscard]] const unreal::GNames& gnames(void) const override;
@@ -100,6 +98,7 @@ class BL1EHook : public BL1Hook {
     void process_event(unreal::UObject* object,
                        unreal::UFunction* func,
                        void* params) const override;
+    void uconsole_output_text(const std::wstring& str) const override;
     [[nodiscard]] std::wstring uobject_path_name(const unreal::UObject* obj) const override;
     void ftext_as_culture_invariant(unreal::FText* text,
                                     unreal::TemporaryFString&& str) const override;

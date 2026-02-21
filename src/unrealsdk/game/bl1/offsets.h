@@ -19,7 +19,7 @@
 #include "unrealsdk/unreal/offsets.h"
 #include "unrealsdk/unreal/structs/fname.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
 
 namespace unrealsdk::unreal {
 

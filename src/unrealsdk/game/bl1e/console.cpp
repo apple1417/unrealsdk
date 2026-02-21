@@ -1,20 +1,14 @@
 #include "unrealsdk/pch.h"
 
-#include "unrealsdk/game/bl1/bl1.h"
-
 #include "unrealsdk/commands.h"
 #include "unrealsdk/config.h"
+#include "unrealsdk/game/bl1e/bl1e.h"
 #include "unrealsdk/hook_manager.h"
 #include "unrealsdk/unreal/classes/properties/copyable_property.h"
-#include "unrealsdk/unreal/classes/properties/uboolproperty.h"
 #include "unrealsdk/unreal/classes/properties/uobjectproperty.h"
 #include "unrealsdk/unreal/classes/properties/ustrproperty.h"
-#include "unrealsdk/unreal/classes/uobject.h"
-#include "unrealsdk/unreal/classes/uobject_funcs.h"
-#include "unrealsdk/unreal/find_class.h"
-#include "unrealsdk/unreal/wrappers/bound_function.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW && !defined(UNREALSDK_IMPORTING)
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64 && !defined(UNREALSDK_IMPORTING)
 
 using namespace unrealsdk::unreal;
 
@@ -22,13 +16,17 @@ namespace unrealsdk::game {
 
 namespace {
 
+// TODO: At this point i've copied the console implementation multiple times and changed nothing.
+//  Put in an action to refactor and either create a class or a set of free functions for the common
+//  console implementation.
+
 // This is an extra hook, which we don't strictly need for the interface, but is really handy. By
 // default the game prepends 'say ' to every command as a primitive way to disable console. Bypass
 // it so you can actually use it.
 
 const std::wstring SAY_BYPASS_FUNC = L"Engine.Console:ShippingConsoleCommand";
 const constexpr auto SAY_BYPASS_TYPE = hook_manager::Type::PRE;
-const std::wstring SAY_BYPASS_ID = L"unrealsdk_bl1_say_bypass";
+const std::wstring SAY_BYPASS_ID = L"unrealsdk_bl1e_say_bypass";
 
 // We could combine this with the say bypass, but by keeping them separate it'll let users disable
 // one if they really want to
@@ -39,11 +37,11 @@ const std::wstring CONSOLE_COMMAND_FUNC = L"Engine.Console:ConsoleCommand";
 const std::wstring PC_CONSOLE_COMMAND_FUNC = L"Engine.PlayerController:ConsoleCommand";
 
 const constexpr auto CONSOLE_COMMAND_TYPE = hook_manager::Type::PRE;
-const std::wstring CONSOLE_COMMAND_ID = L"unrealsdk_bl1_console_command";
+const std::wstring CONSOLE_COMMAND_ID = L"unrealsdk_bl1e_console_command";
 
 const std::wstring INJECT_CONSOLE_FUNC = L"WillowGame.WillowGameViewportClient:PostRender";
 const constexpr auto INJECT_CONSOLE_TYPE = hook_manager::Type::PRE;
-const std::wstring INJECT_CONSOLE_ID = L"unrealsdk_bl1_inject_console";
+const std::wstring INJECT_CONSOLE_ID = L"unrealsdk_bl1e_inject_console";
 
 BoundFunction console_output_text{};
 
@@ -189,7 +187,7 @@ bool inject_console_hook(const hook_manager::Details& hook) {
 
 }  // namespace
 
-void BL1Hook::inject_console(void) {
+void BL1EHook::inject_console(void) {
     add_hook(SAY_BYPASS_FUNC, SAY_BYPASS_TYPE, SAY_BYPASS_ID, &say_bypass_hook);
 
     add_hook(CONSOLE_COMMAND_FUNC, CONSOLE_COMMAND_TYPE, CONSOLE_COMMAND_ID, &console_command_hook);
@@ -199,14 +197,14 @@ void BL1Hook::inject_console(void) {
     add_hook(INJECT_CONSOLE_FUNC, INJECT_CONSOLE_TYPE, INJECT_CONSOLE_ID, &inject_console_hook);
 }
 
-void BL1Hook::uconsole_output_text(const std::wstring& str) const {
+void BL1EHook::uconsole_output_text(const std::wstring& str) const {
     if (console_output_text.func == nullptr) {
         return;
     }
     console_output_text.call<void, UStrProperty>(str);
 }
 
-bool BL1Hook::is_console_ready(void) const {
+bool BL1EHook::is_console_ready(void) const {
     return console_output_text.func != nullptr;
 }
 
