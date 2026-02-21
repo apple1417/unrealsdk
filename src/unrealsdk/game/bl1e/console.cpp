@@ -7,6 +7,10 @@
 #include "unrealsdk/unreal/classes/properties/copyable_property.h"
 #include "unrealsdk/unreal/classes/properties/uobjectproperty.h"
 #include "unrealsdk/unreal/classes/properties/ustrproperty.h"
+#include "unrealsdk/unreal/classes/uobject.h"
+#include "unrealsdk/unreal/classes/uobject_funcs.h"
+#include "unrealsdk/unreal/find_class.h"
+#include "unrealsdk/unreal/wrappers/bound_function.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64 && !defined(UNREALSDK_IMPORTING)
 
