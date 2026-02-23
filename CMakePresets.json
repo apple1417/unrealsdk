@@ -406,7 +406,12 @@
         "_msvc",
         "_willow",
         "_debug"
-      ]
+      ],
+      "vendor": {
+        "jetbrains.com/clion": {
+          "toolchain": "msvc-x86"
+        }
+      }
     },
     {
       "name": "msvc-willow-release",
@@ -416,7 +421,12 @@
         "_msvc",
         "_willow",
         "_release"
-      ]
+      ],
+      "vendor": {
+        "jetbrains.com/clion": {
+          "toolchain": "msvc-x86"
+        }
+      }
     },
     {
       "name": "msvc-willow64-debug",
@@ -426,7 +436,12 @@
         "_msvc",
         "_willow64",
         "_debug"
-      ]
+      ],
+      "vendor": {
+        "jetbrains.com/clion": {
+          "toolchain": "msvc-x64"
+        }
+      }
     },
     {
       "name": "msvc-willow64-release",
@@ -436,7 +451,12 @@
         "_msvc",
         "_willow64",
         "_release"
-      ]
+      ],
+      "vendor": {
+        "jetbrains.com/clion": {
+          "toolchain": "msvc-x64"
+        }
+      }
     },
     {
       "name": "msvc-oak-debug",
@@ -446,7 +466,12 @@
         "_msvc",
         "_oak",
         "_debug"
-      ]
+      ],
+      "vendor": {
+        "jetbrains.com/clion": {
+          "toolchain": "msvc-x64"
+        }
+      }
     },
     {
       "name": "msvc-oak-release",
@@ -456,7 +481,12 @@
         "_msvc",
         "_oak",
         "_release"
-      ]
+      ],
+      "vendor": {
+        "jetbrains.com/clion": {
+          "toolchain": "msvc-x64"
+        }
+      }
     }
   ]
 }
