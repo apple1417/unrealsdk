@@ -2,8 +2,8 @@
 #define UNREALSDK_UNREAL_CLASSES_UFUNCTION_H
 
 #include "unrealsdk/unreal/class_traits.h"
-#include "unrealsdk/unreal/classes/uproperty.h"
 #include "unrealsdk/unreal/classes/ustruct.h"
+#include "unrealsdk/unreal/properties/zproperty.h"
 
 namespace unrealsdk::unreal {
 

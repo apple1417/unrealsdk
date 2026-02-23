@@ -1,7 +1,7 @@
 #include "unrealsdk/pch.h"
 #include "unrealsdk/unreal/cast.h"
-#include "unrealsdk/unreal/classes/uproperty.h"
 #include "unrealsdk/unreal/classes/ustruct.h"
+#include "unrealsdk/unreal/properties/zproperty.h"
 #include "unrealsdk/unrealsdk.h"
 
 namespace unrealsdk::unreal::impl {

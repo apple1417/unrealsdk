@@ -7,7 +7,7 @@
 #include "unrealsdk/memory.h"
 #include "unrealsdk/unreal/classes/ufunction.h"
 #include "unrealsdk/unreal/classes/uobject.h"
-#include "unrealsdk/unreal/classes/uproperty.h"
+#include "unrealsdk/unreal/properties/zproperty.h"
 #include "unrealsdk/unreal/structs/fframe.h"
 #include "unrealsdk/unreal/wrappers/bound_function.h"
 #include "unrealsdk/unreal/wrappers/property_proxy.h"

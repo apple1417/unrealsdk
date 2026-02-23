@@ -2,8 +2,8 @@
 #define UNREALSDK_UNREAL_WRAPPERS_UNREAL_POINTER_FUNCS_H
 
 #include "unrealsdk/pch.h"
-#include "unrealsdk/unreal/classes/uproperty.h"
 #include "unrealsdk/unreal/classes/ustruct.h"
+#include "unrealsdk/unreal/properties/zproperty.h"
 #include "unrealsdk/unreal/wrappers/unreal_pointer.h"
 #include "unrealsdk/unrealsdk.h"
 

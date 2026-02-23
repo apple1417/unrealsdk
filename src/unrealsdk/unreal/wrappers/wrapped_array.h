@@ -5,8 +5,8 @@
 
 #include "unrealsdk/unreal/class_name.h"
 #include "unrealsdk/unreal/classes/uclass.h"
-#include "unrealsdk/unreal/classes/uproperty.h"
 #include "unrealsdk/unreal/prop_traits.h"
+#include "unrealsdk/unreal/properties/zproperty.h"
 #include "unrealsdk/unreal/structs/fname.h"
 #include "unrealsdk/unreal/structs/tarray.h"
 #include "unrealsdk/unreal/wrappers/unreal_pointer.h"

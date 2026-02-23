@@ -3,7 +3,7 @@
 
 #include "unrealsdk/unreal/class_traits.h"
 #include "unrealsdk/unreal/classes/ufield.h"
-#include "unrealsdk/unreal/classes/uproperty.h"
+#include "unrealsdk/unreal/properties/zproperty.h"
 #include "unrealsdk/unreal/structs/tarray.h"
 #include "unrealsdk/unreal/structs/tfieldvariant.h"
 #include "unrealsdk/utils.h"

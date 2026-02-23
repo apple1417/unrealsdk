@@ -1,9 +1,9 @@
 #include "unrealsdk/pch.h"
 
 #include "unrealsdk/unreal/classes/ufunction.h"
-#include "unrealsdk/unreal/classes/uproperty.h"
 #include "unrealsdk/unreal/offset_list.h"
 #include "unrealsdk/unreal/offsets.h"
+#include "unrealsdk/unreal/properties/zproperty.h"
 #include "unrealsdk/unrealsdk.h"
 
 namespace unrealsdk::unreal {

@@ -1,8 +1,8 @@
 #include "unrealsdk/pch.h"
 
 #include "unrealsdk/unreal/cast.h"
-#include "unrealsdk/unreal/classes/uproperty.h"
 #include "unrealsdk/unreal/prop_traits.h"
+#include "unrealsdk/unreal/properties/zproperty.h"
 #include "unrealsdk/unreal/wrappers/property_proxy.h"
 #include "unrealsdk/unreal/wrappers/unreal_pointer.h"
 #include "unrealsdk/unreal/wrappers/unreal_pointer_funcs.h"

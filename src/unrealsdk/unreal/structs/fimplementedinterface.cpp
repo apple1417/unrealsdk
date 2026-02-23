@@ -1,6 +1,6 @@
 #include "unrealsdk/pch.h"
 
-#include "unrealsdk/unreal/classes/properties/ustructproperty.h"
+#include "unrealsdk/unreal/properties/zstructproperty.h"
 #include "unrealsdk/unreal/structs/fimplementedinterface.h"
 
 namespace unrealsdk::unreal {

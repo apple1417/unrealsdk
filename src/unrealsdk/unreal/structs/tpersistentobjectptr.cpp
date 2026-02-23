@@ -1,10 +1,10 @@
 #include "unrealsdk/pch.h"
 
 #include "unrealsdk/unreal/class_name.h"
-#include "unrealsdk/unreal/classes/properties/persistent_object_ptr_property.h"
-#include "unrealsdk/unreal/classes/properties/uobjectproperty.h"
 #include "unrealsdk/unreal/classes/uobject.h"
 #include "unrealsdk/unreal/find_class.h"
+#include "unrealsdk/unreal/properties/persistent_object_ptr_property.h"
+#include "unrealsdk/unreal/properties/zobjectproperty.h"
 #include "unrealsdk/unreal/structs/tpersistentobjectptr.h"
 #include "unrealsdk/unreal/wrappers/wrapped_array.h"
 #include "unrealsdk/unreal/wrappers/wrapped_struct.h"

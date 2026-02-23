@@ -5,13 +5,13 @@
 #include "unrealsdk/commands.h"
 #include "unrealsdk/config.h"
 #include "unrealsdk/hook_manager.h"
-#include "unrealsdk/unreal/classes/properties/copyable_property.h"
-#include "unrealsdk/unreal/classes/properties/uboolproperty.h"
-#include "unrealsdk/unreal/classes/properties/uobjectproperty.h"
-#include "unrealsdk/unreal/classes/properties/ustrproperty.h"
 #include "unrealsdk/unreal/classes/uobject.h"
 #include "unrealsdk/unreal/classes/uobject_funcs.h"
 #include "unrealsdk/unreal/find_class.h"
+#include "unrealsdk/unreal/properties/copyable_property.h"
+#include "unrealsdk/unreal/properties/zboolproperty.h"
+#include "unrealsdk/unreal/properties/zobjectproperty.h"
+#include "unrealsdk/unreal/properties/zstrproperty.h"
 #include "unrealsdk/unreal/wrappers/bound_function.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW && !defined(UNREALSDK_IMPORTING)
