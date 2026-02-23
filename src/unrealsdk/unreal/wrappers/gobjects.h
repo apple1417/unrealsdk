@@ -5,8 +5,7 @@
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
 #include "unrealsdk/unreal/structs/gobjects.h"
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
-    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+#elif defined(UNREALSDK_FEAT_WILLOW_COMMON)
 #include "unrealsdk/unreal/structs/tarray.h"
 #else
 #error Unknown SDK flavour
@@ -21,8 +20,7 @@ class GObjects {
    public:
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
     using internal_type = FUObjectArray*;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
-    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+#elif defined(UNREALSDK_FEAT_WILLOW_COMMON)
     using internal_type = TArray<UObject*>*;
 #else
 #error Unknown SDK flavour

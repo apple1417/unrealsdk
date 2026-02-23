@@ -21,8 +21,7 @@ FNameEntry* GNames::at(size_t idx) const {
     return this->internal->at(idx);
 }
 
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
-    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+#elif defined(UNREALSDK_FEAT_WILLOW_COMMON)
 
 size_t GNames::size(void) const {
     return this->internal->size();

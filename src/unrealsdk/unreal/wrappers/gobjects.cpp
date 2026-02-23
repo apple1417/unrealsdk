@@ -6,8 +6,7 @@
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
 #include "unrealsdk/unreal/structs/gobjects.h"
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
-    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+#elif defined(UNREALSDK_FEAT_WILLOW_COMMON)
 #include "unrealsdk/unreal/structs/tarray.h"
 #include "unrealsdk/version_error.h"
 #else
@@ -128,8 +127,7 @@ void GObjects::set_weak_object(FWeakObjectPtr* ptr, const UObject* obj) const {
     }
 }
 
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
-    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+#elif defined(UNREALSDK_FEAT_WILLOW_COMMON)
 
 size_t GObjects::size(void) const {
     return this->internal->size();

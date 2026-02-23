@@ -9,7 +9,7 @@
 
 namespace unrealsdk::unreal {
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+#ifdef UNREALSDK_FEAT_WILLOW_COMMON
 
 UObject* FScriptDelegate::get_object(void) const {
     return this->object.get();

@@ -113,7 +113,7 @@ void UObject::post_edit_change_chain_property(UProperty* prop,
     FEditPropertyChain edit_chain{chain};
     FPropertyChangedChainEvent event{prop, &edit_chain};
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+#ifdef UNREALSDK_FEAT_WILLOW_COMMON
     constexpr auto default_idx = 18;
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
     constexpr auto default_idx = 77;

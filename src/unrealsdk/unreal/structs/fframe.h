@@ -31,7 +31,7 @@ struct FOutParamRec {
 struct FOutputDevice {
     Pointer VfTable;
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+#ifdef UNREALSDK_FEAT_WILLOW_COMMON
    private:
     uint32_t bAllowSuppression;
 
@@ -60,8 +60,7 @@ struct FFrame : public FOutputDevice {
     void* LastPropertyAddress;
 
    public:
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
-    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+#elif defined(UNREALSDK_FEAT_WILLOW_COMMON)
     // Intentionally empty
 #else
 #error Unknown SDK flavour

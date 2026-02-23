@@ -53,8 +53,7 @@ FText::~FText() {
     }
 }
 
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW \
-    || UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW64
+#elif defined(UNREALSDK_FEAT_WILLOW_COMMON)
 
 FText::FText(std::string_view /* str */) : data(), flags() {
     (void)this;
