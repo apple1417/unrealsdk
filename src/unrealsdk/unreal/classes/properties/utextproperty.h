@@ -1,5 +1,5 @@
-#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_UTEXTPROPERTY_H
-#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_UTEXTPROPERTY_H
+#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZTEXTPROPERTY_H
+#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZTEXTPROPERTY_H
 
 #include "unrealsdk/pch.h"
 
@@ -10,30 +10,30 @@
 
 namespace unrealsdk::unreal {
 
-class UTextProperty : public UProperty {
+class ZTextProperty : public ZProperty {
    public:
-    UTextProperty() = delete;
-    UTextProperty(const UTextProperty&) = delete;
-    UTextProperty(UTextProperty&&) = delete;
-    UTextProperty& operator=(const UTextProperty&) = delete;
-    UTextProperty& operator=(UTextProperty&&) = delete;
-    ~UTextProperty() = delete;
+    ZTextProperty() = delete;
+    ZTextProperty(const ZTextProperty&) = delete;
+    ZTextProperty(ZTextProperty&&) = delete;
+    ZTextProperty& operator=(const ZTextProperty&) = delete;
+    ZTextProperty& operator=(ZTextProperty&&) = delete;
+    ~ZTextProperty() = delete;
 };
 
 template <>
-struct PropTraits<UTextProperty> : public AbstractPropTraits<UTextProperty> {
+struct PropTraits<ZTextProperty> : public AbstractPropTraits<ZTextProperty> {
     using Value = std::wstring;
 
-    static Value get(const UTextProperty* prop, uintptr_t addr, const UnrealPointer<void>& parent);
-    static void set(const UTextProperty* prop, uintptr_t addr, const Value& value);
-    static void destroy(const UTextProperty* prop, uintptr_t addr);
+    static Value get(const ZTextProperty* prop, uintptr_t addr, const UnrealPointer<void>& parent);
+    static void set(const ZTextProperty* prop, uintptr_t addr, const Value& value);
+    static void destroy(const ZTextProperty* prop, uintptr_t addr);
 };
 
 template <>
-struct ClassTraits<UTextProperty> {
+struct ClassTraits<ZTextProperty> {
     static inline const wchar_t* const NAME = L"TextProperty";
 };
 
 }  // namespace unrealsdk::unreal
 
-#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_UTEXTPROPERTY_H */
+#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZTEXTPROPERTY_H */

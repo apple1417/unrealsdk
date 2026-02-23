@@ -12,24 +12,24 @@ namespace unrealsdk::unreal {
 
 namespace func_params::impl {
 
-UProperty* get_next_param(UProperty* prop) {
+ZProperty* get_next_param(ZProperty* prop) {
     prop = prop->PropertyLinkNext();
-    while (prop != nullptr && (prop->PropertyFlags() & UProperty::PROP_FLAG_PARAM) == 0) {
+    while (prop != nullptr && (prop->PropertyFlags() & ZProperty::PROP_FLAG_PARAM) == 0) {
         prop = prop->PropertyLinkNext();
     }
     return prop;
 }
 
-void validate_no_more_params(UProperty* prop) {
+void validate_no_more_params(ZProperty* prop) {
     for (; prop != nullptr; prop = prop->PropertyLinkNext()) {
-        if ((prop->PropertyFlags() & UProperty::PROP_FLAG_PARAM) == 0) {
+        if ((prop->PropertyFlags() & ZProperty::PROP_FLAG_PARAM) == 0) {
             continue;
         }
-        if ((prop->PropertyFlags() & UProperty::PROP_FLAG_RETURN) != 0) {
+        if ((prop->PropertyFlags() & ZProperty::PROP_FLAG_RETURN) != 0) {
             continue;
         }
 #if UNREALSDK_HAS_OPTIONAL_FUNC_PARAMS
-        if ((prop->PropertyFlags() & UProperty::PROP_FLAG_OPTIONAL) != 0) {
+        if ((prop->PropertyFlags() & ZProperty::PROP_FLAG_OPTIONAL) != 0) {
             continue;
         }
 #endif

@@ -94,7 +94,7 @@ BoundFunction UObject::get<UFunction, BoundFunction>(const FName& name, size_t i
 void UObject::post_edit_change_property(const FName& name) const {
     this->post_edit_change_property(this->Class()->find_prop(name));
 }
-void UObject::post_edit_change_property(UProperty* prop) const {
+void UObject::post_edit_change_property(ZProperty* prop) const {
     FPropertyChangedEvent event{prop};
 
     static auto idx =
@@ -104,8 +104,8 @@ void UObject::post_edit_change_property(UProperty* prop) const {
     this->call_virtual_function<void, FPropertyChangedEvent*>(idx, &event);
 }
 
-void UObject::post_edit_change_chain_property(UProperty* prop,
-                                              const std::vector<UProperty*>& chain) const {
+void UObject::post_edit_change_chain_property(ZProperty* prop,
+                                              const std::vector<ZProperty*>& chain) const {
     FEditPropertyChain edit_chain{chain};
     FPropertyChangedChainEvent event{prop, &edit_chain};
 
@@ -115,9 +115,9 @@ void UObject::post_edit_change_chain_property(UProperty* prop,
     this->call_virtual_function<void, FPropertyChangedEvent*>(idx, &event);
 }
 
-void UObject::post_edit_change_chain_property(UProperty* prop,
-                                              std::initializer_list<UProperty*> chain) const {
-    const std::vector<UProperty*> vector_chain{chain};
+void UObject::post_edit_change_chain_property(ZProperty* prop,
+                                              std::initializer_list<ZProperty*> chain) const {
+    const std::vector<ZProperty*> vector_chain{chain};
     this->post_edit_change_chain_property(prop, vector_chain);
 }
 

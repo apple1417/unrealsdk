@@ -15,10 +15,10 @@ uint8_t* FFrame::extract_current_args(WrappedStruct& args) {
     // NOLINTNEXTLINE(misc-const-correctness) - see llvm/llvm-project#157320
     uint8_t* original_code = this->Code();
 
-    for (auto prop = reinterpret_cast<UProperty*>(args.type->Children());
+    for (auto prop = reinterpret_cast<ZProperty*>(args.type->Children());
          *this->Code() != FFrame::EXPR_TOKEN_END_FUNCTION_PARAMS;
-         prop = reinterpret_cast<UProperty*>(prop->Next())) {
-        if ((prop->PropertyFlags() & UProperty::PROP_FLAG_RETURN) != 0) {
+         prop = reinterpret_cast<ZProperty*>(prop->Next())) {
+        if ((prop->PropertyFlags() & ZProperty::PROP_FLAG_RETURN) != 0) {
             continue;
         }
 

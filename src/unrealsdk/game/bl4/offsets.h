@@ -27,7 +27,7 @@ namespace unrealsdk::game::bl4 {
 //             readability-magic-numbers)
 
 class UClass;
-class UProperty;
+class ZProperty;
 struct FField;
 
 using FFieldClass = unreal::offsets::generic::FFieldClass;                // Validated
@@ -62,12 +62,12 @@ class UStruct : public UField {
     unreal::TArray<uint8_t> Script;
 
    public:
-    UProperty* PropertyLink;
+    ZProperty* PropertyLink;
 
    private:  // Validated up to this point
-    UProperty* RefLink;
-    UProperty* DestructorLink;
-    UProperty* PostConstructLink;
+    ZProperty* RefLink;
+    ZProperty* DestructorLink;
+    ZProperty* PostConstructLink;
     unreal::TArray<UObject*> ScriptObjectReferences;
 };
 
@@ -100,7 +100,7 @@ class UFunction : public UStruct {
    private:
     uint16_t RPCId;
     uint16_t RPCResponseId;
-    UProperty* FirstPropertyToInit;
+    ZProperty* FirstPropertyToInit;
     UFunction* EventGraphFunction;
     int32_t EventGraphCallOffset;
     void* Func;
@@ -119,7 +119,7 @@ class UEnum : public UField {
     int64_t CppForm;
 };
 
-class UProperty : public FField {  // Validated
+class ZProperty : public FField {  // Validated
    public:
     int32_t ArrayDim;
     int32_t ElementSize;
@@ -134,38 +134,38 @@ class UProperty : public FField {  // Validated
     int32_t Offset_Internal;
 
    public:
-    UProperty* PropertyLinkNext;
+    ZProperty* PropertyLinkNext;
 
    private:
-    UProperty* NextRef;
-    UProperty* DestructorLinkNext;
-    UProperty* PostConstructLinkNext;
+    ZProperty* NextRef;
+    ZProperty* DestructorLinkNext;
+    ZProperty* PostConstructLinkNext;
     unreal::FName RepNotifyFunc;
 };
 
-class UArrayProperty : public UProperty {  // validated
+class ZArrayProperty : public ZProperty {  // validated
    public:
     uint64_t ArrayFlags;
-    UProperty* Inner;
+    ZProperty* Inner;
 };
-using UByteProperty = unreal::offsets::generic::UByteProperty<UProperty>;
-using UDelegateProperty = unreal::offsets::generic::UDelegateProperty<UProperty>;
-using UEnumProperty = unreal::offsets::generic::UEnumProperty<UProperty>;
-class UFloatProperty : public UProperty {};
-using UInterfaceProperty = unreal::offsets::generic::UInterfaceProperty<UProperty>;
-class UIntProperty : public UProperty {};
-using UMulticastDelegateProperty = unreal::offsets::generic::UMulticastDelegateProperty<UProperty>;
-using UObjectProperty = unreal::offsets::generic::UObjectProperty<UProperty>;
-using UStructProperty = unreal::offsets::generic::UStructProperty<UProperty>;  // validated
+using ZByteProperty = unreal::offsets::generic::ZByteProperty<ZProperty>;
+using ZDelegateProperty = unreal::offsets::generic::ZDelegateProperty<ZProperty>;
+using ZEnumProperty = unreal::offsets::generic::ZEnumProperty<ZProperty>;
+class ZFloatProperty : public ZProperty {};
+using ZInterfaceProperty = unreal::offsets::generic::ZInterfaceProperty<ZProperty>;
+class ZIntProperty : public ZProperty {};
+using ZMulticastDelegateProperty = unreal::offsets::generic::ZMulticastDelegateProperty<ZProperty>;
+using ZObjectProperty = unreal::offsets::generic::ZObjectProperty<ZProperty>;
+using ZStructProperty = unreal::offsets::generic::ZStructProperty<ZProperty>;  // validated
 
-using UByteAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<UByteProperty>;
-using UClassProperty = unreal::offsets::generic::UClassProperty<UObjectProperty>;
-using UFloatAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<UFloatProperty>;
-using UIntAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<UIntProperty>;
-using USoftClassProperty = unreal::offsets::generic::USoftClassProperty<UObjectProperty>;
-using FGbxDefPtrProperty = unreal::offsets::generic::FGbxDefPtrProperty<UProperty>;  // Validated
+using ZByteAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<ZByteProperty>;
+using ZClassProperty = unreal::offsets::generic::ZClassProperty<ZObjectProperty>;
+using ZFloatAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<ZFloatProperty>;
+using ZIntAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<ZIntProperty>;
+using ZSoftClassProperty = unreal::offsets::generic::ZSoftClassProperty<ZObjectProperty>;
+using ZGbxDefPtrProperty = unreal::offsets::generic::ZGbxDefPtrProperty<ZProperty>;  // Validated
 
-class UBoolProperty : public UProperty {
+class ZBoolProperty : public ZProperty {
    private:
     uint8_t FieldSize;
     uint8_t ByteOffset;
@@ -198,7 +198,7 @@ struct FFrame {
 
    private:
     void* Locals;
-    UProperty* LastProperty;
+    ZProperty* LastProperty;
     void* LastPropertyAddress;
 
    public:

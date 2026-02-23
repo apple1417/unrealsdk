@@ -33,7 +33,7 @@ class UFunction : public UStruct {
      *
      * @return The return param, or `nullptr` if none exists.
      */
-    [[nodiscard]] UProperty* find_return_param(void) const;
+    [[nodiscard]] ZProperty* find_return_param(void) const;
 };
 
 template <>

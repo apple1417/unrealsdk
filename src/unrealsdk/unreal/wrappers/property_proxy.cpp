@@ -10,7 +10,7 @@
 
 namespace unrealsdk::unreal {
 
-PropertyProxy::PropertyProxy(UProperty* prop) : prop(prop), ptr(nullptr) {}
+PropertyProxy::PropertyProxy(ZProperty* prop) : prop(prop), ptr(nullptr) {}
 PropertyProxy::PropertyProxy(const PropertyProxy& other) : prop(other.prop), ptr(nullptr) {
     if (this->prop != nullptr && other.has_value()) {
         cast(this->prop, [this, &other]<typename T>(const T* prop) {

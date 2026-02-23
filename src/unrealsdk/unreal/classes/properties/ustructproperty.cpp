@@ -11,17 +11,17 @@
 
 namespace unrealsdk::unreal {
 
-UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(UStructProperty, UNREALSDK_USTRUCTPROPERTY_FIELDS);
+UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(ZStructProperty, UNREALSDK_ZSTRUCTPROPERTY_FIELDS);
 
-PropTraits<UStructProperty>::Value PropTraits<UStructProperty>::get(
-    const UStructProperty* prop,
+PropTraits<ZStructProperty>::Value PropTraits<ZStructProperty>::get(
+    const ZStructProperty* prop,
     uintptr_t addr,
     const UnrealPointer<void>& parent) {
     auto this_struct = prop->Struct();
     return {this_struct, reinterpret_cast<void*>(addr), parent};
 }
 
-void PropTraits<UStructProperty>::set(const UStructProperty* prop,
+void PropTraits<ZStructProperty>::set(const ZStructProperty* prop,
                                       uintptr_t addr,
                                       const Value& value) {
     auto this_struct = prop->Struct();
@@ -32,7 +32,7 @@ void PropTraits<UStructProperty>::set(const UStructProperty* prop,
     copy_struct(addr, value);
 }
 
-void PropTraits<UStructProperty>::destroy(const UStructProperty* prop, uintptr_t addr) {
+void PropTraits<ZStructProperty>::destroy(const ZStructProperty* prop, uintptr_t addr) {
     destroy_struct(prop->Struct(), addr);
 }
 

@@ -8,9 +8,9 @@
 
 namespace unrealsdk::unreal {
 
-class ULazyObjectProperty;
+class ZLazyObjectProperty;
 class UObject;
-class USoftObjectProperty;
+class ZSoftObjectProperty;
 class WrappedStruct;
 class WrappedArray;
 
@@ -42,10 +42,10 @@ struct FSoftObjectPath {
                                            FName name,
                                            size_t idx = 0);
     static const FSoftObjectPath* get_from(const UObject* obj,
-                                           const USoftObjectProperty* prop,
+                                           const ZSoftObjectProperty* prop,
                                            size_t idx = 0);
     static const FSoftObjectPath* get_from(const WrappedStruct& wrapped_struct,
-                                           const USoftObjectProperty* prop,
+                                           const ZSoftObjectProperty* prop,
                                            size_t idx = 0);
 
     /**
@@ -79,10 +79,10 @@ struct FLazyObjectPath {
                                            FName name,
                                            size_t idx = 0);
     static const FLazyObjectPath* get_from(const UObject* obj,
-                                           const ULazyObjectProperty* prop,
+                                           const ZLazyObjectProperty* prop,
                                            size_t idx = 0);
     static const FLazyObjectPath* get_from(const WrappedStruct& wrapped_struct,
-                                           const ULazyObjectProperty* prop,
+                                           const ZLazyObjectProperty* prop,
                                            size_t idx = 0);
 
     /**

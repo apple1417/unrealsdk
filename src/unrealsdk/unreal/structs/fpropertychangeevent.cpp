@@ -3,9 +3,9 @@
 
 namespace unrealsdk::unreal {
 
-class UProperty;
+class ZProperty;
 
-FEditPropertyChain::FEditPropertyChain(const std::vector<UProperty*>& chain)
+FEditPropertyChain::FEditPropertyChain(const std::vector<ZProperty*>& chain)
     : size((uint32_t)chain.size()) {
     this->nodes.resize(chain.size());
 

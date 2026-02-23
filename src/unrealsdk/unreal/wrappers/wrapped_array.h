@@ -16,7 +16,7 @@ namespace unrealsdk::unreal {
 
 class WrappedArray {
    public:
-    const UProperty* type;
+    const ZProperty* type;
     UnrealPointer<TArray<void>> base;
 
     /**
@@ -26,7 +26,7 @@ class WrappedArray {
      * @param base The base address of the array.
      * @param parent The parent pointer this array was retrieved from, used to copy ownership.
      */
-    WrappedArray(const UProperty* type,
+    WrappedArray(const ZProperty* type,
                  TArray<void>* base,
                  const UnrealPointer<void>& parent = {nullptr});
 

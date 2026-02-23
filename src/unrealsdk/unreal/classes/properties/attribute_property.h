@@ -10,8 +10,8 @@
 
 namespace unrealsdk::unreal {
 
-class UArrayProperty;
-class UProperty;
+class ZArrayProperty;
+class ZProperty;
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define DEFINE_ATTRIBUTE_PROPERTY(class_name, base_class, fields) \
@@ -30,34 +30,34 @@ class UProperty;
 
 // These fields become member functions, returning a reference into the object.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_UBYTEATTRIBUTEPROPERTY_FIELDS(X) \
-    X(UArrayProperty*, ModifierStackProperty)      \
-    X(UByteAttributeProperty*, OtherAttributeProperty)
+#define UNREALSDK_ZBYTEATTRIBUTEPROPERTY_FIELDS(X) \
+    X(ZArrayProperty*, ModifierStackProperty)      \
+    X(ZByteAttributeProperty*, OtherAttributeProperty)
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_UFLOATATTRIBUTEPROPERTY_FIELDS(X) \
-    X(UArrayProperty*, ModifierStackProperty)       \
-    X(UFloatAttributeProperty*, OtherAttributeProperty)
+#define UNREALSDK_ZFLOATATTRIBUTEPROPERTY_FIELDS(X) \
+    X(ZArrayProperty*, ModifierStackProperty)       \
+    X(ZFloatAttributeProperty*, OtherAttributeProperty)
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_UINTATTRIBUTEPROPERTY_FIELDS(X) \
-    X(UArrayProperty*, ModifierStackProperty)     \
-    X(UIntAttributeProperty*, OtherAttributeProperty)
+#define UNREALSDK_ZINTATTRIBUTEPROPERTY_FIELDS(X) \
+    X(ZArrayProperty*, ModifierStackProperty)     \
+    X(ZIntAttributeProperty*, OtherAttributeProperty)
 
-DEFINE_ATTRIBUTE_PROPERTY(UByteAttributeProperty,
-                          UByteProperty,
-                          UNREALSDK_UBYTEATTRIBUTEPROPERTY_FIELDS);
-DEFINE_ATTRIBUTE_PROPERTY(UFloatAttributeProperty,
-                          UFloatProperty,
-                          UNREALSDK_UFLOATATTRIBUTEPROPERTY_FIELDS);
-DEFINE_ATTRIBUTE_PROPERTY(UIntAttributeProperty,
-                          UIntProperty,
-                          UNREALSDK_UINTATTRIBUTEPROPERTY_FIELDS);
+DEFINE_ATTRIBUTE_PROPERTY(ZByteAttributeProperty,
+                          ZByteProperty,
+                          UNREALSDK_ZBYTEATTRIBUTEPROPERTY_FIELDS);
+DEFINE_ATTRIBUTE_PROPERTY(ZFloatAttributeProperty,
+                          ZFloatProperty,
+                          UNREALSDK_ZFLOATATTRIBUTEPROPERTY_FIELDS);
+DEFINE_ATTRIBUTE_PROPERTY(ZIntAttributeProperty,
+                          ZIntProperty,
+                          UNREALSDK_ZINTATTRIBUTEPROPERTY_FIELDS);
 
 template <>
-inline const wchar_t* const ClassTraits<UByteAttributeProperty>::NAME = L"ByteAttributeProperty";
+inline const wchar_t* const ClassTraits<ZByteAttributeProperty>::NAME = L"ByteAttributeProperty";
 template <>
-inline const wchar_t* const ClassTraits<UFloatAttributeProperty>::NAME = L"FloatAttributeProperty";
+inline const wchar_t* const ClassTraits<ZFloatAttributeProperty>::NAME = L"FloatAttributeProperty";
 template <>
-inline const wchar_t* const ClassTraits<UIntAttributeProperty>::NAME = L"IntAttributeProperty";
+inline const wchar_t* const ClassTraits<ZIntAttributeProperty>::NAME = L"IntAttributeProperty";
 
 #undef DEFINE_ATTRIBUTE_PROPERTY
 

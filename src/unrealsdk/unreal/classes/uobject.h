@@ -15,7 +15,7 @@ UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 
 struct FImplementedInterface;
 class UClass;
-class UProperty;
+class ZProperty;
 
 class UObject {
    public:
@@ -143,11 +143,11 @@ class UObject {
      * @param chain The chain of properties to follow, if the change was within a struct.
      */
     void post_edit_change_property(const FName& name) const;
-    void post_edit_change_property(UProperty* prop) const;
-    void post_edit_change_chain_property(UProperty* prop,
-                                         const std::vector<UProperty*>& chain) const;
-    void post_edit_change_chain_property(UProperty* prop,
-                                         std::initializer_list<UProperty*> chain) const;
+    void post_edit_change_property(ZProperty* prop) const;
+    void post_edit_change_chain_property(ZProperty* prop,
+                                         const std::vector<ZProperty*>& chain) const;
+    void post_edit_change_chain_property(ZProperty* prop,
+                                         std::initializer_list<ZProperty*> chain) const;
 };
 
 template <>

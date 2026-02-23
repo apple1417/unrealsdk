@@ -10,9 +10,9 @@ namespace unrealsdk::unreal {
 
 UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(UFunction, UNREALSDK_UFUNCTION_FIELDS);
 
-UProperty* UFunction::find_return_param(void) const {
+ZProperty* UFunction::find_return_param(void) const {
     for (auto prop : this->properties()) {
-        if ((prop->PropertyFlags() & UProperty::PROP_FLAG_RETURN) != 0) {
+        if ((prop->PropertyFlags() & ZProperty::PROP_FLAG_RETURN) != 0) {
             return prop;
         }
     }

@@ -10,12 +10,12 @@
 
 namespace unrealsdk::unreal {
 
-class UArrayProperty;
+class ZArrayProperty;
 class UClass;
 class UEnum;
 class UFunction;
 class UObject;
-class UProperty;
+class ZProperty;
 class UScriptStruct;
 template <typename FFieldType, typename UObjectType>
 struct TFieldVariant;
@@ -33,24 +33,24 @@ namespace offsets::generic {
 template <typename T>
 class GenericAttributeProperty : public T {
    public:
-    unreal::UArrayProperty* ModifierStackProperty;
+    unreal::ZArrayProperty* ModifierStackProperty;
     GenericAttributeProperty<T>* OtherAttributeProperty;
 };
 
 template <typename T>
-class UArrayProperty : public T {
+class ZArrayProperty : public T {
    public:
-    unreal::UProperty* Inner;
+    unreal::ZProperty* Inner;
 };
 
 template <typename T>
-class UByteProperty : public T {
+class ZByteProperty : public T {
    public:
     unreal::UEnum* Enum;
 };
 
 template <typename T>
-class UClassProperty : public T {
+class ZClassProperty : public T {
    public:
     unreal::UClass* MetaClass;
 };
@@ -62,15 +62,15 @@ class UConst : public T {
 };
 
 template <typename T>
-class UDelegateProperty : public T {
+class ZDelegateProperty : public T {
    public:
     unreal::UFunction* Signature;
 };
 
 template <typename T>
-class UEnumProperty : public T {
+class ZEnumProperty : public T {
    public:
-    unreal::UProperty* UnderlyingProp;
+    unreal::ZProperty* UnderlyingProp;
     unreal::UEnum* Enum;
 };
 
@@ -81,19 +81,19 @@ class UField : public T {
 };
 
 template <typename T>
-class UInterfaceProperty : public T {
+class ZInterfaceProperty : public T {
    public:
     unreal::UClass* InterfaceClass;
 };
 
 template <typename T>
-class UMulticastDelegateProperty : public T {
+class ZMulticastDelegateProperty : public T {
    public:
     unreal::UFunction* Signature;
 };
 
 template <typename T>
-class UObjectProperty : public T {
+class ZObjectProperty : public T {
    public:
     // NOLINTNEXTLINE(readability-identifier-naming)
     unreal::UClass* PropertyClass;
@@ -106,13 +106,13 @@ class UScriptStruct : public T {
 };
 
 template <typename T>
-class USoftClassProperty : public T {
+class ZSoftClassProperty : public T {
    public:
     unreal::UClass* MetaClass;
 };
 
 template <typename T>
-class UStructProperty : public T {
+class ZStructProperty : public T {
    public:
     // NOLINTNEXTLINE(readability-identifier-naming)
     unreal::UScriptStruct* Struct;
@@ -146,7 +146,7 @@ struct FFieldClass {
 };
 
 template <typename T>
-class FGbxDefPtrProperty : public T {
+class ZGbxDefPtrProperty : public T {
    public:
     // NOLINTNEXTLINE(readability-identifier-naming)
     unreal::UScriptStruct* Struct;

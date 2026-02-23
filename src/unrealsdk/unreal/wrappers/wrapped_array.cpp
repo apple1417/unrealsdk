@@ -8,7 +8,7 @@
 
 namespace unrealsdk::unreal {
 
-WrappedArray::WrappedArray(const UProperty* type,
+WrappedArray::WrappedArray(const ZProperty* type,
                            TArray<void>* base,
                            const UnrealPointer<void>& parent)
     : type(type), base(parent, base) {

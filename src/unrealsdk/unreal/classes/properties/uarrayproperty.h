@@ -1,5 +1,5 @@
-#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_UARRAYPROPERTY_H
-#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_UARRAYPROPERTY_H
+#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZARRAYPROPERTY_H
+#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZARRAYPROPERTY_H
 
 #include "unrealsdk/pch.h"
 
@@ -12,36 +12,36 @@
 
 namespace unrealsdk::unreal {
 
-class UArrayProperty : public UProperty {
+class ZArrayProperty : public ZProperty {
    public:
-    UArrayProperty() = delete;
-    UArrayProperty(const UArrayProperty&) = delete;
-    UArrayProperty(UArrayProperty&&) = delete;
-    UArrayProperty& operator=(const UArrayProperty&) = delete;
-    UArrayProperty& operator=(UArrayProperty&&) = delete;
-    ~UArrayProperty() = delete;
+    ZArrayProperty() = delete;
+    ZArrayProperty(const ZArrayProperty&) = delete;
+    ZArrayProperty(ZArrayProperty&&) = delete;
+    ZArrayProperty& operator=(const ZArrayProperty&) = delete;
+    ZArrayProperty& operator=(ZArrayProperty&&) = delete;
+    ~ZArrayProperty() = delete;
 
     // These fields become member functions, returning a reference into the object.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_UARRAYPROPERTY_FIELDS(X) X(UProperty*, Inner)
+#define UNREALSDK_ZARRAYPROPERTY_FIELDS(X) X(ZProperty*, Inner)
 
-    UNREALSDK_DEFINE_FIELDS_HEADER(UArrayProperty, UNREALSDK_UARRAYPROPERTY_FIELDS);
+    UNREALSDK_DEFINE_FIELDS_HEADER(ZArrayProperty, UNREALSDK_ZARRAYPROPERTY_FIELDS);
 };
 
 template <>
-struct PropTraits<UArrayProperty> : public AbstractPropTraits<UArrayProperty> {
+struct PropTraits<ZArrayProperty> : public AbstractPropTraits<ZArrayProperty> {
     using Value = WrappedArray;
 
-    static Value get(const UArrayProperty* prop, uintptr_t addr, const UnrealPointer<void>& parent);
-    static void set(const UArrayProperty* prop, uintptr_t addr, const Value& value);
-    static void destroy(const UArrayProperty* prop, uintptr_t addr);
+    static Value get(const ZArrayProperty* prop, uintptr_t addr, const UnrealPointer<void>& parent);
+    static void set(const ZArrayProperty* prop, uintptr_t addr, const Value& value);
+    static void destroy(const ZArrayProperty* prop, uintptr_t addr);
 };
 
 template <>
-struct ClassTraits<UArrayProperty> {
+struct ClassTraits<ZArrayProperty> {
     static inline const wchar_t* const NAME = L"ArrayProperty";
 };
 
 }  // namespace unrealsdk::unreal
 
-#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_UARRAYPROPERTY_H */
+#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZARRAYPROPERTY_H */

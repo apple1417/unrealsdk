@@ -1,5 +1,5 @@
-#ifndef UNREALSDK_UNREAL_CLASSES_UPROPERTY_H
-#define UNREALSDK_UNREAL_CLASSES_UPROPERTY_H
+#ifndef UNREALSDK_UNREAL_CLASSES_ZPROPERTY_H
+#define UNREALSDK_UNREAL_CLASSES_ZPROPERTY_H
 
 #include "unrealsdk/pch.h"
 #include "unrealsdk/unreal/class_traits.h"
@@ -14,9 +14,9 @@
 namespace unrealsdk::unreal {
 
 #if UNREALSDK_PROPERTIES_ARE_FFIELD
-class UProperty : public FField {
+class ZProperty : public FField {
 #else
-class UProperty : public UField {
+class ZProperty : public UField {
 #endif
 
    public:
@@ -27,32 +27,32 @@ class UProperty : public UField {
     static constexpr auto PROP_FLAG_OUT = 0x100;
     static constexpr auto PROP_FLAG_RETURN = 0x400;
 
-    UProperty() = delete;
-    UProperty(const UProperty&) = delete;
-    UProperty(UProperty&&) = delete;
-    UProperty& operator=(const UProperty&) = delete;
-    UProperty& operator=(UProperty&&) = delete;
-    ~UProperty() = delete;
+    ZProperty() = delete;
+    ZProperty(const ZProperty&) = delete;
+    ZProperty(ZProperty&&) = delete;
+    ZProperty& operator=(const ZProperty&) = delete;
+    ZProperty& operator=(ZProperty&&) = delete;
+    ~ZProperty() = delete;
 
-    using property_flags_type = UNREALSDK_UPROPERTY_FLAGS_TYPE;
+    using property_flags_type = UNREALSDK_ZPROPERTY_FLAGS_TYPE;
 
     // These fields become member functions, returning a reference into the object.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_UPROPERTY_FIELDS(X)     \
+#define UNREALSDK_ZPROPERTY_FIELDS(X)     \
     X(int32_t, ArrayDim)                  \
     X(int32_t, ElementSize)               \
     X(property_flags_type, PropertyFlags) \
     X(int32_t, Offset_Internal)           \
-    X(UProperty*, PropertyLinkNext)
+    X(ZProperty*, PropertyLinkNext)
 
-    UNREALSDK_DEFINE_FIELDS_HEADER(UProperty, UNREALSDK_UPROPERTY_FIELDS);
+    UNREALSDK_DEFINE_FIELDS_HEADER(ZProperty, UNREALSDK_ZPROPERTY_FIELDS);
 };
 
 template <>
-struct ClassTraits<UProperty> {
+struct ClassTraits<ZProperty> {
     static inline const wchar_t* const NAME = L"Property";
 };
 
 }  // namespace unrealsdk::unreal
 
-#endif /* UNREALSDK_UNREAL_CLASSES_UPROPERTY_H */
+#endif /* UNREALSDK_UNREAL_CLASSES_ZPROPERTY_H */

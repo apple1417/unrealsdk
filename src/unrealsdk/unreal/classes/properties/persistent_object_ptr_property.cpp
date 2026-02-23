@@ -14,24 +14,24 @@
 
 namespace unrealsdk::unreal {
 
-UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(USoftClassProperty, UNREALSDK_USOFTCLASSPROPERTY_FIELDS);
+UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(ZSoftClassProperty, UNREALSDK_ZSOFTCLASSPROPERTY_FIELDS);
 
-PropTraits<ULazyObjectProperty>::Value PropTraits<ULazyObjectProperty>::get(
-    const ULazyObjectProperty* /*prop*/,
+PropTraits<ZLazyObjectProperty>::Value PropTraits<ZLazyObjectProperty>::get(
+    const ZLazyObjectProperty* /*prop*/,
     uintptr_t addr,
     const UnrealPointer<void>& /*parent*/) {
     auto ptr = reinterpret_cast<FLazyObjectPtr*>(addr);
     return unrealsdk::gobjects().get_weak_object(&ptr->weak_ptr);
 }
-PropTraits<USoftObjectProperty>::Value PropTraits<USoftObjectProperty>::get(
-    const USoftObjectProperty* /*prop*/,
+PropTraits<ZSoftObjectProperty>::Value PropTraits<ZSoftObjectProperty>::get(
+    const ZSoftObjectProperty* /*prop*/,
     uintptr_t addr,
     const UnrealPointer<void>& /*parent*/) {
     auto ptr = reinterpret_cast<FSoftObjectPtr*>(addr);
     return unrealsdk::gobjects().get_weak_object(&ptr->weak_ptr);
 }
-PropTraits<USoftClassProperty>::Value PropTraits<USoftClassProperty>::get(
-    const USoftClassProperty* /*prop*/,
+PropTraits<ZSoftClassProperty>::Value PropTraits<ZSoftClassProperty>::get(
+    const ZSoftClassProperty* /*prop*/,
     uintptr_t addr,
     const UnrealPointer<void>& /*parent*/) {
     // Soft classes still use a soft object pointer struct
@@ -39,7 +39,7 @@ PropTraits<USoftClassProperty>::Value PropTraits<USoftClassProperty>::get(
     return reinterpret_cast<UClass*>(unrealsdk::gobjects().get_weak_object(&ptr->weak_ptr));
 }
 
-void PropTraits<ULazyObjectProperty>::set(const ULazyObjectProperty* prop,
+void PropTraits<ZLazyObjectProperty>::set(const ZLazyObjectProperty* prop,
                                           uintptr_t addr,
                                           const Value& value) {
     // Ensure the object is of a valid class
@@ -52,7 +52,7 @@ void PropTraits<ULazyObjectProperty>::set(const ULazyObjectProperty* prop,
 
     unrealsdk::internal::flazyobjectptr_assign(reinterpret_cast<FLazyObjectPtr*>(addr), value);
 }
-void PropTraits<USoftObjectProperty>::set(const USoftObjectProperty* prop,
+void PropTraits<ZSoftObjectProperty>::set(const ZSoftObjectProperty* prop,
                                           uintptr_t addr,
                                           const Value& value) {
     // Ensure the object is of a valid class
@@ -65,7 +65,7 @@ void PropTraits<USoftObjectProperty>::set(const USoftObjectProperty* prop,
 
     unrealsdk::internal::fsoftobjectptr_assign(reinterpret_cast<FSoftObjectPtr*>(addr), value);
 }
-void PropTraits<USoftClassProperty>::set(const USoftClassProperty* prop,
+void PropTraits<ZSoftClassProperty>::set(const ZSoftClassProperty* prop,
                                          uintptr_t addr,
                                          const Value& value) {
     // Ensure the object is of a valid class
@@ -84,10 +84,10 @@ void PropTraits<USoftClassProperty>::set(const USoftClassProperty* prop,
     unrealsdk::internal::fsoftobjectptr_assign(reinterpret_cast<FSoftObjectPtr*>(addr), value);
 }
 
-void PropTraits<USoftObjectProperty>::destroy(const USoftObjectProperty* /*prop*/, uintptr_t addr) {
+void PropTraits<ZSoftObjectProperty>::destroy(const ZSoftObjectProperty* /*prop*/, uintptr_t addr) {
     reinterpret_cast<FSoftObjectPtr*>(addr)->identifier.subpath.free();
 }
-void PropTraits<USoftClassProperty>::destroy(const USoftClassProperty* /*prop*/, uintptr_t addr) {
+void PropTraits<ZSoftClassProperty>::destroy(const ZSoftClassProperty* /*prop*/, uintptr_t addr) {
     reinterpret_cast<FSoftObjectPtr*>(addr)->identifier.subpath.free();
 }
 

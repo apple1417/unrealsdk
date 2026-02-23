@@ -1,5 +1,5 @@
-#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_UMULTICASTDELEGATEPROPERTY_H
-#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_UMULTICASTDELEGATEPROPERTY_H
+#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZMULTICASTDELEGATEPROPERTY_H
+#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZMULTICASTDELEGATEPROPERTY_H
 
 #include "unrealsdk/pch.h"
 
@@ -14,40 +14,40 @@ namespace unrealsdk::unreal {
 
 class UFunction;
 
-class UMulticastDelegateProperty : public UProperty {
+class ZMulticastDelegateProperty : public ZProperty {
    public:
-    UMulticastDelegateProperty() = delete;
-    UMulticastDelegateProperty(const UMulticastDelegateProperty&) = delete;
-    UMulticastDelegateProperty(UMulticastDelegateProperty&&) = delete;
-    UMulticastDelegateProperty& operator=(const UMulticastDelegateProperty&) = delete;
-    UMulticastDelegateProperty& operator=(UMulticastDelegateProperty&&) = delete;
-    ~UMulticastDelegateProperty() = delete;
+    ZMulticastDelegateProperty() = delete;
+    ZMulticastDelegateProperty(const ZMulticastDelegateProperty&) = delete;
+    ZMulticastDelegateProperty(ZMulticastDelegateProperty&&) = delete;
+    ZMulticastDelegateProperty& operator=(const ZMulticastDelegateProperty&) = delete;
+    ZMulticastDelegateProperty& operator=(ZMulticastDelegateProperty&&) = delete;
+    ~ZMulticastDelegateProperty() = delete;
 
     // These fields become member functions, returning a reference into the object.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_UMULTICASTDELEGATEPROPERTY_FIELDS(X) X(UFunction*, Signature)
+#define UNREALSDK_ZMULTICASTDELEGATEPROPERTY_FIELDS(X) X(UFunction*, Signature)
 
-    UNREALSDK_DEFINE_FIELDS_HEADER(UMulticastDelegateProperty,
-                                   UNREALSDK_UMULTICASTDELEGATEPROPERTY_FIELDS);
+    UNREALSDK_DEFINE_FIELDS_HEADER(ZMulticastDelegateProperty,
+                                   UNREALSDK_ZMULTICASTDELEGATEPROPERTY_FIELDS);
 };
 
 template <>
-struct PropTraits<UMulticastDelegateProperty>
-    : public AbstractPropTraits<UMulticastDelegateProperty> {
+struct PropTraits<ZMulticastDelegateProperty>
+    : public AbstractPropTraits<ZMulticastDelegateProperty> {
     using Value = WrappedMulticastDelegate;
 
-    static Value get(const UMulticastDelegateProperty* prop,
+    static Value get(const ZMulticastDelegateProperty* prop,
                      uintptr_t addr,
                      const UnrealPointer<void>& parent);
-    static void set(const UMulticastDelegateProperty* prop, uintptr_t addr, const Value& value);
-    static void destroy(const UMulticastDelegateProperty* prop, uintptr_t addr);
+    static void set(const ZMulticastDelegateProperty* prop, uintptr_t addr, const Value& value);
+    static void destroy(const ZMulticastDelegateProperty* prop, uintptr_t addr);
 };
 
 template <>
-struct ClassTraits<UMulticastDelegateProperty> {
+struct ClassTraits<ZMulticastDelegateProperty> {
     static inline const wchar_t* const NAME = L"MulticastDelegateProperty";
 };
 
 }  // namespace unrealsdk::unreal
 
-#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_UMULTICASTDELEGATEPROPERTY_H */
+#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZMULTICASTDELEGATEPROPERTY_H */

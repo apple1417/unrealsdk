@@ -93,16 +93,16 @@ void FScriptDelegate::validate_signature(const std::optional<BoundFunction>& fun
     reasonably simple to implement.
     */
     {
-        auto func_props = std::ranges::filter_view(func->func->properties(), [](UProperty* prop) {
-            return (prop->PropertyFlags() & UProperty::PROP_FLAG_PARAM) != 0;
+        auto func_props = std::ranges::filter_view(func->func->properties(), [](ZProperty* prop) {
+            return (prop->PropertyFlags() & ZProperty::PROP_FLAG_PARAM) != 0;
         });
-        auto sig_props = std::ranges::filter_view(signature->properties(), [](UProperty* prop) {
-            return (prop->PropertyFlags() & UProperty::PROP_FLAG_PARAM) != 0;
+        auto sig_props = std::ranges::filter_view(signature->properties(), [](ZProperty* prop) {
+            return (prop->PropertyFlags() & ZProperty::PROP_FLAG_PARAM) != 0;
         });
 
         auto [func_diff, sig_diff] = std::ranges::mismatch(
             func_props, sig_props,
-            [](UProperty* func, UProperty* sig) { return func->Class() == sig->Class(); });
+            [](ZProperty* func, ZProperty* sig) { return func->Class() == sig->Class(); });
 
         if (func_diff != func_props.end() && sig_diff != sig_props.end()) {
             throw std::invalid_argument(std::format(

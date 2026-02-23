@@ -15,98 +15,98 @@ struct FLazyObjectPath;
 struct FSoftObjectPath;
 class UObject;
 
-class ULazyObjectProperty : public UObjectProperty {
+class ZLazyObjectProperty : public ZObjectProperty {
    public:
-    ULazyObjectProperty() = delete;
-    ULazyObjectProperty(const ULazyObjectProperty&) = delete;
-    ULazyObjectProperty(ULazyObjectProperty&&) = delete;
-    ULazyObjectProperty& operator=(const ULazyObjectProperty&) = delete;
-    ULazyObjectProperty& operator=(ULazyObjectProperty&&) = delete;
-    ~ULazyObjectProperty() = delete;
+    ZLazyObjectProperty() = delete;
+    ZLazyObjectProperty(const ZLazyObjectProperty&) = delete;
+    ZLazyObjectProperty(ZLazyObjectProperty&&) = delete;
+    ZLazyObjectProperty& operator=(const ZLazyObjectProperty&) = delete;
+    ZLazyObjectProperty& operator=(ZLazyObjectProperty&&) = delete;
+    ~ZLazyObjectProperty() = delete;
 };
 
-class USoftObjectProperty : public UObjectProperty {
+class ZSoftObjectProperty : public ZObjectProperty {
    public:
-    USoftObjectProperty() = delete;
-    USoftObjectProperty(const USoftObjectProperty&) = delete;
-    USoftObjectProperty(USoftObjectProperty&&) = delete;
-    USoftObjectProperty& operator=(const USoftObjectProperty&) = delete;
-    USoftObjectProperty& operator=(USoftObjectProperty&&) = delete;
-    ~USoftObjectProperty() = delete;
+    ZSoftObjectProperty() = delete;
+    ZSoftObjectProperty(const ZSoftObjectProperty&) = delete;
+    ZSoftObjectProperty(ZSoftObjectProperty&&) = delete;
+    ZSoftObjectProperty& operator=(const ZSoftObjectProperty&) = delete;
+    ZSoftObjectProperty& operator=(ZSoftObjectProperty&&) = delete;
+    ~ZSoftObjectProperty() = delete;
 };
 
 // Not entirely sure if this should inherit soft object property or class property, but soft object
 // object simplifies a lot of our code
-class USoftClassProperty : public USoftObjectProperty {
+class ZSoftClassProperty : public ZSoftObjectProperty {
    public:
-    USoftClassProperty() = delete;
-    USoftClassProperty(const USoftClassProperty&) = delete;
-    USoftClassProperty(USoftClassProperty&&) = delete;
-    USoftClassProperty& operator=(const USoftClassProperty&) = delete;
-    USoftClassProperty& operator=(USoftClassProperty&&) = delete;
-    ~USoftClassProperty() = delete;
+    ZSoftClassProperty() = delete;
+    ZSoftClassProperty(const ZSoftClassProperty&) = delete;
+    ZSoftClassProperty(ZSoftClassProperty&&) = delete;
+    ZSoftClassProperty& operator=(const ZSoftClassProperty&) = delete;
+    ZSoftClassProperty& operator=(ZSoftClassProperty&&) = delete;
+    ~ZSoftClassProperty() = delete;
 
     // These fields become member functions, returning a reference into the object.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_USOFTCLASSPROPERTY_FIELDS(X) X(UClass*, MetaClass)
+#define UNREALSDK_ZSOFTCLASSPROPERTY_FIELDS(X) X(UClass*, MetaClass)
 
-    UNREALSDK_DEFINE_FIELDS_HEADER(USoftClassProperty, UNREALSDK_USOFTCLASSPROPERTY_FIELDS);
+    UNREALSDK_DEFINE_FIELDS_HEADER(ZSoftClassProperty, UNREALSDK_ZSOFTCLASSPROPERTY_FIELDS);
 };
 
 template <>
-struct PropTraits<ULazyObjectProperty> : public AbstractPropTraits<ULazyObjectProperty> {
+struct PropTraits<ZLazyObjectProperty> : public AbstractPropTraits<ZLazyObjectProperty> {
     using Value = UObject*;
 
-    static Value get(const ULazyObjectProperty* prop,
+    static Value get(const ZLazyObjectProperty* prop,
                      uintptr_t addr,
                      const UnrealPointer<void>& parent);
-    static void set(const ULazyObjectProperty* prop, uintptr_t addr, const Value& value);
+    static void set(const ZLazyObjectProperty* prop, uintptr_t addr, const Value& value);
 
-    static const FLazyObjectPath* get_identifier(const ULazyObjectProperty* prop,
+    static const FLazyObjectPath* get_identifier(const ZLazyObjectProperty* prop,
                                                  uintptr_t addr,
                                                  const UnrealPointer<void>& parent);
 };
 
 template <>
-struct PropTraits<USoftObjectProperty> : public AbstractPropTraits<USoftObjectProperty> {
+struct PropTraits<ZSoftObjectProperty> : public AbstractPropTraits<ZSoftObjectProperty> {
     using Value = UObject*;
 
-    static Value get(const USoftObjectProperty* prop,
+    static Value get(const ZSoftObjectProperty* prop,
                      uintptr_t addr,
                      const UnrealPointer<void>& parent);
-    static void set(const USoftObjectProperty* prop, uintptr_t addr, const Value& value);
-    static void destroy(const USoftObjectProperty* prop, uintptr_t addr);
+    static void set(const ZSoftObjectProperty* prop, uintptr_t addr, const Value& value);
+    static void destroy(const ZSoftObjectProperty* prop, uintptr_t addr);
 
-    static const FSoftObjectPath* get_identifier(const USoftObjectProperty* prop,
+    static const FSoftObjectPath* get_identifier(const ZSoftObjectProperty* prop,
                                                  uintptr_t addr,
                                                  const UnrealPointer<void>& parent);
 };
 
 template <>
-struct PropTraits<USoftClassProperty> : public AbstractPropTraits<USoftClassProperty> {
+struct PropTraits<ZSoftClassProperty> : public AbstractPropTraits<ZSoftClassProperty> {
     using Value = UClass*;
 
-    static Value get(const USoftClassProperty* prop,
+    static Value get(const ZSoftClassProperty* prop,
                      uintptr_t addr,
                      const UnrealPointer<void>& parent);
-    static void set(const USoftClassProperty* prop, uintptr_t addr, const Value& value);
-    static void destroy(const USoftClassProperty* prop, uintptr_t addr);
+    static void set(const ZSoftClassProperty* prop, uintptr_t addr, const Value& value);
+    static void destroy(const ZSoftClassProperty* prop, uintptr_t addr);
 
-    static const FSoftObjectPath* get_identifier(const USoftClassProperty* prop,
+    static const FSoftObjectPath* get_identifier(const ZSoftClassProperty* prop,
                                                  uintptr_t addr,
                                                  const UnrealPointer<void>& parent);
 };
 
 template <>
-struct ClassTraits<ULazyObjectProperty> {
+struct ClassTraits<ZLazyObjectProperty> {
     static inline const wchar_t* const NAME = L"LazyObjectProperty";
 };
 template <>
-struct ClassTraits<USoftObjectProperty> {
+struct ClassTraits<ZSoftObjectProperty> {
     static inline const wchar_t* const NAME = L"SoftObjectProperty";
 };
 template <>
-struct ClassTraits<USoftClassProperty> {
+struct ClassTraits<ZSoftClassProperty> {
     static inline const wchar_t* const NAME = L"SoftClassProperty";
 };
 

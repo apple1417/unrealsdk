@@ -1,5 +1,5 @@
-#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_USTRUCTPROPERTY_H
-#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_USTRUCTPROPERTY_H
+#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZSTRUCTPROPERTY_H
+#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZSTRUCTPROPERTY_H
 
 #include "unrealsdk/pch.h"
 
@@ -13,38 +13,38 @@ namespace unrealsdk::unreal {
 
 class UScriptStruct;
 
-class UStructProperty : public UProperty {
+class ZStructProperty : public ZProperty {
    public:
-    UStructProperty() = delete;
-    UStructProperty(const UStructProperty&) = delete;
-    UStructProperty(UStructProperty&&) = delete;
-    UStructProperty& operator=(const UStructProperty&) = delete;
-    UStructProperty& operator=(UStructProperty&&) = delete;
-    ~UStructProperty() = delete;
+    ZStructProperty() = delete;
+    ZStructProperty(const ZStructProperty&) = delete;
+    ZStructProperty(ZStructProperty&&) = delete;
+    ZStructProperty& operator=(const ZStructProperty&) = delete;
+    ZStructProperty& operator=(ZStructProperty&&) = delete;
+    ~ZStructProperty() = delete;
 
     // These fields become member functions, returning a reference into the object.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_USTRUCTPROPERTY_FIELDS(X) X(UScriptStruct*, Struct)
+#define UNREALSDK_ZSTRUCTPROPERTY_FIELDS(X) X(UScriptStruct*, Struct)
 
-    UNREALSDK_DEFINE_FIELDS_HEADER(UStructProperty, UNREALSDK_USTRUCTPROPERTY_FIELDS);
+    UNREALSDK_DEFINE_FIELDS_HEADER(ZStructProperty, UNREALSDK_ZSTRUCTPROPERTY_FIELDS);
 };
 
 template <>
-struct PropTraits<UStructProperty> : public AbstractPropTraits<UStructProperty> {
+struct PropTraits<ZStructProperty> : public AbstractPropTraits<ZStructProperty> {
     using Value = WrappedStruct;
 
-    static Value get(const UStructProperty* prop,
+    static Value get(const ZStructProperty* prop,
                      uintptr_t addr,
                      const UnrealPointer<void>& parent);
-    static void set(const UStructProperty* prop, uintptr_t addr, const Value& value);
-    static void destroy(const UStructProperty* prop, uintptr_t addr);
+    static void set(const ZStructProperty* prop, uintptr_t addr, const Value& value);
+    static void destroy(const ZStructProperty* prop, uintptr_t addr);
 };
 
 template <>
-struct ClassTraits<UStructProperty> {
+struct ClassTraits<ZStructProperty> {
     static inline const wchar_t* const NAME = L"StructProperty";
 };
 
 }  // namespace unrealsdk::unreal
 
-#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_USTRUCTPROPERTY_H */
+#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZSTRUCTPROPERTY_H */

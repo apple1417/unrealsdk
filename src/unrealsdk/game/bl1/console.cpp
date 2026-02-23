@@ -51,32 +51,32 @@ bool say_bypass_hook(const hook_manager::Details& hook) {
     static const auto console_command_func =
         hook.obj->Class()->find_func_and_validate(L"ConsoleCommand"_fn);
     static const auto command_property =
-        hook.args->type->find_prop_and_validate<UStrProperty>(L"Command"_fn);
+        hook.args->type->find_prop_and_validate<ZStrProperty>(L"Command"_fn);
 
     hook.obj->get<UFunction, BoundFunction>(console_command_func)
-        .call<void, UStrProperty>(hook.args->get<UStrProperty>(command_property));
+        .call<void, ZStrProperty>(hook.args->get<ZStrProperty>(command_property));
     return true;
 }
 
 bool console_command_hook(const hook_manager::Details& hook) {
     static const auto command_property =
-        hook.args->type->find_prop_and_validate<UStrProperty>(L"Command"_fn);
+        hook.args->type->find_prop_and_validate<ZStrProperty>(L"Command"_fn);
 
     static const auto history_prop =
-        hook.obj->Class()->find_prop_and_validate<UStrProperty>(L"History"_fn);
+        hook.obj->Class()->find_prop_and_validate<ZStrProperty>(L"History"_fn);
     static const auto history_top_prop =
-        hook.obj->Class()->find_prop_and_validate<UIntProperty>(L"HistoryTop"_fn);
+        hook.obj->Class()->find_prop_and_validate<ZIntProperty>(L"HistoryTop"_fn);
     static const auto history_bot_prop =
-        hook.obj->Class()->find_prop_and_validate<UIntProperty>(L"HistoryBot"_fn);
+        hook.obj->Class()->find_prop_and_validate<ZIntProperty>(L"HistoryBot"_fn);
     static const auto history_cur_prop =
-        hook.obj->Class()->find_prop_and_validate<UIntProperty>(L"HistoryCur"_fn);
+        hook.obj->Class()->find_prop_and_validate<ZIntProperty>(L"HistoryCur"_fn);
 
     static const UFunction* purge_command_func =
         hook.obj->Class()->find_func_and_validate(L"PurgeCommandFromHistory"_fn);
     static const UFunction* save_config_func =
         hook.obj->Class()->find_func_and_validate(L"SaveConfig"_fn);
 
-    auto line = hook.args->get<UStrProperty>(command_property);
+    auto line = hook.args->get<ZStrProperty>(command_property);
 
     // This hook only runs when input via console, it is direct user input
     if (!commands::impl::is_command_valid(line, true)) {
@@ -93,22 +93,22 @@ bool console_command_hook(const hook_manager::Details& hook) {
         //  changes while scrolling, but we can't really check that
 
         // First remove it from history
-        hook.obj->get<UFunction, BoundFunction>(purge_command_func).call<void, UStrProperty>(line);
+        hook.obj->get<UFunction, BoundFunction>(purge_command_func).call<void, ZStrProperty>(line);
 
         // Insert this line at top
-        auto history_top = hook.obj->get<UIntProperty>(history_top_prop);
-        hook.obj->set<UStrProperty>(history_prop, history_top, line);
+        auto history_top = hook.obj->get<ZIntProperty>(history_top_prop);
+        hook.obj->set<ZStrProperty>(history_prop, history_top, line);
 
         // Increment top
         history_top = (history_top + 1) % history_prop->ArrayDim();
-        hook.obj->set<UIntProperty>(history_top_prop, history_top);
+        hook.obj->set<ZIntProperty>(history_top_prop, history_top);
         // And set current
-        hook.obj->set<UIntProperty>(history_cur_prop, history_top);
+        hook.obj->set<ZIntProperty>(history_cur_prop, history_top);
 
         // Increment bottom if needed
-        auto history_bot = hook.obj->get<UIntProperty>(history_bot_prop);
+        auto history_bot = hook.obj->get<ZIntProperty>(history_bot_prop);
         if ((history_bot == -1) || history_bot == history_top) {
-            hook.obj->set<UIntProperty>(history_bot_prop,
+            hook.obj->set<ZIntProperty>(history_bot_prop,
                                         (history_bot + 1) % history_prop->ArrayDim());
         }
 
@@ -132,7 +132,7 @@ bool console_command_hook(const hook_manager::Details& hook) {
      * lowest people practically set their console log level to is dev warning.
      */
     auto msg = format(L">>> {} <<<", line);
-    console_output_text.call<void, UStrProperty>(msg);
+    console_output_text.call<void, ZStrProperty>(msg);
     LOG(MIN, L"{}", msg);
 
     try {
@@ -146,9 +146,9 @@ bool console_command_hook(const hook_manager::Details& hook) {
 
 bool pc_console_command_hook(const hook_manager::Details& hook) {
     static const auto command_property =
-        hook.args->type->find_prop_and_validate<UStrProperty>(L"Command"_fn);
+        hook.args->type->find_prop_and_validate<ZStrProperty>(L"Command"_fn);
 
-    auto line = hook.args->get<UStrProperty>(command_property);
+    auto line = hook.args->get<ZStrProperty>(command_property);
 
     // Conversely, this hook is explicitly not from console
     if (!commands::impl::is_command_valid(line, false)) {
@@ -168,18 +168,18 @@ bool pc_console_command_hook(const hook_manager::Details& hook) {
 bool inject_console_hook(const hook_manager::Details& hook) {
     remove_hook(INJECT_CONSOLE_FUNC, INJECT_CONSOLE_TYPE, INJECT_CONSOLE_ID);
 
-    auto console = hook.obj->get<UObjectProperty>(L"ViewportConsole"_fn);
+    auto console = hook.obj->get<ZObjectProperty>(L"ViewportConsole"_fn);
 
     // Grab this reference ASAP
     // Actually using OutputTextLine because it handles an empty string - OutputText does nothing
     console_output_text = console->get<UFunction, BoundFunction>(L"OutputTextLine"_fn);
 
-    auto existing_console_key = console->get<UNameProperty>(L"ConsoleKey"_fn);
+    auto existing_console_key = console->get<ZNameProperty>(L"ConsoleKey"_fn);
     if (existing_console_key != L"None"_fn || existing_console_key == L"Undefine"_fn) {
         LOG(MISC, "Console key is already set to '{}'", existing_console_key);
     } else {
         std::string wanted_console_key{config::get_str("unrealsdk.console_key").value_or("Tilde")};
-        console->set<UNameProperty>(L"ConsoleKey"_fn, FName{wanted_console_key});
+        console->set<ZNameProperty>(L"ConsoleKey"_fn, FName{wanted_console_key});
 
         LOG(MISC, "Set console key to '{}'", wanted_console_key);
     }
@@ -203,7 +203,7 @@ void BL1Hook::uconsole_output_text(const std::wstring& str) const {
     if (console_output_text.func == nullptr) {
         return;
     }
-    console_output_text.call<void, UStrProperty>(str);
+    console_output_text.call<void, ZStrProperty>(str);
 }
 
 bool BL1Hook::is_console_ready(void) const {

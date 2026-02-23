@@ -11,6 +11,6 @@
 
 namespace unrealsdk::unreal {
 
-UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(UProperty, UNREALSDK_UPROPERTY_FIELDS);
+UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(ZProperty, UNREALSDK_ZPROPERTY_FIELDS);
 
 }  // namespace unrealsdk::unreal

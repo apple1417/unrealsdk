@@ -10,20 +10,20 @@
 
 namespace unrealsdk::unreal {
 
-PropTraits<UStrProperty>::Value PropTraits<UStrProperty>::get(
-    const UStrProperty* /*prop*/,
+PropTraits<ZStrProperty>::Value PropTraits<ZStrProperty>::get(
+    const ZStrProperty* /*prop*/,
     uintptr_t addr,
     const UnrealPointer<void>& /*parent*/) {
     return *reinterpret_cast<UnmanagedFString*>(addr);
 }
 
-void PropTraits<UStrProperty>::set(const UStrProperty* /*prop*/,
+void PropTraits<ZStrProperty>::set(const ZStrProperty* /*prop*/,
                                    uintptr_t addr,
                                    const Value& value) {
     *reinterpret_cast<UnmanagedFString*>(addr) = value;
 }
 
-void PropTraits<UStrProperty>::destroy(const UStrProperty* /*prop*/, uintptr_t addr) {
+void PropTraits<ZStrProperty>::destroy(const ZStrProperty* /*prop*/, uintptr_t addr) {
     reinterpret_cast<UnmanagedFString*>(addr)->free();
 }
 

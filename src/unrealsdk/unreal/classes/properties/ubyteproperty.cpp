@@ -6,6 +6,6 @@
 
 namespace unrealsdk::unreal {
 
-UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(UByteProperty, UNREALSDK_UBYTEPROPERTY_FIELDS);
+UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(ZByteProperty, UNREALSDK_ZBYTEPROPERTY_FIELDS);
 
 }  // namespace unrealsdk::unreal

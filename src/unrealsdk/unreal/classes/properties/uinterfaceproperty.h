@@ -1,5 +1,5 @@
-#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_UINTERFACEPROPERTY_H
-#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_UINTERFACEPROPERTY_H
+#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZINTERFACEPROPERTY_H
+#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZINTERFACEPROPERTY_H
 
 #include "unrealsdk/pch.h"
 
@@ -13,37 +13,37 @@ namespace unrealsdk::unreal {
 class UClass;
 class UObject;
 
-class UInterfaceProperty : public UProperty {
+class ZInterfaceProperty : public ZProperty {
    public:
-    UInterfaceProperty() = delete;
-    UInterfaceProperty(const UInterfaceProperty&) = delete;
-    UInterfaceProperty(UInterfaceProperty&&) = delete;
-    UInterfaceProperty& operator=(const UInterfaceProperty&) = delete;
-    UInterfaceProperty& operator=(UInterfaceProperty&&) = delete;
-    ~UInterfaceProperty() = delete;
+    ZInterfaceProperty() = delete;
+    ZInterfaceProperty(const ZInterfaceProperty&) = delete;
+    ZInterfaceProperty(ZInterfaceProperty&&) = delete;
+    ZInterfaceProperty& operator=(const ZInterfaceProperty&) = delete;
+    ZInterfaceProperty& operator=(ZInterfaceProperty&&) = delete;
+    ~ZInterfaceProperty() = delete;
 
     // These fields become member functions, returning a reference into the object.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_UINTERFACEPROPERTY_FIELDS(X) X(UClass*, InterfaceClass)
+#define UNREALSDK_ZINTERFACEPROPERTY_FIELDS(X) X(UClass*, InterfaceClass)
 
-    UNREALSDK_DEFINE_FIELDS_HEADER(UInterfaceProperty, UNREALSDK_UINTERFACEPROPERTY_FIELDS);
+    UNREALSDK_DEFINE_FIELDS_HEADER(ZInterfaceProperty, UNREALSDK_ZINTERFACEPROPERTY_FIELDS);
 };
 
 template <>
-struct PropTraits<UInterfaceProperty> : public AbstractPropTraits<UInterfaceProperty> {
+struct PropTraits<ZInterfaceProperty> : public AbstractPropTraits<ZInterfaceProperty> {
     using Value = UObject*;
 
-    static Value get(const UInterfaceProperty* prop,
+    static Value get(const ZInterfaceProperty* prop,
                      uintptr_t addr,
                      const UnrealPointer<void>& parent);
-    static void set(const UInterfaceProperty* prop, uintptr_t addr, const Value& value);
+    static void set(const ZInterfaceProperty* prop, uintptr_t addr, const Value& value);
 };
 
 template <>
-struct ClassTraits<UInterfaceProperty> {
+struct ClassTraits<ZInterfaceProperty> {
     static inline const wchar_t* const NAME = L"InterfaceProperty";
 };
 
 }  // namespace unrealsdk::unreal
 
-#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_UINTERFACEPROPERTY_H */
+#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZINTERFACEPROPERTY_H */

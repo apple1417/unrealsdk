@@ -25,14 +25,14 @@ namespace impl {
  * @param prop The current property to start at.
  * @return The next parameter, or nullptr on reaching the end of the chain.
  */
-[[nodiscard]] UProperty* get_next_param(UProperty* prop);
+[[nodiscard]] ZProperty* get_next_param(ZProperty* prop);
 
 /**
  * @brief Checks that there are no more required params for a function call.
  *
  * @param prop The next unparsed parameter property object.
  */
-void validate_no_more_params(UProperty* prop);
+void validate_no_more_params(ZProperty* prop);
 
 /**
  * @brief Tail recursive function to set all args in a function's params struct.
@@ -46,7 +46,7 @@ void validate_no_more_params(UProperty* prop);
  */
 template <typename T0, typename... Ts>
 void set_param(WrappedStruct& params,
-               UProperty* prop,
+               ZProperty* prop,
                const typename PropTraits<T0>::Value& arg0,
                const typename PropTraits<Ts>::Value&... args) {
     if (prop == nullptr) {
@@ -78,8 +78,8 @@ void set_param(WrappedStruct& params,
  */
 template <typename... Ts>
 void write_params(WrappedStruct& params, const typename PropTraits<Ts>::Value&... args) {
-    UProperty* prop = params.type->PropertyLink();
-    if (prop != nullptr && (prop->PropertyFlags() & UProperty::PROP_FLAG_PARAM) == 0) {
+    ZProperty* prop = params.type->PropertyLink();
+    if (prop != nullptr && (prop->PropertyFlags() & ZProperty::PROP_FLAG_PARAM) == 0) {
         prop = impl::get_next_param(prop);
     }
 

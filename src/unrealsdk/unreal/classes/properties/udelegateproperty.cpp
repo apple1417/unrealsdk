@@ -9,16 +9,16 @@
 
 namespace unrealsdk::unreal {
 
-UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(UDelegateProperty, UNREALSDK_UDELEGATEPROPERTY_FIELDS);
+UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(ZDelegateProperty, UNREALSDK_ZDELEGATEPROPERTY_FIELDS);
 
-PropTraits<UDelegateProperty>::Value PropTraits<UDelegateProperty>::get(
-    const UDelegateProperty* /*prop*/,
+PropTraits<ZDelegateProperty>::Value PropTraits<ZDelegateProperty>::get(
+    const ZDelegateProperty* /*prop*/,
     uintptr_t addr,
     const UnrealPointer<void>& /*parent*/) {
     return reinterpret_cast<FScriptDelegate*>(addr)->as_function();
 }
 
-void PropTraits<UDelegateProperty>::set(const UDelegateProperty* prop,
+void PropTraits<ZDelegateProperty>::set(const ZDelegateProperty* prop,
                                         uintptr_t addr,
                                         const Value& value) {
     FScriptDelegate::validate_signature(value, prop->Signature());

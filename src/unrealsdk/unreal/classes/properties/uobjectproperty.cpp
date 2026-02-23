@@ -9,16 +9,16 @@
 
 namespace unrealsdk::unreal {
 
-UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(UObjectProperty, UNREALSDK_UOBJECTPROPERTY_FIELDS);
+UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(ZObjectProperty, UNREALSDK_ZOBJECTPROPERTY_FIELDS);
 
-PropTraits<UObjectProperty>::Value PropTraits<UObjectProperty>::get(
-    const UObjectProperty* /*prop*/,
+PropTraits<ZObjectProperty>::Value PropTraits<ZObjectProperty>::get(
+    const ZObjectProperty* /*prop*/,
     uintptr_t addr,
     const UnrealPointer<void>& /*parent*/) {
     return *reinterpret_cast<Value*>(addr);
 }
 
-void PropTraits<UObjectProperty>::set(const UObjectProperty* prop,
+void PropTraits<ZObjectProperty>::set(const ZObjectProperty* prop,
                                       uintptr_t addr,
                                       const Value& value) {
     // Ensure the object is of a valid class

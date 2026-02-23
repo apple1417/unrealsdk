@@ -7,7 +7,7 @@ namespace unrealsdk::unreal {
 
 UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 
-class UStructProperty;
+class ZStructProperty;
 class UClass;
 
 struct FImplementedInterface {
@@ -20,7 +20,7 @@ struct FImplementedInterface {
     int32_t PointerOffset;
     bool isNative;
 #elif UNREALSDK_FIMPLEMENTEDINTERFACE_FORMAT == UNREALSDK_FIMPLEMENTEDINTERFACE_FORMAT_UE3
-    UStructProperty* VFTableProperty;  // May be null (if native?)
+    ZStructProperty* VFTableProperty;  // May be null (if native?)
 #else
 #error Unknown FImplementedInterface format
 #endif

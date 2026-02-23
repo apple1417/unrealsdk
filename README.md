@@ -37,14 +37,14 @@ through the `get` and `set` functions. These functions take the expected propert
 arg, and will throw exceptions if it doesn't appear to line up.
 
 ```cpp
-auto paused = hook.args->get<UBoolProperty>(L"StartPaused"_fn);
+auto paused = hook.args->get<ZBoolProperty>(L"StartPaused"_fn);
 
-auto idx = hook.obj->get<UIntProperty>(L"MessageOfTheDayIdx"_fn);
-auto motd_array = hook.obj->get<UArrayProperty>(L"MessagesOfTheDay"_fn);
-motd_array.get_at<UStructProperty>(idx).set<UStrProperty>(L"Body"_fn, L"No MOTD today");
+auto idx = hook.obj->get<ZIntProperty>(L"MessageOfTheDayIdx"_fn);
+auto motd_array = hook.obj->get<ZArrayProperty>(L"MessagesOfTheDay"_fn);
+motd_array.get_at<ZStructProperty>(idx).set<ZStrProperty>(L"Body"_fn, L"No MOTD today");
 
 auto op_string = hook.obj->get<UFunction, BoundFunction>(L"BuildOverpowerPromptString"_fn)
-                    .call<UStrProperty, UIntProperty, UIntProperty>(1, 10);
+                    .call<ZStrProperty, ZIntProperty, ZIntProperty>(1, 10);
 ```
 
 # Integrating the SDK into your project

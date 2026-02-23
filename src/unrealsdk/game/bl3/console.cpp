@@ -74,12 +74,12 @@ void console_command_hook(UObject* console_obj, UnmanagedFString* raw_line) {
                 // Since we know we can never overflow if the current line already exists in the
                 // buffer, we can combine the two memmoves
 
-                auto history_buffer = console_obj->get<UArrayProperty>(L"HistoryBuffer"_fn);
+                auto history_buffer = console_obj->get<ZArrayProperty>(L"HistoryBuffer"_fn);
                 auto history_size = history_buffer.size();
 
                 size_t matching_idx = history_size;
                 for (size_t i = 0; i < history_size; i++) {
-                    if (history_buffer.get_at<UStrProperty>(i) == line) {
+                    if (history_buffer.get_at<ZStrProperty>(i) == line) {
                         matching_idx = i;
                     }
                 }
@@ -99,7 +99,7 @@ void console_command_hook(UObject* console_obj, UnmanagedFString* raw_line) {
                 }
 
                 if (needs_move) {
-                    history_buffer.destroy_at<UStrProperty>(dropped_idx);
+                    history_buffer.destroy_at<ZStrProperty>(dropped_idx);
 
                     // If the entry to drop is right at the end of the array, don't bother moving
                     // anything, just lower the count
@@ -117,7 +117,7 @@ void console_command_hook(UObject* console_obj, UnmanagedFString* raw_line) {
                 }
 
                 history_buffer.resize(history_size + 1);
-                history_buffer.set_at<UStrProperty>(history_size, line);
+                history_buffer.set_at<ZStrProperty>(history_size, line);
 
                 // UE would normally call UObject::SaveConfig here, but it's a pain to get to for
                 // just this, and we'll see if people actually complain
@@ -162,19 +162,19 @@ void console_command_hook(UObject* console_obj, UnmanagedFString* raw_line) {
 bool inject_console_hook(hook_manager::Details& hook) {
     hook_manager::remove_hook(INJECT_CONSOLE_FUNC, INJECT_CONSOLE_TYPE, INJECT_CONSOLE_ID);
 
-    auto local_player = hook.obj->get<UObjectProperty>(L"Player"_fn);
-    auto viewport = local_player->get<UObjectProperty>(L"ViewportClient"_fn);
+    auto local_player = hook.obj->get<ZObjectProperty>(L"Player"_fn);
+    auto viewport = local_player->get<ZObjectProperty>(L"ViewportClient"_fn);
     auto console_property =
-        viewport->Class()->find_prop_and_validate<UObjectProperty>(L"ViewportConsole"_fn);
+        viewport->Class()->find_prop_and_validate<ZObjectProperty>(L"ViewportConsole"_fn);
     console = viewport->get(console_property);
 
     if (console == nullptr) {
         auto default_console = console_property->PropertyClass()->ClassDefaultObject();
         console = unrealsdk::construct_object(default_console->Class(), default_console->Outer());
-        viewport->set<UObjectProperty>(L"ViewportConsole"_fn, console);
+        viewport->set<ZObjectProperty>(L"ViewportConsole"_fn, console);
     }
 
-    console->set<UObjectProperty>(L"ConsoleTargetPlayer"_fn, local_player);
+    console->set<ZObjectProperty>(L"ConsoleTargetPlayer"_fn, local_player);
 
     static auto console_command_vf_idx =
         config::get_int("unrealsdk.uconsole_console_command_vf_index")
@@ -194,7 +194,7 @@ bool inject_console_hook(hook_manager::Details& hook) {
         }
 
         auto existing_console_key =
-            inner_obj->get<UStructProperty>(L"ConsoleKey"_fn).get<UNameProperty>(L"KeyName"_fn);
+            inner_obj->get<ZStructProperty>(L"ConsoleKey"_fn).get<ZNameProperty>(L"KeyName"_fn);
         FName console_key{0, 0};
 
         if (existing_console_key != L"None"_fn && existing_console_key != L"Undefine"_fn) {
@@ -206,16 +206,16 @@ bool inject_console_hook(hook_manager::Details& hook) {
                 config::get_str("unrealsdk.console_key").value_or("Tilde")};
             console_key = FName{wanted_console_key};
 
-            inner_obj->get<UStructProperty>(L"ConsoleKey"_fn)
-                .set<UNameProperty>(L"KeyName"_fn, console_key);
+            inner_obj->get<ZStructProperty>(L"ConsoleKey"_fn)
+                .set<ZNameProperty>(L"KeyName"_fn, console_key);
 
             LOG(MISC, "Set console key to '{}'", wanted_console_key);
         }
 
         // Make sure the array version is set to the same
-        auto arr = inner_obj->get<UArrayProperty>(L"ConsoleKeys"_fn);
+        auto arr = inner_obj->get<ZArrayProperty>(L"ConsoleKeys"_fn);
         arr.resize(1);
-        arr.get_at<UStructProperty>(0).set<UNameProperty>(L"KeyName"_fn, console_key);
+        arr.get_at<ZStructProperty>(0).set<ZNameProperty>(L"KeyName"_fn, console_key);
     }
 
     return false;

@@ -9,15 +9,15 @@
 
 namespace unrealsdk::unreal {
 
-PropTraits<UWeakObjectProperty>::Value PropTraits<UWeakObjectProperty>::get(
-    const UWeakObjectProperty* /*prop*/,
+PropTraits<ZWeakObjectProperty>::Value PropTraits<ZWeakObjectProperty>::get(
+    const ZWeakObjectProperty* /*prop*/,
     uintptr_t addr,
     const UnrealPointer<void>& /*parent*/) {
     auto ptr = reinterpret_cast<FWeakObjectPtr*>(addr);
     return unrealsdk::gobjects().get_weak_object(ptr);
 }
 
-void PropTraits<UWeakObjectProperty>::set(const UWeakObjectProperty* prop,
+void PropTraits<ZWeakObjectProperty>::set(const ZWeakObjectProperty* prop,
                                           uintptr_t addr,
                                           const Value& value) {
     // Ensure the object is of a valid class

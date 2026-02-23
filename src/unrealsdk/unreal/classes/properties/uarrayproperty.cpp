@@ -14,10 +14,10 @@
 
 namespace unrealsdk::unreal {
 
-UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(UArrayProperty, UNREALSDK_UARRAYPROPERTY_FIELDS);
+UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(ZArrayProperty, UNREALSDK_ZARRAYPROPERTY_FIELDS);
 
-PropTraits<UArrayProperty>::Value PropTraits<UArrayProperty>::get(
-    const UArrayProperty* prop,
+PropTraits<ZArrayProperty>::Value PropTraits<ZArrayProperty>::get(
+    const ZArrayProperty* prop,
     uintptr_t addr,
     const UnrealPointer<void>& parent) {
     auto inner = prop->Inner();
@@ -29,7 +29,7 @@ PropTraits<UArrayProperty>::Value PropTraits<UArrayProperty>::get(
     return {inner, reinterpret_cast<TArray<void>*>(addr), parent};
 }
 
-void PropTraits<UArrayProperty>::set(const UArrayProperty* prop,
+void PropTraits<ZArrayProperty>::set(const ZArrayProperty* prop,
                                      uintptr_t addr,
                                      const Value& value) {
     auto inner = prop->Inner();
@@ -62,7 +62,7 @@ void PropTraits<UArrayProperty>::set(const UArrayProperty* prop,
     });
 }
 
-void PropTraits<UArrayProperty>::destroy(const UArrayProperty* prop, uintptr_t addr) {
+void PropTraits<ZArrayProperty>::destroy(const ZArrayProperty* prop, uintptr_t addr) {
     auto inner = prop->Inner();
     if (prop->ArrayDim() > 1) {
         throw std::runtime_error(

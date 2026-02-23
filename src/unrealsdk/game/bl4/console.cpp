@@ -74,12 +74,12 @@ void console_command_hook(UObject* console_obj, UnmanagedFString* raw_line) {
                 // Since we know we can never overflow if the current line already exists in the
                 // buffer, we can combine the two memmoves
 
-                auto history_buffer = console_obj->get<UArrayProperty>(L"HistoryBuffer"_fn);
+                auto history_buffer = console_obj->get<ZArrayProperty>(L"HistoryBuffer"_fn);
                 auto history_size = history_buffer.size();
 
                 size_t matching_idx = history_size;
                 for (size_t i = 0; i < history_size; i++) {
-                    if (history_buffer.get_at<UStrProperty>(i) == line) {
+                    if (history_buffer.get_at<ZStrProperty>(i) == line) {
                         matching_idx = i;
                     }
                 }
@@ -99,7 +99,7 @@ void console_command_hook(UObject* console_obj, UnmanagedFString* raw_line) {
                 }
 
                 if (needs_move) {
-                    history_buffer.destroy_at<UStrProperty>(dropped_idx);
+                    history_buffer.destroy_at<ZStrProperty>(dropped_idx);
 
                     // If the entry to drop is right at the end of the array, don't bother moving
                     // anything, just lower the count
@@ -117,7 +117,7 @@ void console_command_hook(UObject* console_obj, UnmanagedFString* raw_line) {
                 }
 
                 history_buffer.resize(history_size + 1);
-                history_buffer.set_at<UStrProperty>(history_size, line);
+                history_buffer.set_at<ZStrProperty>(history_size, line);
 
                 // UE would normally call UObject::SaveConfig here, but it's a pain to get to for
                 // just this, and we'll see if people actually complain
@@ -163,19 +163,19 @@ bool inject_console_hook(hook_manager::Details& hook) {
     hook_manager::remove_hook(INJECT_CONSOLE_FUNC, INJECT_CONSOLE_TYPE, INJECT_CONSOLE_ID);
     LOG(INFO, "Injecting console");
 
-    auto local_player = hook.obj->get<UObjectProperty>(L"Player"_fn);
-    auto viewport = local_player->get<UObjectProperty>(L"ViewportClient"_fn);
+    auto local_player = hook.obj->get<ZObjectProperty>(L"Player"_fn);
+    auto viewport = local_player->get<ZObjectProperty>(L"ViewportClient"_fn);
     auto console_property =
-        viewport->Class()->find_prop_and_validate<UObjectProperty>(L"ViewportConsole"_fn);
+        viewport->Class()->find_prop_and_validate<ZObjectProperty>(L"ViewportConsole"_fn);
     console = viewport->get(console_property);
 
     if (console == nullptr) {
         auto default_console = console_property->PropertyClass()->ClassDefaultObject();
         console = unrealsdk::construct_object(default_console->Class(), viewport);
-        viewport->set<UObjectProperty>(L"ViewportConsole"_fn, console);
+        viewport->set<ZObjectProperty>(L"ViewportConsole"_fn, console);
     }
 
-    console->set<UObjectProperty>(L"ConsoleTargetPlayer"_fn, local_player);
+    console->set<ZObjectProperty>(L"ConsoleTargetPlayer"_fn, local_player);
 
     static auto console_command_vf_idx =
         config::get_int("unrealsdk.uconsole_console_command_vf_index")
@@ -198,9 +198,9 @@ bool inject_console_hook(hook_manager::Details& hook) {
 
         auto wanted_console_key = config::get_str("unrealsdk.console_key");
 
-        auto arr = inner_obj->get<UArrayProperty>(L"ConsoleKeys"_fn);
+        auto arr = inner_obj->get<ZArrayProperty>(L"ConsoleKeys"_fn);
         if (arr.size() > 0) {
-            auto existing_fname = arr.get_at<UStructProperty>(0).get<UNameProperty>(L"KeyName"_fn);
+            auto existing_fname = arr.get_at<ZStructProperty>(0).get<ZNameProperty>(L"KeyName"_fn);
 
             // It seems we do have tilde as a default console key in this game. Rather than just
             // accept that like we do in other games (where there's no default), if the user's
@@ -214,7 +214,7 @@ bool inject_console_hook(hook_manager::Details& hook) {
                     // Technically we might be throwing away other keys in later slots, but you did
                     // say you wanted this one
                     arr.resize(1);
-                    arr.get_at<UStructProperty>(0).set<UNameProperty>(L"KeyName"_fn, wanted_fname);
+                    arr.get_at<ZStructProperty>(0).set<ZNameProperty>(L"KeyName"_fn, wanted_fname);
 
                     LOG(MISC, "Set console key to '{}'", wanted_fname);
                 }
@@ -225,7 +225,7 @@ bool inject_console_hook(hook_manager::Details& hook) {
         } else {
             FName wanted_fname{std::string{wanted_console_key.value_or("Tilde")}};
             arr.resize(1);
-            arr.get_at<UStructProperty>(0).set<UNameProperty>(L"KeyName"_fn, wanted_fname);
+            arr.get_at<ZStructProperty>(0).set<ZNameProperty>(L"KeyName"_fn, wanted_fname);
 
             LOG(MISC, "Set console key to '{}'", wanted_fname);
         }

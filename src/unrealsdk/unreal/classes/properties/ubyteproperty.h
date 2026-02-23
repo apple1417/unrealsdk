@@ -1,5 +1,5 @@
-#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_UBYTEPROPERTY_H
-#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_UBYTEPROPERTY_H
+#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZBYTEPROPERTY_H
+#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZBYTEPROPERTY_H
 
 #include "unrealsdk/pch.h"
 
@@ -12,30 +12,30 @@ namespace unrealsdk::unreal {
 
 class UEnum;
 
-class UByteProperty : public CopyableProperty<uint8_t> {
+class ZByteProperty : public CopyableProperty<uint8_t> {
    public:
-    UByteProperty() = delete;
-    UByteProperty(const UByteProperty&) = delete;
-    UByteProperty(UByteProperty&&) = delete;
-    UByteProperty& operator=(const UByteProperty&) = delete;
-    UByteProperty& operator=(UByteProperty&&) = delete;
-    ~UByteProperty() = delete;
+    ZByteProperty() = delete;
+    ZByteProperty(const ZByteProperty&) = delete;
+    ZByteProperty(ZByteProperty&&) = delete;
+    ZByteProperty& operator=(const ZByteProperty&) = delete;
+    ZByteProperty& operator=(ZByteProperty&&) = delete;
+    ~ZByteProperty() = delete;
 
     // These fields become member functions, returning a reference into the object.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_UBYTEPROPERTY_FIELDS(X) X(UEnum*, Enum)
+#define UNREALSDK_ZBYTEPROPERTY_FIELDS(X) X(UEnum*, Enum)
 
-    UNREALSDK_DEFINE_FIELDS_HEADER(UByteProperty, UNREALSDK_UBYTEPROPERTY_FIELDS);
+    UNREALSDK_DEFINE_FIELDS_HEADER(ZByteProperty, UNREALSDK_ZBYTEPROPERTY_FIELDS);
 };
 
 template <>
-struct PropTraits<UByteProperty> : public PropTraits<CopyableProperty<uint8_t>> {};
+struct PropTraits<ZByteProperty> : public PropTraits<CopyableProperty<uint8_t>> {};
 
 template <>
-struct ClassTraits<UByteProperty> {
+struct ClassTraits<ZByteProperty> {
     static inline const wchar_t* const NAME = L"ByteProperty";
 };
 
 }  // namespace unrealsdk::unreal
 
-#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_UBYTEPROPERTY_H */
+#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZBYTEPROPERTY_H */

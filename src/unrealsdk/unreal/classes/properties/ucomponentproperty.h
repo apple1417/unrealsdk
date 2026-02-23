@@ -1,5 +1,5 @@
-#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_UCOMPONENTPROPERTY_H
-#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_UCOMPONENTPROPERTY_H
+#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZCOMPONENTPROPERTY_H
+#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZCOMPONENTPROPERTY_H
 
 #include "unrealsdk/pch.h"
 
@@ -9,24 +9,24 @@
 
 namespace unrealsdk::unreal {
 
-class UComponentProperty : public UObjectProperty {
+class ZComponentProperty : public ZObjectProperty {
    public:
-    UComponentProperty() = delete;
-    UComponentProperty(const UComponentProperty&) = delete;
-    UComponentProperty(UComponentProperty&&) = delete;
-    UComponentProperty& operator=(const UComponentProperty&) = delete;
-    UComponentProperty& operator=(UComponentProperty&&) = delete;
-    ~UComponentProperty() = delete;
+    ZComponentProperty() = delete;
+    ZComponentProperty(const ZComponentProperty&) = delete;
+    ZComponentProperty(ZComponentProperty&&) = delete;
+    ZComponentProperty& operator=(const ZComponentProperty&) = delete;
+    ZComponentProperty& operator=(ZComponentProperty&&) = delete;
+    ~ZComponentProperty() = delete;
 };
 
 template <>
-struct PropTraits<UComponentProperty> : public PropTraits<UObjectProperty> {};
+struct PropTraits<ZComponentProperty> : public PropTraits<ZObjectProperty> {};
 
 template <>
-struct ClassTraits<UComponentProperty> {
+struct ClassTraits<ZComponentProperty> {
     static inline const wchar_t* const NAME = L"ComponentProperty";
 };
 
 }  // namespace unrealsdk::unreal
 
-#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_UCOMPONENTPROPERTY_H */
+#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZCOMPONENTPROPERTY_H */

@@ -12,17 +12,17 @@
 
 namespace unrealsdk::unreal {
 
-UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(UMulticastDelegateProperty,
-                                    UNREALSDK_UMULTICASTDELEGATEPROPERTY_FIELDS);
+UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(ZMulticastDelegateProperty,
+                                    UNREALSDK_ZMULTICASTDELEGATEPROPERTY_FIELDS);
 
-PropTraits<UMulticastDelegateProperty>::Value PropTraits<UMulticastDelegateProperty>::get(
-    const UMulticastDelegateProperty* prop,
+PropTraits<ZMulticastDelegateProperty>::Value PropTraits<ZMulticastDelegateProperty>::get(
+    const ZMulticastDelegateProperty* prop,
     uintptr_t addr,
     const UnrealPointer<void>& parent) {
     return {prop->Signature(), reinterpret_cast<TArray<FScriptDelegate>*>(addr), parent};
 }
 
-void PropTraits<UMulticastDelegateProperty>::set(const UMulticastDelegateProperty* prop,
+void PropTraits<ZMulticastDelegateProperty>::set(const ZMulticastDelegateProperty* prop,
                                                  uintptr_t addr,
                                                  const Value& value) {
     if (value.signature != prop->Signature()) {
@@ -45,7 +45,7 @@ void PropTraits<UMulticastDelegateProperty>::set(const UMulticastDelegatePropert
     memcpy(arr->data, value.base->data, value.base->size() * sizeof(*arr->data));
 }
 
-void PropTraits<UMulticastDelegateProperty>::destroy(const UMulticastDelegateProperty* /*prop*/,
+void PropTraits<ZMulticastDelegateProperty>::destroy(const ZMulticastDelegateProperty* /*prop*/,
                                                      uintptr_t addr) {
     reinterpret_cast<TArray<FScriptDelegate>*>(addr)->free();
 }

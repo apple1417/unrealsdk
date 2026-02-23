@@ -1,5 +1,5 @@
-#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_UDELEGATEPROPERTY_H
-#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_UDELEGATEPROPERTY_H
+#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZDELEGATEPROPERTY_H
+#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZDELEGATEPROPERTY_H
 
 #include "unrealsdk/pch.h"
 
@@ -13,37 +13,37 @@ namespace unrealsdk::unreal {
 
 class UFunction;
 
-class UDelegateProperty : public UProperty {
+class ZDelegateProperty : public ZProperty {
    public:
-    UDelegateProperty() = delete;
-    UDelegateProperty(const UDelegateProperty&) = delete;
-    UDelegateProperty(UDelegateProperty&&) = delete;
-    UDelegateProperty& operator=(const UDelegateProperty&) = delete;
-    UDelegateProperty& operator=(UDelegateProperty&&) = delete;
-    ~UDelegateProperty() = delete;
+    ZDelegateProperty() = delete;
+    ZDelegateProperty(const ZDelegateProperty&) = delete;
+    ZDelegateProperty(ZDelegateProperty&&) = delete;
+    ZDelegateProperty& operator=(const ZDelegateProperty&) = delete;
+    ZDelegateProperty& operator=(ZDelegateProperty&&) = delete;
+    ~ZDelegateProperty() = delete;
 
     // These fields become member functions, returning a reference into the object.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_UDELEGATEPROPERTY_FIELDS(X) X(UFunction*, Signature)
+#define UNREALSDK_ZDELEGATEPROPERTY_FIELDS(X) X(UFunction*, Signature)
 
-    UNREALSDK_DEFINE_FIELDS_HEADER(UDelegateProperty, UNREALSDK_UDELEGATEPROPERTY_FIELDS);
+    UNREALSDK_DEFINE_FIELDS_HEADER(ZDelegateProperty, UNREALSDK_ZDELEGATEPROPERTY_FIELDS);
 };
 
 template <>
-struct PropTraits<UDelegateProperty> : public AbstractPropTraits<UDelegateProperty> {
+struct PropTraits<ZDelegateProperty> : public AbstractPropTraits<ZDelegateProperty> {
     using Value = std::optional<BoundFunction>;
 
-    static Value get(const UDelegateProperty* prop,
+    static Value get(const ZDelegateProperty* prop,
                      uintptr_t addr,
                      const UnrealPointer<void>& parent);
-    static void set(const UDelegateProperty* prop, uintptr_t addr, const Value& value);
+    static void set(const ZDelegateProperty* prop, uintptr_t addr, const Value& value);
 };
 
 template <>
-struct ClassTraits<UDelegateProperty> {
+struct ClassTraits<ZDelegateProperty> {
     static inline const wchar_t* const NAME = L"DelegateProperty";
 };
 
 }  // namespace unrealsdk::unreal
 
-#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_UDELEGATEPROPERTY_H */
+#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZDELEGATEPROPERTY_H */

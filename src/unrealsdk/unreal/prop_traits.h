@@ -6,12 +6,12 @@
 
 namespace unrealsdk::unreal {
 
-class UProperty;
+class ZProperty;
 
 /**
- * @brief Traits class describing a UProperty.
+ * @brief Traits class describing a ZProperty.
  *
- * @tparam T The UProperty class that's being described.
+ * @tparam T The ZProperty class that's being described.
  */
 template <typename T>
 struct AbstractPropTraits {

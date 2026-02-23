@@ -81,7 +81,7 @@ WrappedStruct WrappedStruct::copy_params_only(void) const {
 
     auto dest = reinterpret_cast<uintptr_t>(new_struct.base.get());
     for (const auto& prop : this->type->properties()) {
-        if ((prop->PropertyFlags() & UProperty::PROP_FLAG_PARAM) == 0) {
+        if ((prop->PropertyFlags() & ZProperty::PROP_FLAG_PARAM) == 0) {
             continue;
         }
 

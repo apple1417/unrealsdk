@@ -1,5 +1,5 @@
-#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_UENUMPROPERTY_H
-#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_UENUMPROPERTY_H
+#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZENUMPROPERTY_H
+#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZENUMPROPERTY_H
 
 #include "unrealsdk/pch.h"
 
@@ -12,37 +12,37 @@ namespace unrealsdk::unreal {
 
 class UEnum;
 
-class UEnumProperty : public UProperty {
+class ZEnumProperty : public ZProperty {
    public:
-    UEnumProperty() = delete;
-    UEnumProperty(const UEnumProperty&) = delete;
-    UEnumProperty(UEnumProperty&&) = delete;
-    UEnumProperty& operator=(const UEnumProperty&) = delete;
-    UEnumProperty& operator=(UEnumProperty&&) = delete;
-    ~UEnumProperty() = delete;
+    ZEnumProperty() = delete;
+    ZEnumProperty(const ZEnumProperty&) = delete;
+    ZEnumProperty(ZEnumProperty&&) = delete;
+    ZEnumProperty& operator=(const ZEnumProperty&) = delete;
+    ZEnumProperty& operator=(ZEnumProperty&&) = delete;
+    ~ZEnumProperty() = delete;
 
     // These fields become member functions, returning a reference into the object.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_UENUMPROPERTY_FIELDS(X) \
-    X(UProperty*, UnderlyingProp)         \
+#define UNREALSDK_ZENUMPROPERTY_FIELDS(X) \
+    X(ZProperty*, UnderlyingProp)         \
     X(UEnum*, Enum)
 
-    UNREALSDK_DEFINE_FIELDS_HEADER(UEnumProperty, UNREALSDK_UENUMPROPERTY_FIELDS);
+    UNREALSDK_DEFINE_FIELDS_HEADER(ZEnumProperty, UNREALSDK_ZENUMPROPERTY_FIELDS);
 };
 
 template <>
-struct PropTraits<UEnumProperty> : public AbstractPropTraits<UEnumProperty> {
+struct PropTraits<ZEnumProperty> : public AbstractPropTraits<ZEnumProperty> {
     using Value = int64_t;
 
-    static Value get(const UEnumProperty* prop, uintptr_t addr, const UnrealPointer<void>& parent);
-    static void set(const UEnumProperty* prop, uintptr_t addr, const Value& value);
+    static Value get(const ZEnumProperty* prop, uintptr_t addr, const UnrealPointer<void>& parent);
+    static void set(const ZEnumProperty* prop, uintptr_t addr, const Value& value);
 };
 
 template <>
-struct ClassTraits<UEnumProperty> {
+struct ClassTraits<ZEnumProperty> {
     static inline const wchar_t* const NAME = L"EnumProperty";
 };
 
 }  // namespace unrealsdk::unreal
 
-#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_UENUMPROPERTY_H */
+#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZENUMPROPERTY_H */

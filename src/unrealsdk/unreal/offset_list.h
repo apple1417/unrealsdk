@@ -37,34 +37,34 @@ namespace unrealsdk::unreal::offsets {
 // NOLINTBEGIN(cppcoreguidelines-macro-usage)
 
 #define UNREALSDK__DYNAMIC_OFFSET_TYPES(X) \
-    X(UArrayProperty)                      \
-    X(UBoolProperty)                       \
-    X(UByteAttributeProperty)              \
-    X(UByteProperty)                       \
-    X(UClass)                              \
-    X(UClassProperty)                      \
-    X(UConst)                              \
-    X(UDelegateProperty)                   \
-    X(UEnum)                               \
-    X(UEnumProperty)                       \
-    X(UField)                              \
-    X(UFloatAttributeProperty)             \
-    X(UFunction)                           \
-    X(UIntAttributeProperty)               \
-    X(UInterfaceProperty)                  \
-    X(UMulticastDelegateProperty)          \
-    X(UObject)                             \
-    X(UObjectProperty)                     \
-    X(UProperty)                           \
-    X(UScriptStruct)                       \
-    X(USoftClassProperty)                  \
-    X(UStruct)                             \
-    X(UStructProperty)                     \
-    X(FGbxDefPtrProperty)                  \
-    X(FNameEntry)                          \
-    X(FFrame)                              \
+    X(FField)                              \
     X(FFieldClass)                         \
-    X(FField)
+    X(FFrame)                              \
+    X(FNameEntry)                          \
+    X(UClass)                              \
+    X(UConst)                              \
+    X(UEnum)                               \
+    X(UField)                              \
+    X(UFunction)                           \
+    X(UObject)                             \
+    X(UScriptStruct)                       \
+    X(UStruct)                             \
+    X(ZArrayProperty)                      \
+    X(ZBoolProperty)                       \
+    X(ZByteAttributeProperty)              \
+    X(ZByteProperty)                       \
+    X(ZClassProperty)                      \
+    X(ZDelegateProperty)                   \
+    X(ZEnumProperty)                       \
+    X(ZFloatAttributeProperty)             \
+    X(ZGbxDefPtrProperty)                  \
+    X(ZIntAttributeProperty)               \
+    X(ZInterfaceProperty)                  \
+    X(ZMulticastDelegateProperty)          \
+    X(ZObjectProperty)                     \
+    X(ZProperty)                           \
+    X(ZSoftClassProperty)                  \
+    X(ZStructProperty)
 
 #define UNREALSDK_OFFSETS__DEFINE_OFFSET_LIST_MEMBERS(name) unrealsdk::unreal::name::Offsets name;
 #define UNREALSDK_OFFSETS__NESTED_FROM_TYPE(name) \

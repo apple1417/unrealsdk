@@ -16,29 +16,29 @@ namespace {
 // Have observed uint8, int8, uint32, and int32
 // Since negatives are possible, the enum value type is a int64
 // This list therefore includes all numeric types *except* uint64, which could go out of range
-using valid_underlying_types = std::tuple<UInt8Property,
-                                          UInt16Property,
-                                          UIntProperty,
-                                          UInt64Property,
-                                          UByteProperty,
-                                          UUInt16Property,
-                                          UUInt32Property>;
+using valid_underlying_types = std::tuple<ZInt8Property,
+                                          ZInt16Property,
+                                          ZIntProperty,
+                                          ZInt64Property,
+                                          ZByteProperty,
+                                          ZUInt16Property,
+                                          ZUInt32Property>;
 
 }  // namespace
 
-UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(UEnumProperty, UNREALSDK_UENUMPROPERTY_FIELDS);
+UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(ZEnumProperty, UNREALSDK_ZENUMPROPERTY_FIELDS);
 
-PropTraits<UEnumProperty>::Value PropTraits<UEnumProperty>::get(const UEnumProperty* prop,
+PropTraits<ZEnumProperty>::Value PropTraits<ZEnumProperty>::get(const ZEnumProperty* prop,
                                                                 uintptr_t addr,
                                                                 const UnrealPointer<void>& parent) {
-    PropTraits<UEnumProperty>::Value value{};
+    PropTraits<ZEnumProperty>::Value value{};
 
     cast<cast_options<>::with_classes<valid_underlying_types>>(
         prop->UnderlyingProp(), [addr, parent, &value]<typename T>(const T* underlying) {
             static_assert(std::is_integral_v<typename PropTraits<T>::Value>);
 
             using underlying_limits = std::numeric_limits<typename PropTraits<T>::Value>;
-            using value_limits = std::numeric_limits<typename PropTraits<UEnumProperty>::Value>;
+            using value_limits = std::numeric_limits<typename PropTraits<ZEnumProperty>::Value>;
             static_assert(underlying_limits::min() >= value_limits::min()
                           && underlying_limits::max() <= value_limits::max());
 
@@ -48,13 +48,13 @@ PropTraits<UEnumProperty>::Value PropTraits<UEnumProperty>::get(const UEnumPrope
     return value;
 }
 
-void PropTraits<UEnumProperty>::set(const UEnumProperty* prop, uintptr_t addr, const Value& value) {
+void PropTraits<ZEnumProperty>::set(const ZEnumProperty* prop, uintptr_t addr, const Value& value) {
     cast<cast_options<>::with_classes<valid_underlying_types>>(
         prop->UnderlyingProp(), [addr, value]<typename T>(const T* underlying) {
             static_assert(std::is_integral_v<typename PropTraits<T>::Value>);
 
             using underlying_limits = std::numeric_limits<typename PropTraits<T>::Value>;
-            using value_limits = std::numeric_limits<typename PropTraits<UEnumProperty>::Value>;
+            using value_limits = std::numeric_limits<typename PropTraits<ZEnumProperty>::Value>;
             static_assert(underlying_limits::min() >= value_limits::min()
                           && underlying_limits::max() <= value_limits::max());
 

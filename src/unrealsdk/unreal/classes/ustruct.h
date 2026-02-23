@@ -11,7 +11,7 @@
 namespace unrealsdk::unreal {
 
 class UFunction;
-class UProperty;
+class ZProperty;
 
 class UStruct : public UField {
    public:
@@ -41,7 +41,7 @@ class UStruct : public UField {
     X(UStruct*, SuperField)             \
     X(UField*, Children)                \
     X(property_size_type, PropertySize) \
-    X(UProperty*, PropertyLink)         \
+    X(ZProperty*, PropertyLink)         \
     UNREALSDK__USTRUCT_MIN_ALIGNMENT(X) \
     UNREALSDK__USTRUCT_CHILD_PROPERTIES(X)
 
@@ -80,17 +80,17 @@ class UStruct : public UField {
     struct PropertyIterator {
         using iterator_category = std::forward_iterator_tag;
         using difference_type = std::ptrdiff_t;
-        using value_type = UProperty*;
-        using pointer = UProperty**;
-        using reference = UProperty*;
+        using value_type = ZProperty*;
+        using pointer = ZProperty**;
+        using reference = ZProperty*;
 
         friend class UStruct;
 
        private:
 #if UNREALSDK_USTRUCT_PROPERTY_ITER == UNREALSDK_USTRUCT_PROPERTY_ITER_PROPERTYLINK
-        UProperty* prop;
+        ZProperty* prop;
 
-        PropertyIterator(UProperty* prop);
+        PropertyIterator(ZProperty* prop);
 #elif UNREALSDK_USTRUCT_PROPERTY_ITER == UNREALSDK_USTRUCT_PROPERTY_ITER_CHILDPROPERTIES
         const UStruct* this_struct;
         FField* field;
@@ -177,11 +177,11 @@ class UStruct : public UField {
      * @return The found child object.
      */
 #if UNREALSDK_PROPERTIES_ARE_FFIELD
-    [[nodiscard]] TFieldVariant<UProperty, UField> find(const FName& name) const;
+    [[nodiscard]] TFieldVariant<ZProperty, UField> find(const FName& name) const;
 #else
     [[nodiscard]] TFieldVariantStub<UField> find(const FName& name) const;
 #endif
-    [[nodiscard]] UProperty* find_prop(const FName& name) const;
+    [[nodiscard]] ZProperty* find_prop(const FName& name) const;
 
     /**
      * @brief Finds a child property/function by name, and validates that it's of the expected type.

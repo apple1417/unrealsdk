@@ -1,5 +1,5 @@
-#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_UOBJECTPROPERTY_H
-#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_UOBJECTPROPERTY_H
+#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZOBJECTPROPERTY_H
+#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZOBJECTPROPERTY_H
 
 #include "unrealsdk/pch.h"
 
@@ -13,37 +13,37 @@ namespace unrealsdk::unreal {
 class UClass;
 class UObject;
 
-class UObjectProperty : public UProperty {
+class ZObjectProperty : public ZProperty {
    public:
-    UObjectProperty() = delete;
-    UObjectProperty(const UObjectProperty&) = delete;
-    UObjectProperty(UObjectProperty&&) = delete;
-    UObjectProperty& operator=(const UObjectProperty&) = delete;
-    UObjectProperty& operator=(UObjectProperty&&) = delete;
-    ~UObjectProperty() = delete;
+    ZObjectProperty() = delete;
+    ZObjectProperty(const ZObjectProperty&) = delete;
+    ZObjectProperty(ZObjectProperty&&) = delete;
+    ZObjectProperty& operator=(const ZObjectProperty&) = delete;
+    ZObjectProperty& operator=(ZObjectProperty&&) = delete;
+    ~ZObjectProperty() = delete;
 
     // These fields become member functions, returning a reference into the object.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_UOBJECTPROPERTY_FIELDS(X) X(UClass*, PropertyClass)
+#define UNREALSDK_ZOBJECTPROPERTY_FIELDS(X) X(UClass*, PropertyClass)
 
-    UNREALSDK_DEFINE_FIELDS_HEADER(UObject, UNREALSDK_UOBJECTPROPERTY_FIELDS);
+    UNREALSDK_DEFINE_FIELDS_HEADER(UObject, UNREALSDK_ZOBJECTPROPERTY_FIELDS);
 };
 
 template <>
-struct PropTraits<UObjectProperty> : public AbstractPropTraits<UObjectProperty> {
+struct PropTraits<ZObjectProperty> : public AbstractPropTraits<ZObjectProperty> {
     using Value = UObject*;
 
-    static Value get(const UObjectProperty* prop,
+    static Value get(const ZObjectProperty* prop,
                      uintptr_t addr,
                      const UnrealPointer<void>& parent);
-    static void set(const UObjectProperty* prop, uintptr_t addr, const Value& value);
+    static void set(const ZObjectProperty* prop, uintptr_t addr, const Value& value);
 };
 
 template <>
-struct ClassTraits<UObjectProperty> {
+struct ClassTraits<ZObjectProperty> {
     static inline const wchar_t* const NAME = L"ObjectProperty";
 };
 
 }  // namespace unrealsdk::unreal
 
-#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_UOBJECTPROPERTY_H */
+#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZOBJECTPROPERTY_H */

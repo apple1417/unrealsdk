@@ -10,13 +10,13 @@
 
 /*
 This file describes all properties which can be read/written by a simple copy, and whose classes
- don't need to add any extra fields to `UProperty` (or at least not any we care about).
+ don't need to add any extra fields to `ZProperty` (or at least not any we care about).
 */
 
 namespace unrealsdk::unreal {
 
 template <typename T>
-class CopyableProperty : public UProperty {
+class CopyableProperty : public ZProperty {
    public:
     CopyableProperty() = delete;
     CopyableProperty(const CopyableProperty&) = delete;
@@ -40,44 +40,44 @@ struct PropTraits<CopyableProperty<T>> : public AbstractPropTraits<CopyablePrope
     }
 };
 
-using UInt8Property = CopyableProperty<int8_t>;
-using UInt16Property = CopyableProperty<int16_t>;
-using UIntProperty = CopyableProperty<int32_t>;
-using UInt64Property = CopyableProperty<int64_t>;
+using ZInt8Property = CopyableProperty<int8_t>;
+using ZInt16Property = CopyableProperty<int16_t>;
+using ZIntProperty = CopyableProperty<int32_t>;
+using ZInt64Property = CopyableProperty<int64_t>;
 
-// UByteProperty has an extra field we care about, it's handled in a different file
-using UUInt16Property = CopyableProperty<uint16_t>;
-using UUInt32Property = CopyableProperty<uint32_t>;
-using UUInt64Property = CopyableProperty<uint64_t>;
+// ZByteProperty has an extra field we care about, it's handled in a different file
+using ZUInt16Property = CopyableProperty<uint16_t>;
+using ZUInt32Property = CopyableProperty<uint32_t>;
+using ZUInt64Property = CopyableProperty<uint64_t>;
 
-using UFloatProperty = CopyableProperty<float32_t>;
-using UDoubleProperty = CopyableProperty<float64_t>;
+using ZFloatProperty = CopyableProperty<float32_t>;
+using ZDoubleProperty = CopyableProperty<float64_t>;
 
-using UNameProperty = CopyableProperty<FName>;
-
-template <>
-inline const wchar_t* const ClassTraits<UInt8Property>::NAME = L"Int8Property";
-template <>
-inline const wchar_t* const ClassTraits<UInt16Property>::NAME = L"Int16Property";
-template <>
-inline const wchar_t* const ClassTraits<UIntProperty>::NAME = L"IntProperty";
-template <>
-inline const wchar_t* const ClassTraits<UInt64Property>::NAME = L"Int64Property";
+using ZNameProperty = CopyableProperty<FName>;
 
 template <>
-inline const wchar_t* const ClassTraits<UUInt16Property>::NAME = L"UInt16Property";
+inline const wchar_t* const ClassTraits<ZInt8Property>::NAME = L"Int8Property";
 template <>
-inline const wchar_t* const ClassTraits<UUInt32Property>::NAME = L"UInt32Property";
+inline const wchar_t* const ClassTraits<ZInt16Property>::NAME = L"Int16Property";
 template <>
-inline const wchar_t* const ClassTraits<UUInt64Property>::NAME = L"UInt64Property";
+inline const wchar_t* const ClassTraits<ZIntProperty>::NAME = L"IntProperty";
+template <>
+inline const wchar_t* const ClassTraits<ZInt64Property>::NAME = L"Int64Property";
 
 template <>
-inline const wchar_t* const ClassTraits<UFloatProperty>::NAME = L"FloatProperty";
+inline const wchar_t* const ClassTraits<ZUInt16Property>::NAME = L"UInt16Property";
 template <>
-inline const wchar_t* const ClassTraits<UDoubleProperty>::NAME = L"DoubleProperty";
+inline const wchar_t* const ClassTraits<ZUInt32Property>::NAME = L"UInt32Property";
+template <>
+inline const wchar_t* const ClassTraits<ZUInt64Property>::NAME = L"UInt64Property";
 
 template <>
-inline const wchar_t* const ClassTraits<UNameProperty>::NAME = L"NameProperty";
+inline const wchar_t* const ClassTraits<ZFloatProperty>::NAME = L"FloatProperty";
+template <>
+inline const wchar_t* const ClassTraits<ZDoubleProperty>::NAME = L"DoubleProperty";
+
+template <>
+inline const wchar_t* const ClassTraits<ZNameProperty>::NAME = L"NameProperty";
 
 }  // namespace unrealsdk::unreal
 

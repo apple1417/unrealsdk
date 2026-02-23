@@ -81,11 +81,11 @@ UStruct::PropertyIterator::PropertyIterator(const UStruct* this_struct, FField* 
 
 UStruct::PropertyIterator::reference UStruct::PropertyIterator::operator*() const {
     // Trust that the increment keeps this valid
-    return reinterpret_cast<UProperty*>(this->field);
+    return reinterpret_cast<ZProperty*>(this->field);
 }
 
 UStruct::PropertyIterator& UStruct::PropertyIterator::operator++() {
-    auto uprop_cls = find_class<UProperty>();
+    auto uprop_cls = find_class<ZProperty>();
 
     if (this->field != nullptr) {
         do {
@@ -129,8 +129,8 @@ utils::IteratorProxy<UStruct::PropertyIterator> UStruct::properties(void) const 
 
     // Like in the previous one, a null first property is still wrong, and needs to be incremented
     // once, but now so is a non-property type
-    UProperty* first = *begin;
-    if (first == nullptr || !first->Class()->inherits(find_class<UProperty>())) {
+    ZProperty* first = *begin;
+    if (first == nullptr || !first->Class()->inherits(find_class<ZProperty>())) {
         begin++;
     }
 
@@ -142,7 +142,7 @@ utils::IteratorProxy<UStruct::PropertyIterator> UStruct::properties(void) const 
 // This includes base classes so has a much simpler implementation
 
 UStruct::PropertyIterator::PropertyIterator(void) : prop(nullptr) {}
-UStruct::PropertyIterator::PropertyIterator(UProperty* prop) : prop(prop) {}
+UStruct::PropertyIterator::PropertyIterator(ZProperty* prop) : prop(prop) {}
 
 UStruct::PropertyIterator::reference UStruct::PropertyIterator::operator*() const {
     return prop;
@@ -218,7 +218,7 @@ size_t UStruct::get_struct_size(void) const {
 }
 
 #if UNREALSDK_PROPERTIES_ARE_FFIELD
-[[nodiscard]] TFieldVariant<UProperty, UField> UStruct::find(const FName& name) const {
+[[nodiscard]] TFieldVariant<ZProperty, UField> UStruct::find(const FName& name) const {
     for (auto prop : this->properties()) {
         if (prop->Name() == name) {
             return {prop};
@@ -244,7 +244,7 @@ TFieldVariantStub<UField> UStruct::find(const FName& name) const {
 }
 #endif
 
-UProperty* UStruct::find_prop(const FName& name) const {
+ZProperty* UStruct::find_prop(const FName& name) const {
     for (auto prop : this->properties()) {
         if (prop->Name() == name) {
             return prop;

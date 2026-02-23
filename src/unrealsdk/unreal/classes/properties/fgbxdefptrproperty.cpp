@@ -7,23 +7,23 @@
 
 namespace unrealsdk::unreal {
 
-UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(FGbxDefPtrProperty, UNREALSDK_FGBXDEFPTRPROPERTY_FIELDS);
+UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(ZGbxDefPtrProperty, UNREALSDK_ZGBXDEFPTRPROPERTY_FIELDS);
 
-PropTraits<FGbxDefPtrProperty>::Value PropTraits<FGbxDefPtrProperty>::get(
-    const FGbxDefPtrProperty* /*prop*/,
+PropTraits<ZGbxDefPtrProperty>::Value PropTraits<ZGbxDefPtrProperty>::get(
+    const ZGbxDefPtrProperty* /*prop*/,
     uintptr_t addr,
     const UnrealPointer<void>& /*parent*/) {
     return *reinterpret_cast<FGbxDefPtr*>(addr);
 }
 
-void PropTraits<FGbxDefPtrProperty>::set(const FGbxDefPtrProperty* /*prop*/,
+void PropTraits<ZGbxDefPtrProperty>::set(const ZGbxDefPtrProperty* /*prop*/,
                                          uintptr_t addr,
                                          const Value& value) {
     // TODO: do we need to validate struct type here?
     *reinterpret_cast<FGbxDefPtr*>(addr) = value;
 }
 
-void PropTraits<FGbxDefPtrProperty>::destroy(const FGbxDefPtrProperty* /*prop*/,
+void PropTraits<ZGbxDefPtrProperty>::destroy(const ZGbxDefPtrProperty* /*prop*/,
                                              uintptr_t /*addr*/) {
     // TODO: do we need to free anything here
 }

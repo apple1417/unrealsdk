@@ -11,7 +11,7 @@
 
 namespace unrealsdk::unreal {
 
-UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(UInterfaceProperty, UNREALSDK_UINTERFACEPROPERTY_FIELDS);
+UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(ZInterfaceProperty, UNREALSDK_ZINTERFACEPROPERTY_FIELDS);
 
 struct FScriptInterface {
     UObject* obj;     // A pointer to a UObject that implements a native interface.
@@ -19,14 +19,14 @@ struct FScriptInterface {
                       // referenced by ObjectPointer.
 };
 
-PropTraits<UInterfaceProperty>::Value PropTraits<UInterfaceProperty>::get(
-    const UInterfaceProperty* /*prop*/,
+PropTraits<ZInterfaceProperty>::Value PropTraits<ZInterfaceProperty>::get(
+    const ZInterfaceProperty* /*prop*/,
     uintptr_t addr,
     const UnrealPointer<void>& /*parent*/) {
     return reinterpret_cast<FScriptInterface*>(addr)->obj;
 }
 
-void PropTraits<UInterfaceProperty>::set(const UInterfaceProperty* prop,
+void PropTraits<ZInterfaceProperty>::set(const ZInterfaceProperty* prop,
                                          uintptr_t addr,
                                          const Value& value) {
     auto prop_iface = prop->InterfaceClass();

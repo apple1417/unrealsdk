@@ -8,20 +8,20 @@
 
 namespace unrealsdk::unreal {
 
-PropTraits<UTextProperty>::Value PropTraits<UTextProperty>::get(
-    const UTextProperty* /*prop*/,
+PropTraits<ZTextProperty>::Value PropTraits<ZTextProperty>::get(
+    const ZTextProperty* /*prop*/,
     uintptr_t addr,
     const UnrealPointer<void>& /*parent*/) {
     return *reinterpret_cast<FText*>(addr);
 }
 
-void PropTraits<UTextProperty>::set(const UTextProperty* /*prop*/,
+void PropTraits<ZTextProperty>::set(const ZTextProperty* /*prop*/,
                                     uintptr_t addr,
                                     const Value& value) {
     *reinterpret_cast<FText*>(addr) = value;
 }
 
-void PropTraits<UTextProperty>::destroy(const UTextProperty* /*prop*/, uintptr_t addr) {
+void PropTraits<ZTextProperty>::destroy(const ZTextProperty* /*prop*/, uintptr_t addr) {
     // Only call the destructor, don't delete, since we probably don't own this memory
     // If we do, the higher levels will deal with it
     reinterpret_cast<FText*>(addr)->~FText();

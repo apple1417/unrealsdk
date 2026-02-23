@@ -70,7 +70,7 @@ UnrealPointer<T>::UnrealPointer(const UStruct* struct_type)
 }
 
 template <typename T>
-UnrealPointer<T>::UnrealPointer(const UProperty* prop)
+UnrealPointer<T>::UnrealPointer(const ZProperty* prop)
     requires std::is_void_v<T>
     : control(nullptr), ptr(nullptr) {
     // If malloc throws, it should have handled freeing memory if required

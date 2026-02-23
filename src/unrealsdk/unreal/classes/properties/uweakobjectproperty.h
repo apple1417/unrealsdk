@@ -1,5 +1,5 @@
-#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_UWEAKOBJECTPROPERTY_H
-#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_UWEAKOBJECTPROPERTY_H
+#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZWEAKOBJECTPROPERTY_H
+#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZWEAKOBJECTPROPERTY_H
 
 #include "unrealsdk/pch.h"
 
@@ -12,31 +12,31 @@ namespace unrealsdk::unreal {
 
 class UObject;
 
-class UWeakObjectProperty : public UObjectProperty {
+class ZWeakObjectProperty : public ZObjectProperty {
    public:
-    UWeakObjectProperty() = delete;
-    UWeakObjectProperty(const UWeakObjectProperty&) = delete;
-    UWeakObjectProperty(UWeakObjectProperty&&) = delete;
-    UWeakObjectProperty& operator=(const UWeakObjectProperty&) = delete;
-    UWeakObjectProperty& operator=(UWeakObjectProperty&&) = delete;
-    ~UWeakObjectProperty() = delete;
+    ZWeakObjectProperty() = delete;
+    ZWeakObjectProperty(const ZWeakObjectProperty&) = delete;
+    ZWeakObjectProperty(ZWeakObjectProperty&&) = delete;
+    ZWeakObjectProperty& operator=(const ZWeakObjectProperty&) = delete;
+    ZWeakObjectProperty& operator=(ZWeakObjectProperty&&) = delete;
+    ~ZWeakObjectProperty() = delete;
 };
 
 template <>
-struct PropTraits<UWeakObjectProperty> : public AbstractPropTraits<UWeakObjectProperty> {
+struct PropTraits<ZWeakObjectProperty> : public AbstractPropTraits<ZWeakObjectProperty> {
     using Value = UObject*;
 
-    static Value get(const UWeakObjectProperty* prop,
+    static Value get(const ZWeakObjectProperty* prop,
                      uintptr_t addr,
                      const UnrealPointer<void>& parent);
-    static void set(const UWeakObjectProperty* prop, uintptr_t addr, const Value& value);
+    static void set(const ZWeakObjectProperty* prop, uintptr_t addr, const Value& value);
 };
 
 template <>
-struct ClassTraits<UWeakObjectProperty> {
+struct ClassTraits<ZWeakObjectProperty> {
     static inline const wchar_t* const NAME = L"WeakObjectProperty";
 };
 
 }  // namespace unrealsdk::unreal
 
-#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_UWEAKOBJECTPROPERTY_H */
+#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZWEAKOBJECTPROPERTY_H */

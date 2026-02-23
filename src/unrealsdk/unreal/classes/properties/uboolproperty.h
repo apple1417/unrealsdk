@@ -1,5 +1,5 @@
-#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_UBOOLPROPERTY_H
-#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_UBOOLPROPERTY_H
+#ifndef UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZBOOLPROPERTY_H
+#define UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZBOOLPROPERTY_H
 
 #include "unrealsdk/pch.h"
 
@@ -10,37 +10,37 @@
 
 namespace unrealsdk::unreal {
 
-class UBoolProperty : public UProperty {
+class ZBoolProperty : public ZProperty {
    public:
-    UBoolProperty() = delete;
-    UBoolProperty(const UBoolProperty&) = delete;
-    UBoolProperty(UBoolProperty&&) = delete;
-    UBoolProperty& operator=(const UBoolProperty&) = delete;
-    UBoolProperty& operator=(UBoolProperty&&) = delete;
-    ~UBoolProperty() = delete;
+    ZBoolProperty() = delete;
+    ZBoolProperty(const ZBoolProperty&) = delete;
+    ZBoolProperty(ZBoolProperty&&) = delete;
+    ZBoolProperty& operator=(const ZBoolProperty&) = delete;
+    ZBoolProperty& operator=(ZBoolProperty&&) = delete;
+    ~ZBoolProperty() = delete;
 
-    using field_mask_type = UNREALSDK_UBOOLPROPERTY_FIELD_MASK_TYPE;
+    using field_mask_type = UNREALSDK_ZBOOLPROPERTY_FIELD_MASK_TYPE;
 
     // These fields become member functions, returning a reference into the object.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define UNREALSDK_UBOOLPROPERTY_FIELDS(X) X(field_mask_type, FieldMask)
+#define UNREALSDK_ZBOOLPROPERTY_FIELDS(X) X(field_mask_type, FieldMask)
 
-    UNREALSDK_DEFINE_FIELDS_HEADER(UBoolProperty, UNREALSDK_UBOOLPROPERTY_FIELDS);
+    UNREALSDK_DEFINE_FIELDS_HEADER(ZBoolProperty, UNREALSDK_ZBOOLPROPERTY_FIELDS);
 };
 
 template <>
-struct PropTraits<UBoolProperty> : public AbstractPropTraits<UBoolProperty> {
+struct PropTraits<ZBoolProperty> : public AbstractPropTraits<ZBoolProperty> {
     using Value = bool;
 
-    static Value get(const UBoolProperty* prop, uintptr_t addr, const UnrealPointer<void>& parent);
-    static void set(const UBoolProperty* prop, uintptr_t addr, const Value& value);
+    static Value get(const ZBoolProperty* prop, uintptr_t addr, const UnrealPointer<void>& parent);
+    static void set(const ZBoolProperty* prop, uintptr_t addr, const Value& value);
 };
 
 template <>
-struct ClassTraits<UBoolProperty> {
+struct ClassTraits<ZBoolProperty> {
     static inline const wchar_t* const NAME = L"BoolProperty";
 };
 
 }  // namespace unrealsdk::unreal
 
-#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_UBOOLPROPERTY_H */
+#endif /* UNREALSDK_UNREAL_CLASSES_PROPERTIES_ZBOOLPROPERTY_H */
