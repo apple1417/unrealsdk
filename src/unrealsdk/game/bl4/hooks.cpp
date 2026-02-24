@@ -19,7 +19,7 @@ namespace {
 using call_function_func = void(UObject* obj, FFrame* stack, void* result, UFunction* func);
 call_function_func* call_function_ptr;
 
-const constinit Pattern<27> CALL_FUNCTION_SIG{
+const constinit Pattern<24> CALL_FUNCTION_SIG{
     "55"              // push rbp
     "41 57"           // push r15
     "41 56"           // push r14
@@ -28,10 +28,9 @@ const constinit Pattern<27> CALL_FUNCTION_SIG{
     "56"              // push rsi
     "57"              // push rdi
     "53"              // push rbx
-    "48 83 EC 38"     // sub rsp, 38
+    "48 83 EC ??"     // sub rsp, 38
     "48 8D 6C 24 ??"  // lea rbp, [rsp+30]
-    "4C 89 CE"        // mov rsi, r9
-    "4D 89 C6"        // mov r14, r8
+    "4C 89 CB"        // mov rbx, r9
 };
 
 void call_function_hook(UObject* obj, FFrame* stack, void* result, UFunction* func) {
