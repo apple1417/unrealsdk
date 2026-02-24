@@ -12,9 +12,11 @@
 # so `ftext_get_display_string_vf_index` is of course unused.
 
 [unrealsdk]
-# If true, creates an external console window mirroring what is written to the game's console.
+# If true, creates an external console window to write all log messages into.
 # Always enabled in debug builds.
 external_console = false
+# If true, adds ansi escape codes to colour the external console output.
+external_console_colour = true
 
 # The file to write log messages to, relative to the dll.
 log_file = "unrealsdk.log"
