@@ -188,23 +188,18 @@ struct FNameEntry {
 struct FFrame {
    private:
     void* VfTable;
-    uint32_t bSuppressEventTag;
-    uint32_t bAutoEmitLineTerminator;
+    uint32_t Unknown00;
 
    public:
-    UFunction* Node;
-    UObject* Object;
-    uint8_t* Code;
+    UFunction* Node;  // Validated
+    UObject* Object;  // Validated
+    uint8_t* Code;    // Validated
 
    private:
     void* Locals;
-    ZProperty* LastProperty;
+    ZProperty* LastProperty;  // Validated
     void* LastPropertyAddress;
-
-   public:
     FFrame* PreviousFrame;
-
-   private:
     void* OutParams;
 };
 

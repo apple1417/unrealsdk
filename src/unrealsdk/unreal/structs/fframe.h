@@ -18,8 +18,7 @@ struct FFrame {
 #define UNREALSDK_FFRAME_FIELDS(X) \
     X(UFunction*, Node)            \
     X(UObject*, Object)            \
-    X(uint8_t*, Code)              \
-    X(FFrame*, PreviousFrame)
+    X(uint8_t*, Code)
 
     UNREALSDK_DEFINE_FIELDS_HEADER(FFrame, UNREALSDK_FFRAME_FIELDS);
 

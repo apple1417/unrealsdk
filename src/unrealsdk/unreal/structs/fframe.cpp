@@ -15,7 +15,18 @@ uint8_t* FFrame::extract_current_args(WrappedStruct& args) {
     // NOLINTNEXTLINE(misc-const-correctness) - see llvm/llvm-project#157320
     uint8_t* original_code = this->Code();
 
-    for (auto prop = reinterpret_cast<ZProperty*>(args.type->Children());
+#if UNREALSDK_PROPERTIES_ARE_FFIELD
+    auto first_prop = args.type->ChildProperties();
+#else
+    auto first_prop = args.type->Children();
+#endif
+
+    if (first_prop == nullptr) {
+        LOG(ERROR, "Tried to extract frame from a function with no properties!");
+        return original_code;
+    }
+
+    for (auto prop = reinterpret_cast<ZProperty*>(first_prop);
          *this->Code() != FFrame::EXPR_TOKEN_END_FUNCTION_PARAMS;
          prop = reinterpret_cast<ZProperty*>(prop->Next())) {
         if ((prop->PropertyFlags() & ZProperty::PROP_FLAG_RETURN) != 0) {

@@ -38,7 +38,7 @@ void BL4Hook::post_init(void) {
 
 namespace {
 
-using gnatives_func = void (*)(FFrame* stack, UObject* obj, void* param);
+using gnatives_func = void (*)(UObject* obj, FFrame* stack, void* param);
 
 gnatives_func* gnatives_table_ptr;
 
@@ -60,7 +60,7 @@ void BL4Hook::find_fframe_step(void) {
 void BL4Hook::fframe_step(FFrame* frame, UObject* obj, void* param) const {
     auto curr_native = *frame->Code();
     frame->Code()++;
-    gnatives_table_ptr[curr_native](frame, obj, param);
+    gnatives_table_ptr[curr_native](obj, frame, param);
 }
 
 #pragma endregion
