@@ -18,16 +18,10 @@ struct OwnedLogMessage : public LogMessage {
     std::string location_str;
 
    public:
-    OwnedLogMessage(uint64_t unix_time_ms,
-                    Level level,
-                    const char* msg,
-                    size_t msg_size,
-                    const char* location,
-                    size_t location_size,
-                    int line)
-        : LogMessage(unix_time_ms, level, nullptr, 0, nullptr, 0, line),
-          msg_str{msg, msg_size},
-          location_str{location, location_size} {}
+    OwnedLogMessage(const LogMessage& log)
+        : LogMessage(log),
+          msg_str{log.msg, log.msg_size},
+          location_str{log.location, log.location_size} {}
 
     /**
      * @brief Fills in the string pointers and decays back into a raw log message.
@@ -216,15 +210,23 @@ std::string truncate_leading_chunks(const std::string&& str,
 // Doing some stringification to generate the format strings with correct widths
 // NOLINTBEGIN(cppcoreguidelines-macro-usage)
 
+constexpr std::string_view LOG_HEADER =
+    // clang-format off
+// 2026-02-26 19:48:33.235Z   520c                                    unrealsdk::init@59   INFO|
+  "date       time          thread                                           location@line    v|\n";
+// clang-format on
+
 #define DATE_WIDTH 10
 #define TIME_WIDTH 12
 #define TIMESTAMP_WIDTH 23  // Can't calculate since we stringify this value
+#define THREAD_WIDTH 6      // Arguably should be 8, could be any DWORD
 #define LOCATION_WIDTH 50
 #define LINE_WIDTH 4
 #define LEVEL_WIDTH 4
 
 #define RESET_COLOUR "\x1B[0m"
 #define TIMESTAMP_COLOUR "\x1B[0;32m"
+#define THREAD_COLOUR "\x1B[0;35m"
 #define LOCATION_COLOUR "\x1B[0;36m"
 #define ERROR_COLOUR "\x1B[0;31m"
 #define WARNING_COLOUR "\x1B[0;33m"
@@ -236,23 +238,26 @@ std::string truncate_leading_chunks(const std::string&& str,
 #define STR(x) STR_INNER(x)
 
 #define TIMESTAMP_FORMAT_STR(n) "{" STR(n) ":>" STR(TIMESTAMP_WIDTH) "%F %T}Z"
+#define THREAD_FORMAT_STR(n) "{" STR(n) ":>" STR(THREAD_WIDTH) "x}"
 #define LOCATION_FORMAT_STR(n) "{" STR(n) ":>" STR(LOCATION_WIDTH) "}"
 #define LINE_FORMAT_STR(n) "{" STR(n) ":<" STR(LINE_WIDTH) "d}"
 #define LEVEL_FORMAT_STR(n) "{" STR(n) ":>" STR(LEVEL_WIDTH) "}"
 
-#define BASE_FORMAT_STR         /* format */ \
-    TIMESTAMP_FORMAT_STR(0)     /* format */ \
-    " " LOCATION_FORMAT_STR(1)  /* format */ \
-        "@" LINE_FORMAT_STR(2)  /* format */ \
-        " " LEVEL_FORMAT_STR(3) /* format */ \
-        "| {4}\n"
+#define BASE_FORMAT_STR            /* format */ \
+    TIMESTAMP_FORMAT_STR(0)        /* format */ \
+    " " THREAD_FORMAT_STR(1)       /* format */ \
+        " " LOCATION_FORMAT_STR(2) /* format */ \
+        "@" LINE_FORMAT_STR(3)     /* format */ \
+        " " LEVEL_FORMAT_STR(4)    /* format */ \
+        "| {5}\n"
 
 #define COLOURFUL_FORMAT_STR                                    \
     TIMESTAMP_COLOUR TIMESTAMP_FORMAT_STR(0)       /* format */ \
-        " " LOCATION_COLOUR LOCATION_FORMAT_STR(1) /* format */ \
-        RESET_COLOUR "@{5}" LINE_FORMAT_STR(2)     /* format */ \
-        " {6}" LEVEL_FORMAT_STR(3)                 /* format */ \
-        RESET_COLOUR "| {6}{4}" RESET_COLOUR "\n"
+        " " THREAD_COLOUR THREAD_FORMAT_STR(1)     /* format */ \
+        " " LOCATION_COLOUR LOCATION_FORMAT_STR(2) /* format */ \
+        RESET_COLOUR "@{6}" LINE_FORMAT_STR(3)     /* format */ \
+        " {7}" LEVEL_FORMAT_STR(4)                 /* format */ \
+        RESET_COLOUR "| {7}{5}" RESET_COLOUR "\n"
 
 // NOLINTEND(cppcoreguidelines-macro-usage)
 
@@ -263,7 +268,7 @@ std::string truncate_leading_chunks(const std::string&& str,
  * @return The formatted message
  */
 std::string format_message(const LogMessage& msg) {
-    return std::format(BASE_FORMAT_STR, time_from_unix_ms(msg.unix_time_ms),
+    return std::format(BASE_FORMAT_STR, time_from_unix_ms(msg.unix_time_ms), msg.thread_id,
                        truncate_leading_chunks(msg.location, "\\/:", LOCATION_WIDTH), msg.line,
                        get_level_name(msg.level), std::string{msg.msg, msg.msg_size});
 }
@@ -299,22 +304,10 @@ std::string format_colourful_message(const LogMessage& msg) {
             break;
     }
 
-    return std::format(COLOURFUL_FORMAT_STR, time_from_unix_ms(msg.unix_time_ms),
+    return std::format(COLOURFUL_FORMAT_STR, time_from_unix_ms(msg.unix_time_ms), msg.thread_id,
                        truncate_leading_chunks(msg.location, "\\/:", LOCATION_WIDTH), msg.line,
                        get_level_name(msg.level), std::string{msg.msg, msg.msg_size}, line_colour,
                        log_level_colour);
-}
-
-/**
- * @brief Gets a header to display at the top of the log file
- *
- * @return The header.
- */
-std::string get_header(void) {
-    // Could do more preprocessor work on this, but it's only called once per launch so meh
-    return std::format("{1:<{0}} {3:<{2}} {5:>{4}}@{7:<{6}} {9:>{8}}| \n", DATE_WIDTH, "date",
-                       TIME_WIDTH + sizeof('Z'), "time", LOCATION_WIDTH, "location", LINE_WIDTH,
-                       "line", LEVEL_WIDTH, "v");
 }
 
 #endif
@@ -362,16 +355,10 @@ void builtin_logger(const LogMessage* msg) {
 namespace impl {
 namespace {
 
-void enqueue_log_msg(uint64_t unix_time_ms,
-                     Level level,
-                     const char* msg,
-                     size_t msg_size,
-                     const char* location,
-                     size_t location_size,
-                     int line) {
+void enqueue_log_msg(const LogMessage& log) {
     {
         const std::scoped_lock lock(pending_messages_mutex);
-        pending_messages.emplace(unix_time_ms, level, msg, msg_size, location, location_size, line);
+        pending_messages.emplace(log);
     }
     pending_messages_available.notify_all();
 }
@@ -425,7 +412,7 @@ void init(const std::filesystem::path& file, bool unreal_console) {
 
     if (!file.empty()) {
         log_file_stream = std::make_unique<std::ofstream>(file, std::ofstream::trunc);
-        *log_file_stream << get_header() << std::flush;
+        *log_file_stream << LOG_HEADER << std::flush;
     }
 
     // Add the builtin logger now, after initializing the above two streams, so that the external
@@ -470,39 +457,40 @@ void init(const std::filesystem::path& file, bool unreal_console) {
 #pragma region C API Wrappers
 
 #ifdef UNREALSDK_SHARED
-UNREALSDK_CAPI(void,
-               enqueue_log_msg,
-               uint64_t unix_time_ms,
-               Level level,
-               const char* msg,
-               size_t msg_size,
-               const char* location,
-               size_t location_size,
-               int line);
+UNREALSDK_CAPI(void, enqueue_log_msg, const LogMessage* log);
 #endif
 #ifndef UNREALSDK_IMPORTING
-UNREALSDK_CAPI(void,
-               enqueue_log_msg,
-               uint64_t unix_time_ms,
-               Level level,
-               const char* msg,
-               size_t msg_size,
-               const char* location,
-               size_t location_size,
-               int line) {
-    impl::enqueue_log_msg(unix_time_ms, level, msg, msg_size, location, location_size, line);
+UNREALSDK_CAPI(void, enqueue_log_msg, const LogMessage* log) {
+    impl::enqueue_log_msg(*log);
 }
 #endif
 void log(Level level, std::string_view msg, std::string_view location, int line) {
+    // Important: get time asap
     auto now = unix_ms_now();
-    UNREALSDK_MANGLE(enqueue_log_msg)
-    (now, level, msg.data(), msg.size(), location.data(), location.size(), line);
+    // Rest can be in any order
+    const LogMessage log{.unix_time_ms = now,
+                         .level = level,
+                         .msg = msg.data(),
+                         .msg_size = msg.size(),
+                         .location = location.data(),
+                         .location_size = location.size(),
+                         .line = line,
+                         .thread_id = GetCurrentThreadId()};
+    UNREALSDK_MANGLE(enqueue_log_msg)(&log);
 }
 void log(Level level, std::wstring_view msg, std::string_view location, int line) {
     auto now = unix_ms_now();
+
     auto narrow = utils::narrow(msg);
-    UNREALSDK_MANGLE(enqueue_log_msg)
-    (now, level, narrow.data(), narrow.size(), location.data(), location.size(), line);
+    const LogMessage log{.unix_time_ms = now,
+                         .level = level,
+                         .msg = narrow.data(),
+                         .msg_size = narrow.size(),
+                         .location = location.data(),
+                         .location_size = location.size(),
+                         .line = line,
+                         .thread_id = GetCurrentThreadId()};
+    UNREALSDK_MANGLE(enqueue_log_msg)(&log);
 }
 
 #ifdef UNREALSDK_SHARED

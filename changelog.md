@@ -32,6 +32,8 @@ linking against.
 - Introduced `unrealsdk/flavour.h`, which splits flavour defines down into more specific feature
   flags. Using these may be more appropriate in places.
 
+- The log file now includes thread id, and added highlighting to the external console logs.
+
 ## 2.0.0
 - Now supports Borderlands 1. Big thanks to Ry for doing basically all the reverse engineering.
 
