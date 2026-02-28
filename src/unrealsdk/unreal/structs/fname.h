@@ -6,6 +6,7 @@
 namespace unrealsdk::game {
 
 class BL1Hook;
+class BL1EHook;
 class BL2Hook;
 class BL3Hook;
 class BL4Hook;
@@ -19,6 +20,7 @@ UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 struct FName {
    private:
     friend class game::BL1Hook;
+    friend class game::BL1EHook;
     friend class game::BL2Hook;
     friend class game::BL3Hook;
     friend class game::BL4Hook;

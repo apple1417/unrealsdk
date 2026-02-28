@@ -73,10 +73,11 @@ types may slightly change size or layout), but accounting for large engine inter
 (e.g. the different GNames data structures) at runtime is a non-goal.
 
 The currently supported flavours are:
-- `WILLOW`: Borderlands 1, 2, TPS, and AoDK standalone. Named for Gearbox's codename. 32-bit UE3.
+- `WILLOW`: Borderlands 1, BL1 Enhanced, BL2, TPS, and AoDK standalone. Named for Gearbox's
+            codename. UE3, both 32 and 64-bit supported.
 - `OAK`: Borderlands 3 and Wonderlands. Named for Gearbox's codename. 64-bit UE 4.21ish - there's
          some backports making exact versioning awkward.
-- `OAK2`: Borderlands 4. 64bit UE 5.5 (?), compiled with clang + pgo.
+- `OAK2`: Borderlands 4. 64bit UE 5.5 (?), compiled with Clang + PGO.
 
 Additionally, you can optionally define the `UNREALSDK_SHARED` variable, to compile as a shared
 library instead of as an object one. If you want to be able to run multiple projects using the sdk

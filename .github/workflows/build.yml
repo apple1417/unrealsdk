@@ -15,14 +15,17 @@ jobs:
       matrix:
         preset: [
           "clang-willow-release",
+          "clang-willow64-release",
           "clang-oak-release",
           "clang-oak2-release",
           "msvc-willow-release",
+          "msvc-willow64-release",
           "msvc-oak-release",
           "msvc-oak2-release",
           # Sanity check nothing's broken in the debug builds.
           # I think MSVC tends to be the quickest compiler, so we'll use it.
           "msvc-willow-debug",
+          "msvc-willow64-debug",
           "msvc-oak-debug",
           "msvc-oak2-debug",
         ]
@@ -36,7 +39,7 @@ jobs:
       if: startswith(matrix.preset, 'msvc')
       uses: TheMrMilchmann/setup-msvc-dev@v3
       with:
-        arch: ${{ fromJSON('["x86", "x64"]')[contains(matrix.preset, 'oak')] }}
+        arch: ${{ fromJSON('["x64", "x86"]')[contains(matrix.preset, '-willow-')] }}
 
     - name: Setup CMake and Ninja
       uses: lukka/get-cmake@latest
@@ -61,17 +64,23 @@ jobs:
         toolchain:
           - preset: clang-cross-willow-release
             container: clang-cross
+          - preset: clang-cross-willow64-release
+            container: clang-cross
           - preset: clang-cross-oak-release
             container: clang-cross
           - preset: clang-cross-oak2-release
             container: clang-cross
           - preset: llvm-mingw-willow-release
             container: llvm-mingw
+          - preset: llvm-mingw-willow64-release
+            container: llvm-mingw
           - preset: llvm-mingw-oak-release
             container: llvm-mingw
           - preset: llvm-mingw-oak2-release
             container: llvm-mingw
           - preset: mingw-willow-release
+            container: mingw
+          - preset: mingw-willow64-release
             container: mingw
           - preset: mingw-oak-release
             container: mingw
@@ -116,6 +125,7 @@ jobs:
       matrix:
         preset: [
           "clang-willow-release",
+          "clang-willow64-release",
           "clang-oak-release",
           "clang-oak2-release",
         ]

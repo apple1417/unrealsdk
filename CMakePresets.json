@@ -123,6 +123,17 @@
       }
     },
     {
+      "name": "_willow64",
+      "hidden": true,
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "UNREALSDK_FLAVOUR": "WILLOW"
+      }
+    },
+    {
       "name": "_oak",
       "hidden": true,
       "architecture": {
@@ -175,6 +186,26 @@
         "_base",
         "_clang_x86",
         "_willow",
+        "_release"
+      ]
+    },
+    {
+      "name": "clang-willow64-debug",
+      "displayName": "Willow64 Debug (Clang)",
+      "inherits": [
+        "_base",
+        "_clang_x64",
+        "_willow64",
+        "_debug"
+      ]
+    },
+    {
+      "name": "clang-willow64-release",
+      "displayName": "Willow64 Release (Clang)",
+      "inherits": [
+        "_base",
+        "_clang_x64",
+        "_willow64",
         "_release"
       ]
     },
@@ -239,6 +270,26 @@
       ]
     },
     {
+      "name": "clang-cross-willow64-debug",
+      "displayName": "Willow64 Debug (Clang Cross Compiler)",
+      "inherits": [
+        "_base",
+        "_clang_cross_x64",
+        "_willow64",
+        "_debug"
+      ]
+    },
+    {
+      "name": "clang-cross-willow64-release",
+      "displayName": "Willow64 Release (Clang Cross Compiler)",
+      "inherits": [
+        "_base",
+        "_clang_cross_x64",
+        "_willow64",
+        "_release"
+      ]
+    },
+    {
       "name": "clang-cross-oak-debug",
       "displayName": "Oak Debug (Clang Cross Compiler)",
       "inherits": [
@@ -295,6 +346,26 @@
         "_base",
         "_llvm_mingw_x86",
         "_willow",
+        "_release"
+      ]
+    },
+    {
+      "name": "llvm-mingw-willow64-debug",
+      "displayName": "Willow64 Debug (LLVM MinGW)",
+      "inherits": [
+        "_base",
+        "_llvm_mingw_x64",
+        "_willow64",
+        "_debug"
+      ]
+    },
+    {
+      "name": "llvm-mingw-willow64-release",
+      "displayName": "Willow64 Release (LLVM MinGW)",
+      "inherits": [
+        "_base",
+        "_llvm_mingw_x64",
+        "_willow64",
         "_release"
       ]
     },
@@ -359,6 +430,26 @@
       ]
     },
     {
+      "name": "mingw-willow64-debug",
+      "displayName": "Willow64 Debug (MinGW)",
+      "inherits": [
+        "_base",
+        "_mingw_x64",
+        "_willow64",
+        "_debug"
+      ]
+    },
+    {
+      "name": "mingw-willow64-release",
+      "displayName": "Willow64 Release (MinGW)",
+      "inherits": [
+        "_base",
+        "_mingw_x64",
+        "_willow64",
+        "_release"
+      ]
+    },
+    {
       "name": "mingw-oak-debug",
       "displayName": "Oak Debug (MinGW)",
       "inherits": [
@@ -415,6 +506,26 @@
         "_base",
         "_msvc",
         "_willow",
+        "_release"
+      ]
+    },
+    {
+      "name": "msvc-willow64-debug",
+      "displayName": "Willow64 Debug (MSVC)",
+      "inherits": [
+        "_base",
+        "_msvc",
+        "_willow64",
+        "_debug"
+      ]
+    },
+    {
+      "name": "msvc-willow64-release",
+      "displayName": "Willow64 Release (MSVC)",
+      "inherits": [
+        "_base",
+        "_msvc",
+        "_willow64",
         "_release"
       ]
     },

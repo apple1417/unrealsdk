@@ -191,7 +191,13 @@ struct TFieldVariantStub {
 using FFieldVariant = TFieldVariant<FField, UObject>;
 
 static_assert(sizeof(FFieldVariant) == sizeof(uintptr_t));
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+// Willow 64 bit has weird alignment just ignore it
+static_assert(alignof(FFieldVariant) == alignof(uintptr_t)
+              || sizeof(uintptr_t) == sizeof(uint64_t));
+#else
 static_assert(alignof(FFieldVariant) == alignof(uintptr_t));
+#endif
 
 UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 

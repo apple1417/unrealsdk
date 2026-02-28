@@ -210,7 +210,7 @@ struct FNameEntry {
     };
 
    private:
-    uint8_t UnknownData01[0x04];
+    void* UnknownData01;
 
    public:
     unreal::FNameEntry::name_union Name;

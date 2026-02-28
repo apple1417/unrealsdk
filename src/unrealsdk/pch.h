@@ -88,6 +88,7 @@ static_assert(std::numeric_limits<double>::is_iec559 && std::numeric_limits<doub
 using float32_t = float;
 using float64_t = double;
 
+// This is mostly just a sanity check of your build environment
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
 static_assert(sizeof(uintptr_t) == sizeof(uint64_t),
               "Expected 64 bit pointers for Oak SDK flavour");
@@ -95,8 +96,7 @@ static_assert(sizeof(uintptr_t) == sizeof(uint64_t),
 static_assert(sizeof(uintptr_t) == sizeof(uint64_t),
               "Expected 64 bit pointers for Oak2 SDK flavour");
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-static_assert(sizeof(uintptr_t) == sizeof(uint32_t),
-              "Expected 32 bit pointers for Willow SDK flavour");
+// Willow supports both 32-bit and 64-bit pointers
 #else
 #error Unknown sdk flavour
 #endif

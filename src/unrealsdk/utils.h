@@ -148,6 +148,7 @@ struct DLLSafeCallback<std::function<R(As...)>> {
      */
     DLLSafeCallback& operator=(DLLSafeCallback&& other) noexcept {
         std::swap(this->inner, other.inner);
+        return *this;
     }
 
     /**

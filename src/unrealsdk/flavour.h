@@ -112,8 +112,10 @@
  * @fn UNREALSDK_UNREAL_STRUCT_PADDING_POP
  * @brief Pops any pragmas set by UNREAKSDK_UNREAL_STRUCT_PADDING_PUSH()
  */
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-// 32-bit msvc aligns everything to 8 by default
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+// 32-bit msvc aligns everything to 8 by default, so they seem to have applied a pragma globally
+// Interestingly, when they ported to 64-bit builds, it still applies, even though pointers are 8
+// bytes, they're only 4-byte aligned
 #define UNREALSDK_UNREAL_STRUCT_PADDING_PUSH() _Pragma("pack(push, 0x4)")
 #define UNREALSDK_UNREAL_STRUCT_PADDING_POP() _Pragma("pack(pop)")
 #else

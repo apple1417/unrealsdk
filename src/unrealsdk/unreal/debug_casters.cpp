@@ -1,5 +1,6 @@
 #include "unrealsdk/pch.h"
 #include "unrealsdk/game/bl1/offsets.h"
+#include "unrealsdk/game/bl1e/offsets.h"
 #include "unrealsdk/game/bl2/offsets.h"
 #include "unrealsdk/game/bl3/offsets.h"
 #include "unrealsdk/game/bl4/offsets.h"
@@ -23,6 +24,7 @@ generic or concrete type.
 
 #define DEBUG_CASTER_GAMES(X, ...) \
     X(bl1, __VA_ARGS__)            \
+    X(bl1e, __VA_ARGS__)           \
     X(bl2, __VA_ARGS__)            \
     X(tps, __VA_ARGS__)
 

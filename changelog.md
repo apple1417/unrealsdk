@@ -15,6 +15,8 @@ linking against.
 - Now supports Borderlands 4 (Oak2). Thanks to Faultz for finding a lot of the signatures, and
   truman for creating binfold/general unreal RE advice.
 
+- Now supports Borderlands 1 Enhanced, thanks to Ry doing all the reverse engineering again.
+
 - As part of adding Oak2 support, renamed all `UProperty` types to `ZProperty`, and moved their
   headers from `unrealsdk/unreal/classes/properties` to `unrealsdk/unreal/properties`.
 

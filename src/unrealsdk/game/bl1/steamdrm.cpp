@@ -46,6 +46,8 @@ void GetStartupInfoA_hook(LPSTARTUPINFOA lpStartupInfo) {
 }  // namespace
 
 void BL1Hook::wait_for_steam_drm(void) {
+    bool failed_to_hook = false;
+
     {
         // Immediately suspend the other threads
         const ThreadSuspender suspend{};
@@ -67,23 +69,24 @@ void BL1Hook::wait_for_steam_drm(void) {
         if (status != MH_OK) {
             LOG(ERROR, "Failed to create GetStartupInfoA hook: {:x}",
                 static_cast<uint32_t>(status));
-
-            LOG(ERROR, "Falling back to a static delay");
-            std::this_thread::sleep_for(FALLBACK_DELAY);
-            return;
-        }
-
-        status = MH_EnableHook(reinterpret_cast<LPVOID>(&GetStartupInfoA));
-        if (status != MH_OK) {
-            LOG(ERROR, "Failed to enable GetStartupInfoA hook: {:x}",
-                static_cast<uint32_t>(status));
-
-            LOG(ERROR, "Falling back to a static delay");
-            std::this_thread::sleep_for(FALLBACK_DELAY);
-            return;
+            failed_to_hook = true;
+        } else {
+            status = MH_EnableHook(reinterpret_cast<LPVOID>(&GetStartupInfoA));
+            if (status != MH_OK) {
+                LOG(ERROR, "Failed to enable GetStartupInfoA hook: {:x}",
+                    static_cast<uint32_t>(status));
+                failed_to_hook = true;
+            }
         }
 
         // Drop out of this scope and unsuspend the other threads, let the unpacker run
+    }
+
+    if (failed_to_hook) {
+        LOG(ERROR, "Falling back to a static delay");
+        // Need to sleep after unsuspending threads, have to do this here
+        std::this_thread::sleep_for(FALLBACK_DELAY);
+        return;
     }
 
     std::unique_lock lock(ready_mutex);
