@@ -79,10 +79,10 @@ class UClass : public UStruct {
     UObject* ClassDefaultObject;  // Validated
 
    private:
-    uint8_t UnknownData01[0xA0];
+    uint8_t UnknownData01[0xC0];
 
    public:
-    unreal::TArray<unreal::FImplementedInterface> Interfaces;
+    unreal::TArray<unreal::FImplementedInterface> Interfaces;  // Validated
 };
 
 using UScriptStruct = unreal::offsets::generic::UScriptStruct<UStruct>;
@@ -93,7 +93,7 @@ class UFunction : public UStruct {
 
    public:
     uint32_t FunctionFlags;
-    uint8_t NumParams;
+    uint8_t NumParams;  // Validated
     uint16_t ParamsSize;
     uint16_t ReturnValueOffset;
 
