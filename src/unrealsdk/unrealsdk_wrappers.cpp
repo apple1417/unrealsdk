@@ -26,10 +26,6 @@ const GObjects& gobjects(void) {
     return *UNREALSDK_MANGLE(gobjects)();
 }
 
-const GNames& gnames(void) {
-    return *UNREALSDK_MANGLE(gnames)();
-}
-
 void* u_malloc(size_t len) {
     return UNREALSDK_MANGLE(u_malloc)(len);
 }
@@ -70,6 +66,18 @@ void fname_init(FName* name, const wchar_t* str, int32_t number) {
 void fname_init(FName* name, const std::wstring& str, int32_t number) {
     UNREALSDK_MANGLE(fname_init)(name, str.data(), number);
 }
+std::variant<const std::string_view, const std::wstring_view> fname_get_str(
+    const unreal::FName& name) {
+    const void* str = nullptr;
+    size_t size = 0;
+    bool is_wide = false;
+    UNREALSDK_MANGLE(fname_get_str)(name, &str, &size, &is_wide);
+
+    if (is_wide) {
+        return std::wstring_view{reinterpret_cast<const wchar_t*>(str), size};
+    }
+    return std::string_view{reinterpret_cast<const char*>(str), size};
+}
 
 void fframe_step(FFrame* frame, UObject* obj, void* param) {
     UNREALSDK_MANGLE(fframe_step(frame, obj, param));
@@ -86,6 +94,14 @@ void uconsole_output_text(std::wstring_view str) {
 std::wstring uobject_path_name(const UObject* obj) {
     size_t size{};
     auto ptr = UNREALSDK_MANGLE(uobject_path_name)(obj, size);
+
+    std::wstring str{ptr, size};
+    u_free(ptr);
+    return str;
+}
+std::wstring ffield_path_name(const FField* obj) {
+    size_t size{};
+    auto ptr = UNREALSDK_MANGLE(ffield_path_name)(obj, size);
 
     std::wstring str{ptr, size};
     u_free(ptr);

@@ -20,7 +20,7 @@ using size_type = decltype(TArray<wchar_t>::count);
  */
 size_type valid_size(std::wstring_view str) {
     const size_t size = str.size() + 1;  // Include the null terminator
-    if (size > (size_t)std::numeric_limits<size_type>::max()) {
+    if (size > static_cast<size_t>(std::numeric_limits<size_type>::max())) {
         throw std::length_error("Tried to allocate a string longer than TArray max capacity!");
     }
     return static_cast<size_type>(size);

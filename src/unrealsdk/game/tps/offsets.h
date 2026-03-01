@@ -4,14 +4,13 @@
 #include "unrealsdk/pch.h"
 #include "unrealsdk/game/bl2/offsets.h"
 #include "unrealsdk/unreal/offsets.h"
+#include "unrealsdk/unreal/offsets_generic.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
 
 namespace unrealsdk::game::tps {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-private-field"
@@ -25,7 +24,7 @@ class UClass;
 using UObject = bl2::generic::UObject<UClass>;
 class UField : public bl2::UField {};
 
-class UProperty : public UField {
+class ZProperty : public UField {
    public:
     int32_t ArrayDim;
     int32_t ElementSize;
@@ -36,7 +35,7 @@ class UProperty : public UField {
 
    public:
     int32_t Offset_Internal;
-    unreal::UProperty* PropertyLinkNext;
+    unreal::ZProperty* PropertyLinkNext;
 
    private:
     uint8_t UnknownData01[0xC];
@@ -55,7 +54,7 @@ class UStruct : public UField {
     uint8_t UnknownData01[0x1A];
 
    public:
-    UProperty* PropertyLink;
+    ZProperty* PropertyLink;
 
    private:
     uint8_t UnknownData02[0x4];
@@ -82,23 +81,29 @@ using UFunction = bl2::generic::UFunction<UStruct>;
 class UConst : public bl2::UConst {};
 class UEnum : public bl2::UEnum {};
 
-using UArrayProperty = unreal::offsets::generic::UArrayProperty<UProperty>;
-using UBoolProperty = bl2::generic::UBoolProperty<UProperty>;
-using UByteProperty = unreal::offsets::generic::UByteProperty<UProperty>;
-using UDelegateProperty = unreal::offsets::generic::UDelegateProperty<UProperty>;
-using UEnumProperty = unreal::offsets::generic::UEnumProperty<UProperty>;
-class UFloatProperty : public UProperty {};
-using UInterfaceProperty = unreal::offsets::generic::UInterfaceProperty<UProperty>;
-class UIntProperty : public UProperty {};
-using UMulticastDelegateProperty = unreal::offsets::generic::UMulticastDelegateProperty<UProperty>;
-using UObjectProperty = unreal::offsets::generic::UObjectProperty<UProperty>;
-using UStructProperty = unreal::offsets::generic::UStructProperty<UProperty>;
+using ZArrayProperty = unreal::offsets::generic::ZArrayProperty<ZProperty>;
+using ZBoolProperty = bl2::generic::ZBoolProperty<ZProperty>;
+using ZByteProperty = unreal::offsets::generic::ZByteProperty<ZProperty>;
+using ZDelegateProperty = unreal::offsets::generic::ZDelegateProperty<ZProperty>;
+using ZEnumProperty = unreal::offsets::generic::ZEnumProperty<ZProperty>;
+class ZFloatProperty : public ZProperty {};
+using ZInterfaceProperty = unreal::offsets::generic::ZInterfaceProperty<ZProperty>;
+class ZIntProperty : public ZProperty {};
+using ZMulticastDelegateProperty = unreal::offsets::generic::ZMulticastDelegateProperty<ZProperty>;
+using ZObjectProperty = unreal::offsets::generic::ZObjectProperty<ZProperty>;
+using ZStructProperty = unreal::offsets::generic::ZStructProperty<ZProperty>;
 
-using UByteAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<UByteProperty>;
-using UClassProperty = unreal::offsets::generic::UClassProperty<UObjectProperty>;
-using UFloatAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<UFloatProperty>;
-using UIntAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<UIntProperty>;
-using USoftClassProperty = unreal::offsets::generic::USoftClassProperty<UObjectProperty>;
+using ZByteAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<ZByteProperty>;
+using ZClassProperty = unreal::offsets::generic::ZClassProperty<ZObjectProperty>;
+using ZFloatAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<ZFloatProperty>;
+using ZIntAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<ZIntProperty>;
+using ZSoftClassProperty = unreal::offsets::generic::ZSoftClassProperty<ZObjectProperty>;
+using ZGbxDefPtrProperty = unreal::offsets::generic::ZGbxDefPtrProperty<ZProperty>;
+
+class FNameEntry : public bl2::FNameEntry {};
+class FFrame : public bl2::FFrame {};
+class FField : public bl2::FField {};
+class FFieldClass : public bl2::FFieldClass {};
 
 // NOLINTEND(cppcoreguidelines-pro-type-member-init,
 //           readability-identifier-naming,
@@ -106,9 +111,7 @@ using USoftClassProperty = unreal::offsets::generic::USoftClassProperty<UObjectP
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
 }  // namespace unrealsdk::game::tps
 

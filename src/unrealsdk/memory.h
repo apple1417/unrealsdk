@@ -164,7 +164,7 @@ struct Pattern {
     consteval Pattern(const char (&hex)[m],
                       ptrdiff_t offset = std::numeric_limits<ptrdiff_t>::max())
         : bytes(), mask(), offset(offset) {
-        size_t idx = 0;
+        ptrdiff_t idx = 0;
         bool upper_nibble = true;
 
         for (const auto& character : hex) {

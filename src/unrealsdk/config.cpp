@@ -82,6 +82,7 @@ void recursive_merge_table(toml::table& base, const toml::table& overrides) {
     overrides.for_each([&base](auto& key, auto& value) {
         if constexpr (toml::is_table<decltype(value)>) {
             if (base.contains(key)) {
+                // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-avoid-unchecked-container-access)
                 auto base_table = base[key].as_table();
                 if (base_table != nullptr) {
                     recursive_merge_table(*base_table, value);

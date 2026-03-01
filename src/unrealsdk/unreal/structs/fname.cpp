@@ -1,7 +1,6 @@
 #include "unrealsdk/pch.h"
 
 #include "unrealsdk/unreal/structs/fname.h"
-#include "unrealsdk/unreal/wrappers/gnames.h"
 #include "unrealsdk/unrealsdk.h"
 #include "unrealsdk/utils.h"
 
@@ -26,15 +25,12 @@ bool FName::operator!=(const FName& other) const {
 }
 
 std::ostream& operator<<(std::ostream& stream, const FName& name) {
-    auto entry = unrealsdk::gnames().at(name.index);
-
-    // NOLINTBEGIN(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-    if (entry->is_wide()) {
-        stream << utils::narrow(entry->WideName);
+    auto variant = unrealsdk::internal::fname_get_str(name);
+    if (std::holds_alternative<const std::string_view>(variant)) {
+        stream << std::get<const std::string_view>(variant);
     } else {
-        stream << std::string_view{entry->AnsiName};
+        stream << utils::narrow(std::get<const std::wstring_view>(variant));
     }
-    // NOLINTEND(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
     if (name.number != 0) {
         stream << '_' << std::to_string(name.number - 1);
@@ -43,15 +39,12 @@ std::ostream& operator<<(std::ostream& stream, const FName& name) {
 }
 
 std::wostream& operator<<(std::wostream& stream, const FName& name) {
-    auto entry = unrealsdk::gnames().at(name.index);
-
-    // NOLINTBEGIN(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-    if (entry->is_wide()) {
-        stream << std::wstring_view{entry->WideName};
+    auto variant = unrealsdk::internal::fname_get_str(name);
+    if (std::holds_alternative<const std::wstring_view>(variant)) {
+        stream << std::get<const std::wstring_view>(variant);
     } else {
-        stream << utils::widen(entry->AnsiName);
+        stream << utils::widen(std::get<const std::string_view>(variant));
     }
-    // NOLINTEND(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
     if (name.number != 0) {
         stream << '_' << std::to_wstring(name.number - 1);

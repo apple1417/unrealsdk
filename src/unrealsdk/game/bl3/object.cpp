@@ -5,6 +5,7 @@
 #include "unrealsdk/unreal/classes/uobject.h"
 #include "unrealsdk/unreal/structs/fname.h"
 #include "unrealsdk/unreal/structs/fstring.h"
+#include "unrealsdk/version_error.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK && !defined(UNREALSDK_IMPORTING)
 

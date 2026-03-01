@@ -6,7 +6,7 @@
 namespace unrealsdk::unreal {
 
 class UStruct;
-class UProperty;
+class ZProperty;
 
 namespace impl {
 
@@ -41,7 +41,7 @@ class UnrealPointerControl {
 
     union {
         const UStruct* struct_type;
-        const UProperty* prop;
+        const ZProperty* prop;
     } metadata;
 
    public:
@@ -50,7 +50,7 @@ class UnrealPointerControl {
      */
     UnrealPointerControl(const UStruct* struct_type)
         : refs(0), pointer_type(PointerType::STRUCT), metadata{.struct_type = struct_type} {}
-    UnrealPointerControl(const UProperty* prop)
+    UnrealPointerControl(const ZProperty* prop)
         : refs(0), pointer_type(PointerType::PROPERTY), metadata{.prop = prop} {}
 
     /**
@@ -148,7 +148,7 @@ class UnrealPointer {
      *
      * @param prop The property to hold.
      */
-    explicit UnrealPointer(const UProperty* prop)
+    explicit UnrealPointer(const ZProperty* prop)
         requires std::is_void_v<T>;
 
     /**

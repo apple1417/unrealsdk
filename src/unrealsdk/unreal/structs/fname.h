@@ -3,14 +3,28 @@
 
 #include "unrealsdk/pch.h"
 
+namespace unrealsdk::game {
+
+class BL1Hook;
+class BL1EHook;
+class BL2Hook;
+class BL3Hook;
+class BL4Hook;
+
+}  // namespace unrealsdk::game
+
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 
 struct FName {
    private:
+    friend class game::BL1Hook;
+    friend class game::BL1EHook;
+    friend class game::BL2Hook;
+    friend class game::BL3Hook;
+    friend class game::BL4Hook;
+
     int32_t index{0};
     int32_t number{0};
 
@@ -53,9 +67,27 @@ struct FName {
     operator std::wstring() const;
 };
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
+
+/**
+ * @brief Concatenates a string and an FName.
+ *
+ * @param str The string to add to.
+ * @param name The name to add.
+ * @return The new string.
+ */
+inline std::string operator+(std::string& str, const unrealsdk::unreal::FName& name) {
+    return str + std::string{name};
+}
+inline std::wstring operator+(std::wstring& str, const unrealsdk::unreal::FName& name) {
+    return str + std::wstring{name};
+}
+inline std::string operator+(std::string_view str, const unrealsdk::unreal::FName& name) {
+    return std::string{str} + std::string{name};
+}
+inline std::wstring operator+(std::wstring_view str, const unrealsdk::unreal::FName& name) {
+    return std::wstring{str} + std::wstring{name};
+}
 
 /**
  * @brief Construct an FName literal from a wide string.

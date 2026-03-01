@@ -32,7 +32,6 @@ namespace unrealsdk {
 UNREALSDK_CAPI([[nodiscard]] bool, is_initialized);
 UNREALSDK_CAPI([[nodiscard]] bool, is_console_ready);
 UNREALSDK_CAPI([[nodiscard]] const GObjects*, gobjects);
-UNREALSDK_CAPI([[nodiscard]] const GNames*, gnames);
 UNREALSDK_CAPI([[nodiscard]] void*, u_malloc, size_t len);
 UNREALSDK_CAPI([[nodiscard]] void*, u_realloc, void* original, size_t len);
 UNREALSDK_CAPI(void, u_free, void* data);
@@ -57,10 +56,12 @@ UNREALSDK_CAPI([[nodiscard]] UObject*,
 namespace internal {
 
 UNREALSDK_CAPI(void, fname_init, FName* name, const wchar_t* str, int32_t number);
+UNREALSDK_CAPI(void, fname_get_str, FName name, const void** str, size_t* size, bool* is_wide);
 UNREALSDK_CAPI(void, fframe_step, FFrame* frame, UObject* obj, void* param);
 UNREALSDK_CAPI(void, process_event, UObject* object, UFunction* function, void* params);
 UNREALSDK_CAPI(void, uconsole_output_text, const wchar_t* str, size_t size);
 UNREALSDK_CAPI([[nodiscard]] wchar_t*, uobject_path_name, const UObject* obj, size_t& size);
+UNREALSDK_CAPI([[nodiscard]] wchar_t*, ffield_path_name, const FField* obj, size_t& size);
 UNREALSDK_CAPI(void, ftext_as_culture_invariant, FText* text, TemporaryFString&& str);
 UNREALSDK_CAPI(void, fsoftobjectptr_assign, FSoftObjectPtr* ptr, const unreal::UObject* obj);
 UNREALSDK_CAPI(void, flazyobjectptr_assign, FLazyObjectPtr* ptr, const unreal::UObject* obj);

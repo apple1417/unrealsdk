@@ -5,16 +5,9 @@ namespace unrealsdk::unreal {
 
 class UObject;
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
-
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_GOBJECTS_FORMAT == UNREALSDK_GOBJECTS_FORMAT_FUOBJECTARRAY
 
 // There are a few fields we need to modify to deal with weak pointers. To be thread safe we need
 // them to be atomic fields - as unreal itself does. The fields are all aligned as normal, we expect
@@ -82,7 +75,23 @@ struct FUObjectArray {
     FChunkedFixedUObjectArray ObjObjects;
 
    private:
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-private-field"
+#endif
+
+    // TODO HACK: work out a nicer way of doing this
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
     uint8_t UnknownData00[0x178];
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
+    uint8_t UnknownData00[0x80];
+#else
+#error Unknown sdk flavour
+#endif
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 
    public:
     std::atomic<int32_t> MasterSerialNumber;
@@ -91,13 +100,7 @@ struct FUObjectArray {
 
 #endif
 
-#if defined(__clang__) || defined(__MINGW32__)
-#pragma GCC diagnostic pop
-#endif
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
 }  // namespace unrealsdk::unreal
 

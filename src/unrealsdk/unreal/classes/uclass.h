@@ -10,15 +10,6 @@ namespace unrealsdk::unreal {
 
 struct FImplementedInterface;
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
-
 class UClass : public UStruct {
    public:
     UClass() = delete;
@@ -52,14 +43,6 @@ template <>
 struct ClassTraits<UClass> {
     static inline const wchar_t* const NAME = L"Class";
 };
-
-#if defined(__clang__) || defined(__MINGW32__)
-#pragma GCC diagnostic pop
-#endif
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

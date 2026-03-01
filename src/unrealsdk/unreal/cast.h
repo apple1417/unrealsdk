@@ -6,23 +6,6 @@
 
 // Note: this header needs to pull in all unreal classes
 // Refrain from including it in other headers
-#include "unrealsdk/unreal/classes/properties/attribute_property.h"
-#include "unrealsdk/unreal/classes/properties/copyable_property.h"
-#include "unrealsdk/unreal/classes/properties/persistent_object_ptr_property.h"
-#include "unrealsdk/unreal/classes/properties/uarrayproperty.h"
-#include "unrealsdk/unreal/classes/properties/uboolproperty.h"
-#include "unrealsdk/unreal/classes/properties/ubyteproperty.h"
-#include "unrealsdk/unreal/classes/properties/uclassproperty.h"
-#include "unrealsdk/unreal/classes/properties/ucomponentproperty.h"
-#include "unrealsdk/unreal/classes/properties/udelegateproperty.h"
-#include "unrealsdk/unreal/classes/properties/uenumproperty.h"
-#include "unrealsdk/unreal/classes/properties/uinterfaceproperty.h"
-#include "unrealsdk/unreal/classes/properties/umulticastdelegateproperty.h"
-#include "unrealsdk/unreal/classes/properties/uobjectproperty.h"
-#include "unrealsdk/unreal/classes/properties/ustrproperty.h"
-#include "unrealsdk/unreal/classes/properties/ustructproperty.h"
-#include "unrealsdk/unreal/classes/properties/utextproperty.h"
-#include "unrealsdk/unreal/classes/properties/uweakobjectproperty.h"
 #include "unrealsdk/unreal/classes/ublueprintgeneratedclass.h"
 #include "unrealsdk/unreal/classes/uclass.h"
 #include "unrealsdk/unreal/classes/uconst.h"
@@ -30,9 +13,28 @@
 #include "unrealsdk/unreal/classes/ufield.h"
 #include "unrealsdk/unreal/classes/ufunction.h"
 #include "unrealsdk/unreal/classes/uobject.h"
-#include "unrealsdk/unreal/classes/uproperty.h"
 #include "unrealsdk/unreal/classes/uscriptstruct.h"
 #include "unrealsdk/unreal/classes/ustruct.h"
+#include "unrealsdk/unreal/properties/attribute_property.h"
+#include "unrealsdk/unreal/properties/copyable_property.h"
+#include "unrealsdk/unreal/properties/persistent_object_ptr_property.h"
+#include "unrealsdk/unreal/properties/zarrayproperty.h"
+#include "unrealsdk/unreal/properties/zboolproperty.h"
+#include "unrealsdk/unreal/properties/zbyteproperty.h"
+#include "unrealsdk/unreal/properties/zclassproperty.h"
+#include "unrealsdk/unreal/properties/zcomponentproperty.h"
+#include "unrealsdk/unreal/properties/zdelegateproperty.h"
+#include "unrealsdk/unreal/properties/zenumproperty.h"
+#include "unrealsdk/unreal/properties/zgbxdefptrproperty.h"
+#include "unrealsdk/unreal/properties/zinterfaceproperty.h"
+#include "unrealsdk/unreal/properties/zmulticastdelegateproperty.h"
+#include "unrealsdk/unreal/properties/zobjectproperty.h"
+#include "unrealsdk/unreal/properties/zproperty.h"
+#include "unrealsdk/unreal/properties/zstrproperty.h"
+#include "unrealsdk/unreal/properties/zstructproperty.h"
+#include "unrealsdk/unreal/properties/ztextproperty.h"
+#include "unrealsdk/unreal/properties/zweakobjectproperty.h"
+#include "unrealsdk/unreal/structs/ffield.h"
 
 namespace unrealsdk::unreal {
 
@@ -40,47 +42,50 @@ namespace unrealsdk::unreal {
  * @brief A tuple of all unreal classes.
  * @note Intended for to be used to iterate over all types using recursive templates.
  */
-using all_unreal_classes = std::tuple<  //
-    UArrayProperty,
+using all_unreal_classes = std::tuple<  // formatting
+    FField,
     UBlueprintGeneratedClass,
-    UBoolProperty,
-    UByteAttributeProperty,
-    UByteProperty,
     UClass,
-    UClassProperty,
-    UComponentProperty,
     UConst,
-    UDelegateProperty,
-    UDoubleProperty,
     UEnum,
-    UEnumProperty,
     UField,
-    UFloatAttributeProperty,
-    UFloatProperty,
     UFunction,
-    UInt16Property,
-    UInt64Property,
-    UInt8Property,
-    UIntAttributeProperty,
-    UInterfaceProperty,
-    UIntProperty,
-    ULazyObjectProperty,
-    UMulticastDelegateProperty,
-    UNameProperty,
     UObject,
-    UObjectProperty,
-    UProperty,
     UScriptStruct,
-    USoftClassProperty,
-    USoftObjectProperty,
-    UStrProperty,
     UStruct,
-    UStructProperty,
-    UTextProperty,
-    UUInt16Property,
-    UUInt32Property,
-    UUInt64Property,
-    UWeakObjectProperty>;
+    ZArrayProperty,
+    ZBoolProperty,
+    ZByteAttributeProperty,
+    ZByteProperty,
+    ZClassProperty,
+    ZComponentProperty,
+    ZDelegateProperty,
+    ZDoubleProperty,
+    ZEnumProperty,
+    ZFloatAttributeProperty,
+    ZFloatProperty,
+    ZGbxDefPtrProperty,
+    ZInt16Property,
+    ZInt64Property,
+    ZInt8Property,
+    ZIntAttributeProperty,
+    ZIntProperty,
+    ZInterfaceProperty,
+    ZLazyObjectProperty,
+    ZMulticastDelegateProperty,
+    ZNameProperty,
+    ZObjectProperty,
+    ZProperty,
+    ZSoftClassProperty,
+    ZSoftObjectProperty,
+    ZStrProperty,
+    ZStructProperty,
+    ZTextProperty,
+    ZUInt16Property,
+    ZUInt32Property,
+    ZUInt64Property,
+    ZWeakObjectProperty
+    /* formatting */>;
 
 namespace {
 
@@ -95,8 +100,9 @@ namespace {
  *
  * @param obj The object which failed to cast.
  */
-inline void default_cast_fallback(const UObject* obj) {
-    throw std::runtime_error("Unknown object type " + (std::string)obj->Class()->Name());
+template <typename T>
+inline void default_cast_fallback(const T* obj) {
+    throw std::runtime_error("Unknown object type " + obj->Class()->Name());
 }
 
 #ifdef __clang__
@@ -107,6 +113,7 @@ inline void default_cast_fallback(const UObject* obj) {
  * @brief Implementation of cast - kept private as it has less friendly args + template args.
  *
  * @tparam InputType The type of the input object.
+ * @tparam ClassType The type of the working class object.
  * @tparam Function The type of the callback function.
  * @tparam Fallback The type of the fallback function.
  * @tparam include_input_type True if the input type is a valid output type.
@@ -119,6 +126,7 @@ inline void default_cast_fallback(const UObject* obj) {
  * @param fallback The fallback function.
  */
 template <typename InputType,
+          typename ClassType,
           typename Function,
           typename Fallback,
           bool include_input_type,
@@ -126,7 +134,7 @@ template <typename InputType,
           typename ClassTuple,
           size_t i>
 void cast_impl(InputType* obj,
-               const UStruct* working_class,
+               ClassType* working_class,
                const Function& func,
                const Fallback& fallback) {
     // If out of elements
@@ -135,7 +143,7 @@ void cast_impl(InputType* obj,
         if constexpr (check_inherited_types) {
             if (working_class->SuperField() != nullptr) {
                 // Jump back to the start of the tuple, but use the super field
-                return cast_impl<InputType, Function, Fallback, include_input_type,
+                return cast_impl<InputType, ClassType, Function, Fallback, include_input_type,
                                  check_inherited_types, ClassTuple, 0>(
                     obj, working_class->SuperField(), func, fallback);
             }
@@ -164,8 +172,9 @@ void cast_impl(InputType* obj,
         }
 
         // Try the next element
-        return cast_impl<InputType, Function, Fallback, include_input_type, check_inherited_types,
-                         ClassTuple, i + 1>(obj, working_class, func, fallback);
+        return cast_impl<InputType, ClassType, Function, Fallback, include_input_type,
+                         check_inherited_types, ClassTuple, i + 1>(obj, working_class, func,
+                                                                   fallback);
     }
 }
 
@@ -240,16 +249,20 @@ template <typename Options = cast_options<>,
           typename InputType,
           typename Function,
           typename Fallback = std::function<void(InputType*)>>
-void cast(InputType* obj, const Function& func, const Fallback& fallback = default_cast_fallback)
-    requires(std::is_base_of_v<UObject, InputType>)
+void cast(InputType* obj,
+          const Function& func,
+          const Fallback& fallback = default_cast_fallback<InputType>)
+    requires(std::is_base_of_v<UObject, InputType> || std::is_base_of_v<FField, InputType>)
 {
     if (obj == nullptr) {
         throw std::invalid_argument("Tried to cast null object!");
     }
 
-    return cast_impl<InputType, Function, Fallback, Options::include_input_type_v,
+    auto working_cls = obj->Class();
+    using ClassType = std::remove_cvref_t<decltype(*working_cls->SuperField())>;
+    return cast_impl<InputType, ClassType, Function, Fallback, Options::include_input_type_v,
                      Options::check_inherited_types_v, typename Options::class_tuple_t, 0>(
-        obj, obj->Class(), func, fallback);
+        obj, working_cls, func, fallback);
 }
 
 }  // namespace unrealsdk::unreal

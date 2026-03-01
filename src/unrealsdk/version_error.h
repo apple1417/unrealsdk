@@ -39,6 +39,20 @@ NOINLINE void throw_version_error(const char* msg);
 
 #undef NOINLINE
 
+/**
+ * @brief Marks the current source location as unreachable.
+ * @note Sometimes useful after throwing.
+ */
+[[noreturn]] inline void unreachable(void) {
+#ifdef __cpp_lib_unreachable
+    std::unreachable();
+#elif defined(_MSC_VER) && !defined(__clang__)
+    __assume(false);
+#else  // GCC, Clang
+    __builtin_unreachable();
+#endif
+}
+
 }  // namespace unrealsdk
 
 #endif /* UNREALSDK_VERSION_ERROR_H */

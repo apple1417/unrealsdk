@@ -5,11 +5,9 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 
-class UStructProperty;
+class ZStructProperty;
 class UClass;
 
 struct FImplementedInterface {
@@ -18,13 +16,13 @@ struct FImplementedInterface {
     UClass* Class;
 
    private:
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FIMPLEMENTEDINTERFACE_FORMAT == UNREALSDK_FIMPLEMENTEDINTERFACE_FORMAT_UE4
     int32_t PointerOffset;
     bool isNative;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-    UStructProperty* VFTableProperty;  // May be null (if native?)
+#elif UNREALSDK_FIMPLEMENTEDINTERFACE_FORMAT == UNREALSDK_FIMPLEMENTEDINTERFACE_FORMAT_UE3
+    ZStructProperty* VFTableProperty;  // May be null (if native?)
 #else
-#error Unknown SDK flavour
+#error Unknown FImplementedInterface format
 #endif
 
     // NOLINTEND(readability-identifier-naming)
@@ -38,9 +36,7 @@ struct FImplementedInterface {
     [[nodiscard]] size_t get_pointer_offset(void) const;
 };
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
 }  // namespace unrealsdk::unreal
 

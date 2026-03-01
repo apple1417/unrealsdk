@@ -105,15 +105,6 @@ void BL2Hook::fframe_step(FFrame* frame, UObject* obj, void* param) const {
 
 #pragma endregion
 
-#pragma region FText::AsCultureInvariant
-
-void BL2Hook::ftext_as_culture_invariant(unreal::FText* /*text*/,
-                                         unreal::TemporaryFString&& /*str*/) const {
-    throw_version_error("FTexts are not implemented in UE3");
-}
-
-#pragma endregion
-
 #ifdef __MINGW32__
 #pragma GCC diagnostic pop
 #endif

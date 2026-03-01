@@ -1,63 +1,33 @@
 #ifndef UNREALSDK_UNREAL_STRUCTS_GNAMES_H
 #define UNREALSDK_UNREAL_STRUCTS_GNAMES_H
 
+#include "unrealsdk/pch.h"
+#include "unrealsdk/unreal/offsets.h"
+
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
-
+// NOLINTNEXTLINE(readability-identifier-naming)
 struct FNameEntry {
     static constexpr auto NAME_SIZE = 1024;
     static constexpr auto NAME_WIDE_MASK = 0x1;
-    static constexpr auto NAME_INDEX_SHIFT = 1;
 
-    // NOLINTBEGIN(readability-magic-numbers, readability-identifier-naming)
-
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
-    int32_t Index;
-
-   private:
-    uint8_t UnknownData00[0x04];
-
-   public:
-    FNameEntry* HashNext;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-   private:
-    uint8_t UnknownData00[0x08];
-
-   public:
-    int32_t Index;
-
-   private:
-    uint8_t UnknownData01[0x04];
-
-   public:
-#else
-#error Unknown SDK flavour
-#endif
-
-    union {
-        char AnsiName[NAME_SIZE];
-        wchar_t WideName[NAME_SIZE];
+    // NOLINTBEGIN(readability-identifier-naming)
+    using name_union = union {
+        char Ansi[NAME_SIZE];
+        wchar_t Wide[NAME_SIZE];
     };
+    // NOLINTEND(readability-identifier-naming)
 
-    // NOLINTEND(readability-magic-numbers, readability-identifier-naming)
+    // These fields become member functions, returning a reference into the object.
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
+#define UNREALSDK_FNAMEENTRY_FIELDS(X) \
+    X(name_union, Name)                \
+    X(uint8_t, Flags)
 
-    /**
-     * @brief Checks if this entry holds a wide string.
-     *
-     * @return True if this entry is wide, false if it's ANSI.
-     */
-    [[nodiscard]] bool is_wide(void) const;
+    UNREALSDK_DEFINE_FIELDS_HEADER(FNameEntry, UNREALSDK_FNAMEENTRY_FIELDS);
 };
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 
 // NOLINTNEXTLINE(readability-identifier-naming)
 struct TStaticIndirectArrayThreadSafeRead_FNameEntry {
@@ -77,21 +47,33 @@ struct TStaticIndirectArrayThreadSafeRead_FNameEntry {
     /**
      * @brief Get an element in the array, with bounds checking.
      *
-     * @param idx The index to get.
-     * @return The item at that index.
+     * @param idx The index in the array to get.
+     * @return The entry at that index.
      */
     [[nodiscard]] FNameEntry* at(size_t idx) const;
 };
 
-#endif
+struct FNamePool {
+    // NOLINTNEXTLINE(readability-magic-numbers)
+    uint8_t unknown[0x8];
 
-#if defined(__clang__) || defined(__MINGW32__)
-#pragma GCC diagnostic pop
-#endif
+    uint32_t last_chunk_idx;
+    uint32_t num_entries;
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
+    // We treat these as variable length arrays.
+    using chunk = wchar_t[1];
+    chunk* chunks[1];
+
+    /**
+     * @brief Get an element in the array, with bounds checking.
+     *
+     * @param idx The fname index to get.
+     * @return The item at that index.
+     */
+    [[nodiscard]] FNameEntry* at(int32_t idx) const;
+};
+
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
 }  // namespace unrealsdk::unreal
 

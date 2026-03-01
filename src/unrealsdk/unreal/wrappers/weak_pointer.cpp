@@ -6,7 +6,7 @@
 
 namespace unrealsdk::unreal {
 
-#ifdef UNREALSDK_EMULATED_WEAK_POINTER
+#if !UNREALSDK_HAS_NATIVE_WEAK_POINTERS
 WeakPointer::WeakPointer(const UObject* obj) : WeakPointer() {
     *this = obj;
 }
@@ -64,7 +64,7 @@ UObject* WeakPointer::operator*(void) const {
 
 UObject* WeakPointer::operator*(void) {
     // Get the result of the const dereference
-    auto ret = **((const WeakPointer*)this);
+    auto ret = **(const_cast<const WeakPointer*>(this));
 
     // If we have a mutable reference, and the object is null, we can set ourselves to null, we'll
     // never have a valid object reference again. This is generally an optimization, since we can

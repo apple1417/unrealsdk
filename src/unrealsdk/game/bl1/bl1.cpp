@@ -71,7 +71,9 @@ void BL1Hook::find_fframe_step(void) {
 }
 
 void BL1Hook::fframe_step(FFrame* frame, UObject* obj, void* param) const {
-    ((*fframe_step_gnatives)[*frame->Code++])(obj, frame, param);
+    auto curr_native = *frame->Code();
+    frame->Code()++;
+    ((*fframe_step_gnatives)[curr_native])(obj, frame, param);
 }
 
 #pragma region FName::Init
@@ -128,15 +130,6 @@ void BL1Hook::find_fname_init(void) {
 
 void BL1Hook::fname_init(unreal::FName* name, const wchar_t* str, int32_t number) const {
     fname_init_ptr(name, str, number, 1, 1);
-}
-
-#pragma endregion
-
-#pragma region FText::AsCultureInvariant
-
-void BL1Hook::ftext_as_culture_invariant(unreal::FText* /*text*/,
-                                         TemporaryFString&& /*str*/) const {
-    throw_version_error("FTexts are not implemented in UE3");
 }
 
 #pragma endregion

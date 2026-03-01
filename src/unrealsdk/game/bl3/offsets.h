@@ -2,24 +2,26 @@
 #define UNREALSDK_GAME_BL3_OFFSETS_H
 
 #include "unrealsdk/pch.h"
-#include "unrealsdk/unreal/classes/properties/attribute_property.h"
-#include "unrealsdk/unreal/classes/properties/persistent_object_ptr_property.h"
-#include "unrealsdk/unreal/classes/properties/uarrayproperty.h"
-#include "unrealsdk/unreal/classes/properties/ubyteproperty.h"
-#include "unrealsdk/unreal/classes/properties/uclassproperty.h"
-#include "unrealsdk/unreal/classes/properties/udelegateproperty.h"
-#include "unrealsdk/unreal/classes/properties/uenumproperty.h"
-#include "unrealsdk/unreal/classes/properties/uinterfaceproperty.h"
-#include "unrealsdk/unreal/classes/properties/umulticastdelegateproperty.h"
-#include "unrealsdk/unreal/classes/properties/uobjectproperty.h"
-#include "unrealsdk/unreal/classes/properties/ustructproperty.h"
 #include "unrealsdk/unreal/classes/uconst.h"
 #include "unrealsdk/unreal/classes/uenum.h"
 #include "unrealsdk/unreal/classes/ufield.h"
 #include "unrealsdk/unreal/classes/uscriptstruct.h"
 #include "unrealsdk/unreal/offsets.h"
+#include "unrealsdk/unreal/offsets_generic.h"
+#include "unrealsdk/unreal/properties/attribute_property.h"
+#include "unrealsdk/unreal/properties/persistent_object_ptr_property.h"
+#include "unrealsdk/unreal/properties/zarrayproperty.h"
+#include "unrealsdk/unreal/properties/zbyteproperty.h"
+#include "unrealsdk/unreal/properties/zclassproperty.h"
+#include "unrealsdk/unreal/properties/zdelegateproperty.h"
+#include "unrealsdk/unreal/properties/zenumproperty.h"
+#include "unrealsdk/unreal/properties/zinterfaceproperty.h"
+#include "unrealsdk/unreal/properties/zmulticastdelegateproperty.h"
+#include "unrealsdk/unreal/properties/zobjectproperty.h"
+#include "unrealsdk/unreal/properties/zstructproperty.h"
 #include "unrealsdk/unreal/structs/fname.h"
 #include "unrealsdk/unreal/structs/fstring.h"
+#include "unrealsdk/unreal/structs/gnames.h"
 #include "unrealsdk/unreal/structs/tarray.h"
 #include "unrealsdk/unreal/structs/tpair.h"
 
@@ -42,6 +44,7 @@ namespace unrealsdk::game::bl3 {
 //             readability-magic-numbers)
 
 class UClass;
+struct FField;
 
 class UObject {
    private:
@@ -57,7 +60,7 @@ class UObject {
 
 using UField = unreal::offsets::generic::UField<UObject>;
 
-class UProperty : public UField {
+class ZProperty : public UField {
    public:
     int32_t ArrayDim;
     int32_t ElementSize;
@@ -74,12 +77,12 @@ class UProperty : public UField {
     unreal::FName RepNotifyFunc;
 
    public:
-    UProperty* PropertyLinkNext;
+    ZProperty* PropertyLinkNext;
 
    private:
-    UProperty* NextRef;
-    UProperty* DestructorLinkNext;
-    UProperty* PostConstructLinkNext;
+    ZProperty* NextRef;
+    ZProperty* DestructorLinkNext;
+    ZProperty* PostConstructLinkNext;
 };
 
 class UStruct : public UField {
@@ -95,12 +98,12 @@ class UStruct : public UField {
     unreal::TArray<uint8_t> Script;
 
    public:
-    UProperty* PropertyLink;
+    ZProperty* PropertyLink;
 
    private:
-    UProperty* RefLink;
-    UProperty* DestructorLink;
-    UProperty* PostConstructLink;
+    ZProperty* RefLink;
+    ZProperty* DestructorLink;
+    ZProperty* PostConstructLink;
     unreal::TArray<UObject*> ScriptObjectReferences;
 };
 
@@ -130,7 +133,7 @@ class UFunction : public UStruct {
    private:
     uint16_t RPCId;
     uint16_t RPCResponseId;
-    UProperty* FirstPropertyToInit;
+    ZProperty* FirstPropertyToInit;
     UFunction* EventGraphFunction;
     int32_t EventGraphCallOffset;
     void* Func;
@@ -149,24 +152,25 @@ class UEnum : public UField {
     int64_t CppForm;
 };
 
-using UArrayProperty = unreal::offsets::generic::UArrayProperty<UProperty>;
-using UByteProperty = unreal::offsets::generic::UByteProperty<UProperty>;
-using UDelegateProperty = unreal::offsets::generic::UDelegateProperty<UProperty>;
-using UEnumProperty = unreal::offsets::generic::UEnumProperty<UProperty>;
-class UFloatProperty : public UProperty {};
-using UInterfaceProperty = unreal::offsets::generic::UInterfaceProperty<UProperty>;
-class UIntProperty : public UProperty {};
-using UMulticastDelegateProperty = unreal::offsets::generic::UMulticastDelegateProperty<UProperty>;
-using UObjectProperty = unreal::offsets::generic::UObjectProperty<UProperty>;
-using UStructProperty = unreal::offsets::generic::UStructProperty<UProperty>;
+using ZArrayProperty = unreal::offsets::generic::ZArrayProperty<ZProperty>;
+using ZByteProperty = unreal::offsets::generic::ZByteProperty<ZProperty>;
+using ZDelegateProperty = unreal::offsets::generic::ZDelegateProperty<ZProperty>;
+using ZEnumProperty = unreal::offsets::generic::ZEnumProperty<ZProperty>;
+class ZFloatProperty : public ZProperty {};
+using ZInterfaceProperty = unreal::offsets::generic::ZInterfaceProperty<ZProperty>;
+class ZIntProperty : public ZProperty {};
+using ZMulticastDelegateProperty = unreal::offsets::generic::ZMulticastDelegateProperty<ZProperty>;
+using ZObjectProperty = unreal::offsets::generic::ZObjectProperty<ZProperty>;
+using ZStructProperty = unreal::offsets::generic::ZStructProperty<ZProperty>;
 
-using UByteAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<UByteProperty>;
-using UClassProperty = unreal::offsets::generic::UClassProperty<UObjectProperty>;
-using UFloatAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<UFloatProperty>;
-using UIntAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<UIntProperty>;
-using USoftClassProperty = unreal::offsets::generic::USoftClassProperty<UObjectProperty>;
+using ZByteAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<ZByteProperty>;
+using ZClassProperty = unreal::offsets::generic::ZClassProperty<ZObjectProperty>;
+using ZFloatAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<ZFloatProperty>;
+using ZIntAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<ZIntProperty>;
+using ZSoftClassProperty = unreal::offsets::generic::ZSoftClassProperty<ZObjectProperty>;
+using ZGbxDefPtrProperty = unreal::offsets::generic::ZGbxDefPtrProperty<ZProperty>;
 
-class UBoolProperty : public UProperty {
+class ZBoolProperty : public ZProperty {
    private:
     uint8_t FieldSize;
     uint8_t ByteOffset;
@@ -175,6 +179,47 @@ class UBoolProperty : public UProperty {
    public:
     uint8_t FieldMask;
 };
+
+struct FNameEntry {
+   public:
+    union {
+        uint8_t Flags;
+        int32_t Index;
+    };
+
+   private:
+    uint8_t UnknownData00[0x04];
+    FNameEntry* HashNext;
+
+   public:
+    unreal::FNameEntry::name_union Name;
+};
+
+struct FFrame {
+   private:
+    void* VfTable;
+    uint32_t bSuppressEventTag;
+    uint32_t bAutoEmitLineTerminator;
+
+   public:
+    UFunction* Node;
+    UObject* Object;
+    uint8_t* Code;
+
+   private:
+    void* Locals;
+    ZProperty* LastProperty;
+    void* LastPropertyAddress;
+
+   public:
+    FFrame* PreviousFrame;
+
+   private:
+    void* OutParams;
+};
+
+struct FFieldClass : public unreal::offsets::generic::FFieldClass {};
+struct FField : public unreal::offsets::generic::FField<FFieldClass> {};
 
 // NOLINTEND(cppcoreguidelines-pro-type-member-init,
 //           readability-identifier-naming,

@@ -4,7 +4,7 @@
 
 namespace unrealsdk::unreal {
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_GOBJECTS_FORMAT == UNREALSDK_GOBJECTS_FORMAT_FUOBJECTARRAY
 
 FUObjectItem* FChunkedFixedUObjectArray::at(size_t idx) const {
     if (std::cmp_greater_equal(idx, this->Count)) {

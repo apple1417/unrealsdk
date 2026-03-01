@@ -31,6 +31,7 @@ struct LogMessage {
     const char* location;
     size_t location_size;
     int line;
+    DWORD thread_id;
 };
 
 #ifndef UNREALSDK_IMPORTING

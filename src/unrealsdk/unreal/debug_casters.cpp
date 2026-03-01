@@ -1,7 +1,9 @@
 #include "unrealsdk/pch.h"
 #include "unrealsdk/game/bl1/offsets.h"
+#include "unrealsdk/game/bl1e/offsets.h"
 #include "unrealsdk/game/bl2/offsets.h"
 #include "unrealsdk/game/bl3/offsets.h"
+#include "unrealsdk/game/bl4/offsets.h"
 #include "unrealsdk/game/tps/offsets.h"
 #include "unrealsdk/unreal/offset_list.h"
 
@@ -22,12 +24,17 @@ generic or concrete type.
 
 #define DEBUG_CASTER_GAMES(X, ...) \
     X(bl1, __VA_ARGS__)            \
+    X(bl1e, __VA_ARGS__)           \
     X(bl2, __VA_ARGS__)            \
     X(tps, __VA_ARGS__)
 
 #elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
 
 #define DEBUG_CASTER_GAMES(X, ...) X(bl3, __VA_ARGS__)
+
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
+
+#define DEBUG_CASTER_GAMES(X, ...) X(bl4, __VA_ARGS__)
 
 #else
 #error Unknown sdk flavour

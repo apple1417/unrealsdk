@@ -11,15 +11,6 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
-
 class UEnum : public UField {
    public:
     UEnum() = delete;
@@ -29,9 +20,9 @@ class UEnum : public UField {
     UEnum& operator=(UEnum&&) = delete;
     ~UEnum() = delete;
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#if UNREALSDK_ENUM_FORMAT == UNREALSDK_ENUM_FORMAT_UE3
     using names_type = TArray<FName>;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#elif UNREALSDK_ENUM_FORMAT == UNREALSDK_ENUM_FORMAT_UE4
     using names_type = TArray<TPair<FName, uint64_t> >;
 #else
 #error Unknown sdk flavour
@@ -57,14 +48,6 @@ struct ClassTraits<UEnum> {
     static inline const wchar_t* const NAME = L"Enum";
 };
 
-#if defined(__clang__) || defined(__MINGW32__)
-#pragma GCC diagnostic pop
-#endif
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
-
 }  // namespace unrealsdk::unreal
 
-#endif /* PYUNREALSDK_LIBS_UNREALSDK_SRC_UNREALSDK_UNREAL_CLASSES_UENUM_H */
+#endif /* UNREALSDK_UNREAL_CLASSES_UENUM_H */

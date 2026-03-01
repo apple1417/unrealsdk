@@ -100,7 +100,6 @@ namespace {
 void adjust_thread_running_status(bool resume) {
     HANDLE thread_snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
     if (thread_snapshot == nullptr) {
-        CloseHandle(thread_snapshot);
         return;
     }
 

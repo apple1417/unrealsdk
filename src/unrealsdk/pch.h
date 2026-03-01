@@ -5,12 +5,8 @@
 // This file is purely macros, it doesn't rely on anything else
 #include "unrealsdk/exports.h"
 
-// The flavour macros are used in ifdefs everywhere.
-// `UNREALSDK_FLAVOUR` should be defined to be equal to one of them.
-// NOLINTBEGIN(cppcoreguidelines-macro-usage)
-#define UNREALSDK_FLAVOUR_WILLOW 1
-#define UNREALSDK_FLAVOUR_OAK 2
-// NOLINTEND(cppcoreguidelines-macro-usage)
+// Similarly, this is pure macros, and we want to access feature flags everywhere
+#include "unrealsdk/flavour.h"
 
 #define WIN32_LEAN_AND_MEAN
 #define WIN32_NO_STATUS
@@ -66,6 +62,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
+#include <variant>
 
 // This file is mostly just here so that the `LOG` macro is automatically available everywhere
 // It only includes library headers, so is also ok to include
@@ -91,12 +88,15 @@ static_assert(std::numeric_limits<double>::is_iec559 && std::numeric_limits<doub
 using float32_t = float;
 using float64_t = double;
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-static_assert(sizeof(uintptr_t) == sizeof(uint32_t),
-              "Expected 32 bit pointers for Willow SDK flavour");
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+// This is mostly just a sanity check of your build environment
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
 static_assert(sizeof(uintptr_t) == sizeof(uint64_t),
               "Expected 64 bit pointers for Oak SDK flavour");
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
+static_assert(sizeof(uintptr_t) == sizeof(uint64_t),
+              "Expected 64 bit pointers for Oak2 SDK flavour");
+#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+// Willow supports both 32-bit and 64-bit pointers
 #else
 #error Unknown sdk flavour
 #endif

@@ -2,19 +2,10 @@
 #define UNREALSDK_UNREAL_CLASSES_UFUNCTION_H
 
 #include "unrealsdk/unreal/class_traits.h"
-#include "unrealsdk/unreal/classes/uproperty.h"
 #include "unrealsdk/unreal/classes/ustruct.h"
+#include "unrealsdk/unreal/properties/zproperty.h"
 
 namespace unrealsdk::unreal {
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
 
 class UFunction : public UStruct {
    public:
@@ -42,21 +33,13 @@ class UFunction : public UStruct {
      *
      * @return The return param, or `nullptr` if none exists.
      */
-    [[nodiscard]] UProperty* find_return_param(void) const;
+    [[nodiscard]] ZProperty* find_return_param(void) const;
 };
 
 template <>
 struct ClassTraits<UFunction> {
     static inline const wchar_t* const NAME = L"Function";
 };
-
-#if defined(__clang__) || defined(__MINGW32__)
-#pragma GCC diagnostic pop
-#endif
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

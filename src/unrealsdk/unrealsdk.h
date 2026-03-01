@@ -18,6 +18,7 @@ class GObjects;
 class UClass;
 class UFunction;
 class UObject;
+struct FField;
 struct FFrame;
 struct FLazyObjectPtr;
 struct FSoftObjectPtr;
@@ -72,13 +73,6 @@ bool init(const std::function<std::unique_ptr<game::AbstractHook>(void)>& game_g
  * @return A reference to the GObjects wrapper.
  */
 [[nodiscard]] const unreal::GObjects& gobjects(void);
-
-/**
- * @brief Gets a reference to the GNames wrapper.
- *
- * @return A reference to the GNames wrapper.
- */
-[[nodiscard]] const unreal::GNames& gnames(void);
 
 /**
  * @brief Calls unreal's malloc function.
@@ -170,6 +164,15 @@ void fname_init(unreal::FName* name, const wchar_t* str, int32_t number);
 void fname_init(unreal::FName* name, const std::wstring& str, int32_t number);
 
 /**
+ * @brief Gets the string portion of an FName.
+ *
+ * @param name The name to convert.
+ * @returns The relevant string.
+ */
+[[nodiscard]] std::variant<const std::string_view, const std::wstring_view> fname_get_str(
+    const unreal::FName& name);
+
+/**
  * @brief Calls `FFrame::Step`.
  *
  * @param frame The frame to step.
@@ -196,12 +199,13 @@ void process_event(unreal::UObject* object, unreal::UFunction* func, void* param
 void uconsole_output_text(std::wstring_view str);
 
 /**
- * @brief Calls `UObject::PathName` on the given object.
+ * @brief Calls `GetPathName` on the given object/field.
  *
  * @param obj The object to get the name of.
  * @return The object's name
  */
 [[nodiscard]] std::wstring uobject_path_name(const unreal::UObject* obj);
+[[nodiscard]] std::wstring ffield_path_name(const unreal::FField* obj);
 
 /**
  * @brief Calls `FText::AsCultureInvariant`.

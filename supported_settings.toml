@@ -12,9 +12,11 @@
 # so `ftext_get_display_string_vf_index` is of course unused.
 
 [unrealsdk]
-# If true, creates an external console window mirroring what is written to the game's console.
+# If true, creates an external console window to write all log messages into.
 # Always enabled in debug builds.
 external_console = false
+# If true, adds ansi escape codes to colour the external console output.
+external_console_colour = true
 
 # The file to write log messages to, relative to the dll.
 log_file = "unrealsdk.log"
@@ -42,6 +44,8 @@ treference_controller_destructor_vf_index = -1
 
 # Overrides the virtual function index used when calling `FText::GetDisplayString`.
 ftext_get_display_string_vf_index = -1
+# Overrides the virtual function index used when calling the `FTextData` destructor
+ftext_destroy_data_vf_index = -1
 
 # If true, locks simultaneous unreal function calls from different threads. This lock is held both
 # during hooks and when you manually call unreal functions.
@@ -57,3 +61,19 @@ log_all_calls_file = "unrealsdk.calls.tsv"
 uobject_post_edit_change_property_vf_index = -1
 # Overrides the virtual function index used when calling `UObject::PostEditChangeChainProperty`.
 uobject_post_edit_change_chain_property_vf_index = -1
+
+[unrealsdk.bl4_debug]
+# These flags can be used to try disable some of the anti-debug features in BL4. These aren't really
+# complete, as of writing this we can attach a debugger, but are unable to breakpoint or use any
+# actual debugger features.
+# Yes, developing the BL4 support without having a debugger was incredibly annoying.
+
+# Enable anti-debug patches. Note this is known to cause a crash on SQ.
+enabled = false
+
+# After applying all anti-debug patches, wait for a debugger to attach before continuing SDK init.
+wait_for_debugger = false
+
+# The address of the symbiote anti-debug thread. Specifying this avoids the slow sigscan, which may
+# help if you want to debug as the game's getting unpacked.
+symbiote_addr = -1

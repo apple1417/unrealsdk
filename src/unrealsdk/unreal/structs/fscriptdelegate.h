@@ -8,21 +8,17 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 
 class UObject;
 class UFunction;
 
 struct FScriptDelegate {
    private:
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-    UObject* object = nullptr;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_HAS_NATIVE_WEAK_POINTERS
     FWeakObjectPtr object;
 #else
-#error Unknown SDK flavour
+    UObject* object = nullptr;
 #endif
 
    public:
@@ -68,9 +64,7 @@ struct FScriptDelegate {
                                    const UFunction* signature);
 };
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
 }  // namespace unrealsdk::unreal
 

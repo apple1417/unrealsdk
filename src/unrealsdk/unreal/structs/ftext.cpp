@@ -9,7 +9,8 @@
 
 namespace unrealsdk::unreal {
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_TSHAREDPTR \
+    || UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_RAW_PTR
 
 FText::FText(std::string_view str) : FText(utils::widen(str)) {}
 FText::FText(std::wstring_view str) : data(), flags() {
@@ -36,6 +37,9 @@ FText::operator std::string() const {
 FText::operator std::wstring() const {
     return std::wstring{this->operator std::wstring_view()};
 }
+
+#if UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_TSHAREDPTR
+
 FText::operator std::wstring_view() const {
     static auto idx = config::get_int("unrealsdk.ftext_get_display_string_vf_index").value_or(2);
 
@@ -53,7 +57,34 @@ FText::~FText() {
     }
 }
 
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#elif UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_RAW_PTR
+
+FText::operator std::wstring_view() const {
+    static auto idx = config::get_int("unrealsdk.ftext_get_display_string_vf_index").value_or(4);
+
+    auto text_data = this->data;
+    if (text_data == nullptr) {
+        return L"";
+    }
+
+    return *reinterpret_cast<UnmanagedFString* (*)(FTextData*)>(text_data->vftable[idx])(text_data);
+}
+
+FText::~FText() {
+    static auto idx = config::get_int("unrealsdk.ftext_destroy_data_vf_index").value_or(2);
+
+    auto text_data = this->data;
+    if (text_data != nullptr) {
+        // This vf function seems to reduce the ref count itself, we don't need to do anything
+        reinterpret_cast<UnmanagedFString* (*)(FTextData*)>(text_data->vftable[idx])(text_data);
+    }
+}
+
+#else
+#error Unknown FText format
+#endif
+
+#elif UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_NOT_IMPLEMENTED
 
 FText::FText(std::string_view /* str */) : data(), flags() {
     (void)this;
@@ -96,7 +127,7 @@ FText::~FText() {
 }
 
 #else
-#error Unknown SDK flavour
+#error Unknown FText format
 #endif
 
 }  // namespace unrealsdk::unreal

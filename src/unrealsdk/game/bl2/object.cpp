@@ -2,14 +2,15 @@
 #include "unrealsdk/game/bl2/bl2.h"
 #include "unrealsdk/hook_manager.h"
 #include "unrealsdk/memory.h"
-#include "unrealsdk/unreal/classes/properties/uclassproperty.h"
-#include "unrealsdk/unreal/classes/properties/uobjectproperty.h"
-#include "unrealsdk/unreal/classes/properties/ustrproperty.h"
 #include "unrealsdk/unreal/classes/uclass.h"
 #include "unrealsdk/unreal/classes/uobject.h"
+#include "unrealsdk/unreal/properties/zclassproperty.h"
+#include "unrealsdk/unreal/properties/zobjectproperty.h"
+#include "unrealsdk/unreal/properties/zstrproperty.h"
 #include "unrealsdk/unreal/structs/fname.h"
 #include "unrealsdk/unreal/structs/fstring.h"
 #include "unrealsdk/unreal/wrappers/bound_function.h"
+#include "unrealsdk/version_error.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW && !defined(UNREALSDK_IMPORTING)
 

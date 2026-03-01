@@ -8,15 +8,13 @@
 
 namespace unrealsdk::unreal {
 
-class ULazyObjectProperty;
+class ZLazyObjectProperty;
 class UObject;
-class USoftObjectProperty;
+class ZSoftObjectProperty;
 class WrappedStruct;
 class WrappedArray;
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 
 template <typename Identifier>
 struct TPersistentObjectPtr {
@@ -44,10 +42,10 @@ struct FSoftObjectPath {
                                            FName name,
                                            size_t idx = 0);
     static const FSoftObjectPath* get_from(const UObject* obj,
-                                           const USoftObjectProperty* prop,
+                                           const ZSoftObjectProperty* prop,
                                            size_t idx = 0);
     static const FSoftObjectPath* get_from(const WrappedStruct& wrapped_struct,
-                                           const USoftObjectProperty* prop,
+                                           const ZSoftObjectProperty* prop,
                                            size_t idx = 0);
 
     /**
@@ -81,10 +79,10 @@ struct FLazyObjectPath {
                                            FName name,
                                            size_t idx = 0);
     static const FLazyObjectPath* get_from(const UObject* obj,
-                                           const ULazyObjectProperty* prop,
+                                           const ZLazyObjectProperty* prop,
                                            size_t idx = 0);
     static const FLazyObjectPath* get_from(const WrappedStruct& wrapped_struct,
-                                           const ULazyObjectProperty* prop,
+                                           const ZLazyObjectProperty* prop,
                                            size_t idx = 0);
 
     /**
@@ -100,9 +98,7 @@ struct FLazyObjectPath {
 struct FSoftObjectPtr : public TPersistentObjectPtr<FSoftObjectPath> {};
 struct FLazyObjectPtr : public TPersistentObjectPtr<FLazyObjectPath> {};
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
 }  // namespace unrealsdk::unreal
 

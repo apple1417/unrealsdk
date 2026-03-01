@@ -5,8 +5,8 @@
 
 #include "unrealsdk/unreal/class_name.h"
 #include "unrealsdk/unreal/classes/uclass.h"
-#include "unrealsdk/unreal/classes/uproperty.h"
 #include "unrealsdk/unreal/prop_traits.h"
+#include "unrealsdk/unreal/properties/zproperty.h"
 #include "unrealsdk/unreal/structs/fname.h"
 #include "unrealsdk/unreal/structs/tarray.h"
 #include "unrealsdk/unreal/wrappers/unreal_pointer.h"
@@ -16,7 +16,7 @@ namespace unrealsdk::unreal {
 
 class WrappedArray {
    public:
-    const UProperty* type;
+    const ZProperty* type;
     UnrealPointer<TArray<void>> base;
 
     /**
@@ -26,7 +26,7 @@ class WrappedArray {
      * @param base The base address of the array.
      * @param parent The parent pointer this array was retrieved from, used to copy ownership.
      */
-    WrappedArray(const UProperty* type,
+    WrappedArray(const ZProperty* type,
                  TArray<void>* base,
                  const UnrealPointer<void>& parent = {nullptr});
 
@@ -73,7 +73,7 @@ class WrappedArray {
         auto property_class = this->type->Class()->Name();
         if (property_class != cls_fname<T>()) {
             throw std::invalid_argument("WrappedArray property was of invalid type "
-                                        + (std::string)property_class);
+                                        + property_class);
         }
 
         if (idx >= (size_t)this->base->count) {

@@ -5,11 +5,9 @@
 
 namespace unrealsdk::unreal {
 
-class UProperty;
+class ZProperty;
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 
 struct FPropertyChangedEvent {
     static constexpr auto CHANGE_TYPE_UNSPECIFIED = 1;
@@ -19,12 +17,12 @@ struct FPropertyChangedEvent {
      *
      * @param prop The property which was changed.
      */
-    FPropertyChangedEvent(UProperty* prop) : Property(prop), ChangeType(CHANGE_TYPE_UNSPECIFIED) {}
+    FPropertyChangedEvent(ZProperty* prop) : Property(prop), ChangeType(CHANGE_TYPE_UNSPECIFIED) {}
 
    protected:
     // NOLINTBEGIN(readability-identifier-naming)
-    UProperty* Property{};
-    UProperty* MemberProperty{};
+    ZProperty* Property{};
+    ZProperty* MemberProperty{};
     uint32_t ChangeType{};
     int32_t ObjectIteratorIndex{};
     // NOLINTEND(readability-identifier-naming)
@@ -37,11 +35,11 @@ struct FEditPropertyChain {
      *
      * @param chain The chain of properties.
      */
-    FEditPropertyChain(const std::vector<UProperty*>& chain);
+    FEditPropertyChain(const std::vector<ZProperty*>& chain);
 
    protected:
     struct Node {
-        UProperty* value = nullptr;
+        ZProperty* value = nullptr;
         Node* next = nullptr;
         Node* prev = nullptr;
     };
@@ -63,9 +61,7 @@ struct FPropertyChangedChainEvent : public FPropertyChangedEvent {
     FEditPropertyChain* PropertyChain{};
 };
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
 }  // namespace unrealsdk::unreal
 

@@ -4,6 +4,7 @@
 #include "unrealsdk/logging.h"
 #include "unrealsdk/memory.h"
 #include "unrealsdk/unreal/structs/fstring.h"
+#include "unrealsdk/version_error.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW && !defined(UNREALSDK_IMPORTING)
 

@@ -11,11 +11,11 @@
 
 namespace unrealsdk::unreal {
 
-class UProperty;
+class ZProperty;
 
 struct PropertyProxy {
    public:
-    UProperty* prop;
+    ZProperty* prop;
     UnrealPointer<void> ptr;
 
     /**
@@ -24,7 +24,7 @@ struct PropertyProxy {
      * @param prop The property.
      * @param other The other property proxy to construct this one from.
      */
-    PropertyProxy(UProperty* prop);
+    PropertyProxy(ZProperty* prop);
     PropertyProxy(const PropertyProxy& other);
     PropertyProxy(PropertyProxy&& other) noexcept = default;
 

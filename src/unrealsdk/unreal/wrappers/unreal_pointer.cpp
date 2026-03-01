@@ -1,7 +1,7 @@
 #include "unrealsdk/pch.h"
 #include "unrealsdk/unreal/cast.h"
-#include "unrealsdk/unreal/classes/uproperty.h"
 #include "unrealsdk/unreal/classes/ustruct.h"
+#include "unrealsdk/unreal/properties/zproperty.h"
 #include "unrealsdk/unrealsdk.h"
 
 namespace unrealsdk::unreal::impl {
@@ -43,7 +43,7 @@ void UnrealPointerControl::destroy_object(void) {
                                  + sizeof(impl::UnrealPointerControl) - prop->Offset_Internal();
 
                 cast(prop, [prop_base]<typename T>(const T* prop) {
-                    for (size_t i = 0; i < (size_t)prop->ArrayDim(); i++) {
+                    for (size_t i = 0; i < static_cast<size_t>(prop->ArrayDim()); i++) {
                         destroy_property<T>(prop, i, prop_base);
                     }
                 });

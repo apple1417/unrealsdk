@@ -28,18 +28,19 @@ template <typename T>
  * @brief Throws an invalid argument exception if an object is not of the expected type
  * @note Uses an exact type match, not if it's an instance.
  *
- * @tparam T Type type the object is expected to be.
+ * @tparam T Type the object is expected to be.
+ * @tparam U The object's currently known type in C++. Should be picked up automatically.
  * @param obj Pointer to the object.
  */
-template <typename T>
-void throw_on_wrong_type(const UObject* obj) {
+template <typename T, typename U>
+void throw_on_wrong_type(const U* obj) {
     if (obj == nullptr) {
         throw std::invalid_argument("Tried to validate type of null object!");
     }
     static const auto expected_cls_name = cls_fname<T>();
     auto cls_name = obj->Class()->Name();
     if (cls_name != expected_cls_name) {
-        throw std::invalid_argument("Object was of unexpected type " + (std::string)cls_name);
+        throw std::invalid_argument("Object was of unexpected type " + cls_name);
     }
 }
 
@@ -58,6 +59,16 @@ T* validate_type(UObject* obj) {
 }
 template <typename T>
 const T* validate_type(const UObject* obj) {
+    throw_on_wrong_type<T>(obj);
+    return reinterpret_cast<const T*>(obj);
+}
+template <typename T>
+T* validate_type(FField* obj) {
+    throw_on_wrong_type<T>(obj);
+    return reinterpret_cast<T*>(obj);
+}
+template <typename T>
+const T* validate_type(const FField* obj) {
     throw_on_wrong_type<T>(obj);
     return reinterpret_cast<const T*>(obj);
 }

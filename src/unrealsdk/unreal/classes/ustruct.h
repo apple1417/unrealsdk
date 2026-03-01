@@ -3,23 +3,15 @@
 
 #include "unrealsdk/unreal/class_traits.h"
 #include "unrealsdk/unreal/classes/ufield.h"
-#include "unrealsdk/unreal/classes/uproperty.h"
+#include "unrealsdk/unreal/properties/zproperty.h"
 #include "unrealsdk/unreal/structs/tarray.h"
+#include "unrealsdk/unreal/structs/tfieldvariant.h"
 #include "unrealsdk/utils.h"
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
-
 class UFunction;
-class UProperty;
+class ZProperty;
 
 class UStruct : public UField {
    public:
@@ -30,21 +22,30 @@ class UStruct : public UField {
     UStruct& operator=(UStruct&&) = delete;
     ~UStruct() = delete;
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
-    using property_size_type = int32_t;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-    using property_size_type = uint16_t;
+    using property_size_type = UNREALSDK_USTRUCT_PROPERTY_SIZE_TYPE;
+
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
+#if UNREALSDK_USTRUCT_HAS_ALIGNMENT
+#define UNREALSDK__USTRUCT_MIN_ALIGNMENT(X) X(int32_t, MinAlignment)
 #else
-#error Unknown SDK flavour
+#define UNREALSDK__USTRUCT_MIN_ALIGNMENT(X)
+#endif
+#if UNREALSDK_PROPERTIES_ARE_FFIELD
+#define UNREALSDK__USTRUCT_CHILD_PROPERTIES(X) X(FField*, ChildProperties)
+#else
+#define UNREALSDK__USTRUCT_CHILD_PROPERTIES(X)
 #endif
 
     // These fields become member functions, returning a reference into the object.
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define UNREALSDK_USTRUCT_FIELDS(X)     \
     X(UStruct*, SuperField)             \
     X(UField*, Children)                \
     X(property_size_type, PropertySize) \
-    X(UProperty*, PropertyLink)
+    X(ZProperty*, PropertyLink)         \
+    UNREALSDK__USTRUCT_MIN_ALIGNMENT(X) \
+    UNREALSDK__USTRUCT_CHILD_PROPERTIES(X)
+
+    // NOLINTEND(cppcoreguidelines-macro-usage)
 
     UNREALSDK_DEFINE_FIELDS_HEADER(UStruct, UNREALSDK_USTRUCT_FIELDS);
 
@@ -56,13 +57,16 @@ class UStruct : public UField {
         using pointer = UField**;
         using reference = UField*;
 
+        friend class UStruct;
+
        private:
         const UStruct* this_struct;
         UField* field;
 
+        FieldIterator(const UStruct* this_struct, UField* field);
+
        public:
         FieldIterator(void);
-        FieldIterator(const UStruct* this_struct, UField* field);
 
         reference operator*() const;
 
@@ -76,16 +80,28 @@ class UStruct : public UField {
     struct PropertyIterator {
         using iterator_category = std::forward_iterator_tag;
         using difference_type = std::ptrdiff_t;
-        using value_type = UProperty*;
-        using pointer = UProperty**;
-        using reference = UProperty*;
+        using value_type = ZProperty*;
+        using pointer = ZProperty**;
+        using reference = ZProperty*;
+
+        friend class UStruct;
 
        private:
-        UProperty* prop;
+#if UNREALSDK_USTRUCT_PROPERTY_ITER == UNREALSDK_USTRUCT_PROPERTY_ITER_PROPERTYLINK
+        ZProperty* prop;
+
+        PropertyIterator(ZProperty* prop);
+#elif UNREALSDK_USTRUCT_PROPERTY_ITER == UNREALSDK_USTRUCT_PROPERTY_ITER_CHILDPROPERTIES
+        const UStruct* this_struct;
+        FField* field;
+
+        PropertyIterator(const UStruct* this_struct, FField* field);
+#else
+#error Unknown UStruct::properties() iterator type
+#endif
 
        public:
         PropertyIterator(void);
-        PropertyIterator(UProperty* prop);
 
         reference operator*() const;
 
@@ -103,12 +119,15 @@ class UStruct : public UField {
         using pointer = const UStruct**;
         using reference = const UStruct*;
 
+        friend class UStruct;
+
        private:
         const UStruct* this_struct;
 
+        SuperFieldIterator(const UStruct* this_struct);
+
        public:
         SuperFieldIterator(void);
-        SuperFieldIterator(const UStruct* this_struct);
 
         reference operator*() const;
 
@@ -157,8 +176,12 @@ class UStruct : public UField {
      * @param name The name of the child.
      * @return The found child object.
      */
-    [[nodiscard]] UField* find(const FName& name) const;
-    [[nodiscard]] UProperty* find_prop(const FName& name) const;
+#if UNREALSDK_PROPERTIES_ARE_FFIELD
+    [[nodiscard]] TFieldVariant<ZProperty, UField> find(const FName& name) const;
+#else
+    [[nodiscard]] TFieldVariantStub<UField> find(const FName& name) const;
+#endif
+    [[nodiscard]] ZProperty* find_prop(const FName& name) const;
 
     /**
      * @brief Finds a child property/function by name, and validates that it's of the expected type.
@@ -186,14 +209,6 @@ template <>
 struct ClassTraits<UStruct> {
     static inline const wchar_t* const NAME = L"Struct";
 };
-
-#if defined(__clang__) || defined(__MINGW32__)
-#pragma GCC diagnostic pop
-#endif
-
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
 
 }  // namespace unrealsdk::unreal
 

@@ -1,9 +1,8 @@
 #include "unrealsdk/pch.h"
 
 #include "unrealsdk/game/bl1/bl1.h"
-
+#include "unrealsdk/game/bl1/offsets.h"
 #include "unrealsdk/memory.h"
-#include "unrealsdk/unreal/wrappers/gnames.h"
 #include "unrealsdk/unreal/wrappers/gobjects.h"
 
 #if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW && !defined(UNREALSDK_IMPORTING)
@@ -40,8 +39,6 @@ const GObjects& BL1Hook::gobjects(void) const {
 
 namespace {
 
-GNames gnames_wrapper{};
-
 const constinit Pattern<21> GNAMES_SIG{
     "A1 {????????}"  // mov eax, [01FB4DA8]
     "8B 0C ??"       // mov ecx, [eax+esi*4]
@@ -51,17 +48,22 @@ const constinit Pattern<21> GNAMES_SIG{
     "5E"             // pop esi
 };
 
+TArray<bl1::FNameEntry*>* gnames_ptr;
+
 }  // namespace
 
 void BL1Hook::find_gnames(void) {
-    auto gnames_ptr = read_offset<GNames::internal_type>(GNAMES_SIG.sigscan_nullable());
+    gnames_ptr = read_offset<decltype(gnames_ptr)>(GNAMES_SIG.sigscan_nullable());
     LOG(MISC, "GNames: {:p}", reinterpret_cast<void*>(gnames_ptr));
-
-    gnames_wrapper = GNames(gnames_ptr);
 }
 
-const GNames& BL1Hook::gnames(void) const {
-    return gnames_wrapper;
+[[nodiscard]] std::variant<const std::string_view, const std::wstring_view> BL1Hook::fname_get_str(
+    const unreal::FName& name) const {
+    auto entry = gnames_ptr->at(name.index);
+    if ((entry->Index & FNameEntry::NAME_WIDE_MASK) != 0) {
+        return std::wstring_view{&entry->Name.Wide[0]};
+    }
+    return std::string_view{&entry->Name.Ansi[0]};
 }
 
 }  // namespace unrealsdk::game

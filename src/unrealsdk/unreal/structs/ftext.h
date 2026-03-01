@@ -6,12 +6,13 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 
 struct FTextData {
     uintptr_t* vftable;
+#if UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_RAW_PTR
+    std::atomic<uint32_t> ref_count;
+#endif
 };
 
 struct FText {
@@ -20,7 +21,16 @@ struct FText {
     static const constexpr auto FLAG_INVARIANT_CULTURE = 1 << 1;
     static const constexpr auto FLAG_FROM_NAME_OR_STRING = 1 << 4;
 
+#if UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_TSHAREDPTR
     TSharedPointer<FTextData> data;
+#elif UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_RAW_PTR \
+    || UNREALSDK_FTEXT_FORMAT == UNREALSDK_FTEXT_FORMAT_NOT_IMPLEMENTED
+    // Even if not implemented, we need to define something called data, might as well use this one
+    FTextData* data;
+#else
+#error Unknown FText format
+#endif
+
     uint32_t flags;
 
    public:
@@ -66,9 +76,7 @@ struct FText {
     FText& operator=(FText&&) = delete;
 };
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
 }  // namespace unrealsdk::unreal
 

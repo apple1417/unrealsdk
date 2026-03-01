@@ -37,14 +37,14 @@ through the `get` and `set` functions. These functions take the expected propert
 arg, and will throw exceptions if it doesn't appear to line up.
 
 ```cpp
-auto paused = hook.args->get<UBoolProperty>(L"StartPaused"_fn);
+auto paused = hook.args->get<ZBoolProperty>(L"StartPaused"_fn);
 
-auto idx = hook.obj->get<UIntProperty>(L"MessageOfTheDayIdx"_fn);
-auto motd_array = hook.obj->get<UArrayProperty>(L"MessagesOfTheDay"_fn);
-motd_array.get_at<UStructProperty>(idx).set<UStrProperty>(L"Body"_fn, L"No MOTD today");
+auto idx = hook.obj->get<ZIntProperty>(L"MessageOfTheDayIdx"_fn);
+auto motd_array = hook.obj->get<ZArrayProperty>(L"MessagesOfTheDay"_fn);
+motd_array.get_at<ZStructProperty>(idx).set<ZStrProperty>(L"Body"_fn, L"No MOTD today");
 
 auto op_string = hook.obj->get<UFunction, BoundFunction>(L"BuildOverpowerPromptString"_fn)
-                    .call<UStrProperty, UIntProperty, UIntProperty>(1, 10);
+                    .call<ZStrProperty, ZIntProperty, ZIntProperty>(1, 10);
 ```
 
 # Integrating the SDK into your project
@@ -73,9 +73,11 @@ types may slightly change size or layout), but accounting for large engine inter
 (e.g. the different GNames data structures) at runtime is a non-goal.
 
 The currently supported flavours are:
-- `WILLOW`: Borderlands 1, 2, TPS, and AoDK standalone. Named for Gearbox's codename. 32-bit UE3.
+- `WILLOW`: Borderlands 1, BL1 Enhanced, BL2, TPS, and AoDK standalone. Named for Gearbox's
+            codename. UE3, both 32 and 64-bit supported.
 - `OAK`: Borderlands 3 and Wonderlands. Named for Gearbox's codename. 64-bit UE 4.21ish - there's
          some backports making exact versioning awkward.
+- `OAK2`: Borderlands 4. 64bit UE 5.5 (?), compiled with Clang + PGO.
 
 Additionally, you can optionally define the `UNREALSDK_SHARED` variable, to compile as a shared
 library instead of as an object one. If you want to be able to run multiple projects using the sdk

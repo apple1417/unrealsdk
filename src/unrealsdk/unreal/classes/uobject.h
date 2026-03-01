@@ -10,13 +10,12 @@
 
 namespace unrealsdk::unreal {
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(push, 0x4)
-#endif
+// Keeping this just to be safe about the vftable
+UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
 
 struct FImplementedInterface;
 class UClass;
-class UProperty;
+class ZProperty;
 
 class UObject {
    public:
@@ -28,15 +27,10 @@ class UObject {
     UObject& operator=(UObject&&) = delete;
     ~UObject() = delete;
 
+    // Defining this directly on this type, it should always be here
     uintptr_t* vftable;
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
-    using object_flags_type = uint32_t;
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-    using object_flags_type = uint64_t;
-#else
-#error Unknown SDK flavour
-#endif
+    using object_flags_type = UNREALSDK_UOBJECT_FLAGS_TYPE;
 
     // These fields become member functions, returning a reference into the object.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
@@ -149,11 +143,11 @@ class UObject {
      * @param chain The chain of properties to follow, if the change was within a struct.
      */
     void post_edit_change_property(const FName& name) const;
-    void post_edit_change_property(UProperty* prop) const;
-    void post_edit_change_chain_property(UProperty* prop,
-                                         const std::vector<UProperty*>& chain) const;
-    void post_edit_change_chain_property(UProperty* prop,
-                                         std::initializer_list<UProperty*> chain) const;
+    void post_edit_change_property(ZProperty* prop) const;
+    void post_edit_change_chain_property(ZProperty* prop,
+                                         const std::vector<ZProperty*>& chain) const;
+    void post_edit_change_chain_property(ZProperty* prop,
+                                         std::initializer_list<ZProperty*> chain) const;
 };
 
 template <>
@@ -161,9 +155,7 @@ struct ClassTraits<UObject> {
     static inline const wchar_t* const NAME = L"Object";
 };
 
-#if defined(_MSC_VER) && UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
-#pragma pack(pop)
-#endif
+UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
 }  // namespace unrealsdk::unreal
 

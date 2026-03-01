@@ -4,13 +4,13 @@
 #include "unrealsdk/unreal/structs/fweakobjectptr.h"
 #include "unrealsdk/unreal/wrappers/gobjects.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_GOBJECTS_FORMAT == UNREALSDK_GOBJECTS_FORMAT_FUOBJECTARRAY
 #include "unrealsdk/unreal/structs/gobjects.h"
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#elif UNREALSDK_GOBJECTS_FORMAT == UNREALSDK_GOBJECTS_FORMAT_TARRAY
 #include "unrealsdk/unreal/structs/tarray.h"
 #include "unrealsdk/version_error.h"
 #else
-#error Unknown SDK flavour
+#error Unknown GObjects format
 #endif
 
 namespace unrealsdk::unreal {
@@ -72,7 +72,7 @@ GObjects::Iterator GObjects::end(void) {
 GObjects::GObjects(void) : internal(nullptr) {}
 GObjects::GObjects(internal_type internal) : internal(internal) {}
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK
+#if UNREALSDK_GOBJECTS_FORMAT == UNREALSDK_GOBJECTS_FORMAT_FUOBJECTARRAY
 
 size_t GObjects::size(void) const {
     return this->internal->ObjObjects.Count;
@@ -127,7 +127,7 @@ void GObjects::set_weak_object(FWeakObjectPtr* ptr, const UObject* obj) const {
     }
 }
 
-#elif UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_WILLOW
+#elif UNREALSDK_GOBJECTS_FORMAT == UNREALSDK_GOBJECTS_FORMAT_TARRAY
 
 size_t GObjects::size(void) const {
     return this->internal->size();
@@ -149,7 +149,7 @@ void GObjects::set_weak_object(FWeakObjectPtr* /* ptr */, const UObject* /* obj 
 }
 
 #else
-#error Unknown SDK flavour
+#error Unknown GObjects format
 #endif
 
 }  // namespace unrealsdk::unreal

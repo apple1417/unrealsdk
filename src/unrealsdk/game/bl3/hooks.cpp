@@ -164,9 +164,9 @@ void call_function_hook(UObject* obj, FFrame* stack, void* result, UFunction* fu
                 hook_manager::impl::run_hooks_of_type(data, hook_manager::Type::PRE, hook);
 
             if (block_execution) {
-                stack->Code++;
+                stack->Code()++;
             } else {
-                stack->Code = original_code;
+                stack->Code() = original_code;
                 call_function_ptr(obj, stack, result, func);
             }
 

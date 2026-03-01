@@ -18,16 +18,10 @@ struct OwnedLogMessage : public LogMessage {
     std::string location_str;
 
    public:
-    OwnedLogMessage(uint64_t unix_time_ms,
-                    Level level,
-                    const char* msg,
-                    size_t msg_size,
-                    const char* location,
-                    size_t location_size,
-                    int line)
-        : LogMessage(unix_time_ms, level, nullptr, 0, nullptr, 0, line),
-          msg_str{msg, msg_size},
-          location_str{location, location_size} {}
+    OwnedLogMessage(const LogMessage& log)
+        : LogMessage(log),
+          msg_str{log.msg, log.msg_size},
+          location_str{log.location, log.location_size} {}
 
     /**
      * @brief Fills in the string pointers and decays back into a raw log message.
@@ -48,8 +42,10 @@ std::queue<OwnedLogMessage> pending_messages{};
 std::condition_variable pending_messages_available{};
 
 Level unreal_console_level = Level::DEFAULT_CONSOLE_LEVEL;
-HANDLE external_console_handle = nullptr;
 std::unique_ptr<std::ostream> log_file_stream;
+
+HANDLE external_console_handle = nullptr;
+bool external_console_colour = false;
 
 std::mutex callback_mutex{};
 std::vector<log_callback> all_log_callbacks{};
@@ -146,6 +142,7 @@ Level get_level_from_string(std::string_view str) {
     }
 
     // Doing it properly is a bit more complex, just check the first char
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-avoid-unchecked-container-access)
     switch (std::toupper(str[0])) {
         case 'E':
             return Level::ERROR;
@@ -211,11 +208,59 @@ std::string truncate_leading_chunks(const std::string&& str,
     return TRUNCATION_PREFIX + str.substr(start_pos);
 }
 
-constexpr auto DATE_WIDTH = 10;
-constexpr auto TIME_WIDTH = 12;
-constexpr auto LOCATION_WIDTH = 50;
-constexpr auto LINE_WIDTH = 4;
-constexpr auto LEVEL_WIDTH = 4;
+// Doing some stringification to generate the format strings with correct widths
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
+
+constexpr std::string_view LOG_HEADER =
+    // clang-format off
+// 2026-02-26 19:48:33.235Z   520c                                    unrealsdk::init@59   INFO|
+  "date       time          thread                                           location@line    v|\n";
+// clang-format on
+
+#define DATE_WIDTH 10
+#define TIME_WIDTH 12
+#define TIMESTAMP_WIDTH 23  // Can't calculate since we stringify this value
+#define THREAD_WIDTH 6      // Arguably should be 8, could be any DWORD
+#define LOCATION_WIDTH 50
+#define LINE_WIDTH 4
+#define LEVEL_WIDTH 4
+
+#define RESET_COLOUR "\x1B[0m"
+#define TIMESTAMP_COLOUR "\x1B[0;32m"
+#define THREAD_COLOUR "\x1B[0;35m"
+#define LOCATION_COLOUR "\x1B[0;36m"
+#define ERROR_COLOUR "\x1B[0;31m"
+#define WARNING_COLOUR "\x1B[0;33m"
+#define INFO_COLOUR RESET_COLOUR
+#define DEV_WARNING_COLOUR "\x1B[0;38;5;172m"
+#define MISC_COLOUR "\x1B[0;38;5;246m"
+
+#define STR_INNER(x) #x
+#define STR(x) STR_INNER(x)
+
+#define TIMESTAMP_FORMAT_STR(n) "{" STR(n) ":>" STR(TIMESTAMP_WIDTH) "%F %T}Z"
+#define THREAD_FORMAT_STR(n) "{" STR(n) ":>" STR(THREAD_WIDTH) "x}"
+#define LOCATION_FORMAT_STR(n) "{" STR(n) ":>" STR(LOCATION_WIDTH) "}"
+#define LINE_FORMAT_STR(n) "{" STR(n) ":<" STR(LINE_WIDTH) "d}"
+#define LEVEL_FORMAT_STR(n) "{" STR(n) ":>" STR(LEVEL_WIDTH) "}"
+
+#define BASE_FORMAT_STR            /* format */ \
+    TIMESTAMP_FORMAT_STR(0)        /* format */ \
+    " " THREAD_FORMAT_STR(1)       /* format */ \
+        " " LOCATION_FORMAT_STR(2) /* format */ \
+        "@" LINE_FORMAT_STR(3)     /* format */ \
+        " " LEVEL_FORMAT_STR(4)    /* format */ \
+        "| {5}\n"
+
+#define COLOURFUL_FORMAT_STR                                    \
+    TIMESTAMP_COLOUR TIMESTAMP_FORMAT_STR(0)       /* format */ \
+        " " THREAD_COLOUR THREAD_FORMAT_STR(1)     /* format */ \
+        " " LOCATION_COLOUR LOCATION_FORMAT_STR(2) /* format */ \
+        RESET_COLOUR "@{6}" LINE_FORMAT_STR(3)     /* format */ \
+        " {7}" LEVEL_FORMAT_STR(4)                 /* format */ \
+        RESET_COLOUR "| {7}{5}" RESET_COLOUR "\n"
+
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 /**
  * @brief Formats a log message following our internal style.
@@ -224,22 +269,46 @@ constexpr auto LEVEL_WIDTH = 4;
  * @return The formatted message
  */
 std::string format_message(const LogMessage& msg) {
-    return std::format(
-        "{1:>{0}%F %T}Z {3:>{2}}@{5:<{4}d} {7:>{6}}| {8}\n", DATE_WIDTH + sizeof(' ') + TIME_WIDTH,
-        time_from_unix_ms(msg.unix_time_ms), LOCATION_WIDTH,
-        truncate_leading_chunks(msg.location, "\\/:", LOCATION_WIDTH), LINE_WIDTH, msg.line,
-        LEVEL_WIDTH, get_level_name(msg.level), std::string{msg.msg, msg.msg_size});
+    return std::format(BASE_FORMAT_STR, time_from_unix_ms(msg.unix_time_ms), msg.thread_id,
+                       truncate_leading_chunks(msg.location, "\\/:", LOCATION_WIDTH), msg.line,
+                       get_level_name(msg.level), std::string{msg.msg, msg.msg_size});
 }
 
 /**
- * @brief Gets a header to display at the top of the log file
+ * @brief Formats a log message, colouring it with ansi escape sequences.
  *
- * @return The header.
+ * @param msg The log message.
+ * @return The formatted message
  */
-std::string get_header(void) {
-    return std::format("{1:<{0}} {3:<{2}} {5:>{4}}@{7:<{6}} {9:>{8}}| \n", DATE_WIDTH, "date",
-                       TIME_WIDTH + sizeof('Z'), "time", LOCATION_WIDTH, "location", LINE_WIDTH,
-                       "line", LEVEL_WIDTH, "v");
+std::string format_colourful_message(const LogMessage& msg) {
+    // Pyunrealsdk reports a line of -1 when it doesn't know the location
+    // Figure it's neat to highlight that as an error
+    std::string_view line_colour = msg.line > 0 ? LOCATION_COLOUR : ERROR_COLOUR;
+
+    std::string_view log_level_colour;
+    switch (msg.level) {
+        case Level::ERROR:
+            log_level_colour = ERROR_COLOUR;
+            break;
+        case Level::WARNING:
+            log_level_colour = WARNING_COLOUR;
+            break;
+        case Level::INFO:
+        default:
+            log_level_colour = INFO_COLOUR;
+            break;
+        case Level::DEV_WARNING:
+            log_level_colour = DEV_WARNING_COLOUR;
+            break;
+        case Level::MISC:
+            log_level_colour = MISC_COLOUR;
+            break;
+    }
+
+    return std::format(COLOURFUL_FORMAT_STR, time_from_unix_ms(msg.unix_time_ms), msg.thread_id,
+                       truncate_leading_chunks(msg.location, "\\/:", LOCATION_WIDTH), msg.line,
+                       get_level_name(msg.level), std::string{msg.msg, msg.msg_size}, line_colour,
+                       log_level_colour);
 }
 
 #endif
@@ -261,8 +330,14 @@ void builtin_logger(const LogMessage* msg) {
         auto formatted = format_message(*msg);
 
         if (external_console_handle != nullptr) {
-            WriteFile(external_console_handle, formatted.c_str(), (DWORD)formatted.size(), nullptr,
-                      nullptr);
+            if (external_console_colour) {
+                auto colourful = format_colourful_message(*msg);
+                WriteFile(external_console_handle, colourful.c_str(),
+                          static_cast<DWORD>(colourful.size()), nullptr, nullptr);
+            } else {
+                WriteFile(external_console_handle, formatted.c_str(),
+                          static_cast<DWORD>(formatted.size()), nullptr, nullptr);
+            }
         }
 
         if (log_file_stream) {
@@ -281,16 +356,10 @@ void builtin_logger(const LogMessage* msg) {
 namespace impl {
 namespace {
 
-void enqueue_log_msg(uint64_t unix_time_ms,
-                     Level level,
-                     const char* msg,
-                     size_t msg_size,
-                     const char* location,
-                     size_t location_size,
-                     int line) {
+void enqueue_log_msg(const LogMessage& log) {
     {
         const std::scoped_lock lock(pending_messages_mutex);
-        pending_messages.emplace(unix_time_ms, level, msg, msg_size, location, location_size, line);
+        pending_messages.emplace(log);
     }
     pending_messages_available.notify_all();
 }
@@ -344,7 +413,7 @@ void init(const std::filesystem::path& file, bool unreal_console) {
 
     if (!file.empty()) {
         log_file_stream = std::make_unique<std::ofstream>(file, std::ofstream::trunc);
-        *log_file_stream << get_header() << std::flush;
+        *log_file_stream << LOG_HEADER << std::flush;
     }
 
     // Add the builtin logger now, after initializing the above two streams, so that the external
@@ -363,6 +432,22 @@ void init(const std::filesystem::path& file, bool unreal_console) {
         } else {
             LOG(ERROR, "Failed to initialize external console!");
         }
+
+        external_console_colour =
+            config::get_bool("unrealsdk.external_console_colour").value_or([]() {
+                // Wine's console apparently doesn't properly support ansi escape codes, but still
+                // makes the set mode call succeed, so if we detect wine just disable it by default
+                auto ntdll = GetModuleHandle("ntdll");
+                if (ntdll == nullptr) {
+                    return true;
+                }
+                return GetProcAddress(ntdll, "wine_get_version") == nullptr;
+            }());
+
+        if (external_console_colour) {
+            SetConsoleMode(external_console_handle,
+                           ENABLE_VIRTUAL_TERMINAL_PROCESSING | ENABLE_PROCESSED_OUTPUT);
+        }
     }
 }
 #endif
@@ -373,39 +458,40 @@ void init(const std::filesystem::path& file, bool unreal_console) {
 #pragma region C API Wrappers
 
 #ifdef UNREALSDK_SHARED
-UNREALSDK_CAPI(void,
-               enqueue_log_msg,
-               uint64_t unix_time_ms,
-               Level level,
-               const char* msg,
-               size_t msg_size,
-               const char* location,
-               size_t location_size,
-               int line);
+UNREALSDK_CAPI(void, enqueue_log_msg, const LogMessage* log);
 #endif
 #ifndef UNREALSDK_IMPORTING
-UNREALSDK_CAPI(void,
-               enqueue_log_msg,
-               uint64_t unix_time_ms,
-               Level level,
-               const char* msg,
-               size_t msg_size,
-               const char* location,
-               size_t location_size,
-               int line) {
-    impl::enqueue_log_msg(unix_time_ms, level, msg, msg_size, location, location_size, line);
+UNREALSDK_CAPI(void, enqueue_log_msg, const LogMessage* log) {
+    impl::enqueue_log_msg(*log);
 }
 #endif
 void log(Level level, std::string_view msg, std::string_view location, int line) {
+    // Important: get time asap
     auto now = unix_ms_now();
-    UNREALSDK_MANGLE(enqueue_log_msg)
-    (now, level, msg.data(), msg.size(), location.data(), location.size(), line);
+    // Rest can be in any order
+    const LogMessage log{.unix_time_ms = now,
+                         .level = level,
+                         .msg = msg.data(),
+                         .msg_size = msg.size(),
+                         .location = location.data(),
+                         .location_size = location.size(),
+                         .line = line,
+                         .thread_id = GetCurrentThreadId()};
+    UNREALSDK_MANGLE(enqueue_log_msg)(&log);
 }
 void log(Level level, std::wstring_view msg, std::string_view location, int line) {
     auto now = unix_ms_now();
+
     auto narrow = utils::narrow(msg);
-    UNREALSDK_MANGLE(enqueue_log_msg)
-    (now, level, narrow.data(), narrow.size(), location.data(), location.size(), line);
+    const LogMessage log{.unix_time_ms = now,
+                         .level = level,
+                         .msg = narrow.data(),
+                         .msg_size = narrow.size(),
+                         .location = location.data(),
+                         .location_size = location.size(),
+                         .line = line,
+                         .thread_id = GetCurrentThreadId()};
+    UNREALSDK_MANGLE(enqueue_log_msg)(&log);
 }
 
 #ifdef UNREALSDK_SHARED
