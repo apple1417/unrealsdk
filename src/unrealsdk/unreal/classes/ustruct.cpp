@@ -230,7 +230,7 @@ size_t UStruct::get_struct_size(void) const {
         }
     }
 
-    throw std::invalid_argument("Couldn't find field " + (std::string)name);
+    throw std::invalid_argument("Couldn't find field " + name);
 }
 #else
 TFieldVariantStub<UField> UStruct::find(const FName& name) const {
@@ -240,7 +240,7 @@ TFieldVariantStub<UField> UStruct::find(const FName& name) const {
         }
     }
 
-    throw std::invalid_argument("Couldn't find field " + (std::string)name);
+    throw std::invalid_argument("Couldn't find field " + name);
 }
 #endif
 
@@ -251,7 +251,7 @@ ZProperty* UStruct::find_prop(const FName& name) const {
         }
     }
 
-    throw std::invalid_argument("Couldn't find property " + (std::string)name);
+    throw std::invalid_argument("Couldn't find property " + name);
 }
 
 UFunction* UStruct::find_func_and_validate(const FName& name) const {

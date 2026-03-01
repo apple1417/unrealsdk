@@ -98,7 +98,7 @@ std::wstring BL4Hook::uobject_path_name(const UObject* obj) const {
 
     get_obj_path_name_ptr(obj, nullptr, &str);
 
-    std::wstring output{str.base, (size_t)(str.current - str.base)};
+    std::wstring output{str.base, static_cast<size_t>(str.current - str.base)};
     if (str.is_dynamic != 0) {
         unrealsdk::u_free(str.base);
     }

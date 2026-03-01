@@ -89,7 +89,7 @@ void BL4Hook::fname_init(FName* name, const wchar_t* str, int32_t number) const 
     const std::wstring_view wstr_view{str};
     const FNameStringView fname_view{
         .str = str,
-        .len = (uint32_t)wstr_view.size(),
+        .len = static_cast<uint32_t>(wstr_view.size()),
         .non_ascii =
             std::ranges::any_of(wstr_view, [](wchar_t chr) { return chr > max_ascii_char; }) ? 1
                                                                                              : 0U,

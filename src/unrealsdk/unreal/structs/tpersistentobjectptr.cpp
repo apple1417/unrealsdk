@@ -42,7 +42,7 @@ template <typename T>
 const TPersistentObjectPtr<T>* get_addr_from_array(const WrappedArray& array, size_t idx) {
     if (!array.type->Class()->inherits(find_class<ZSoftObjectProperty>())) {
         throw std::invalid_argument("WrappedArray property was of invalid type "
-                                    + (std::string)array.type->Class()->Name());
+                                    + array.type->Class()->Name());
     }
     if (std::cmp_greater_equal(idx, array.base->count)) {
         throw std::out_of_range("WrappedArray index out of range");

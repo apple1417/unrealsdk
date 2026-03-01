@@ -26,8 +26,7 @@ void PropTraits<ZStructProperty>::set(const ZStructProperty* prop,
                                       const Value& value) {
     auto this_struct = prop->Struct();
     if (value.type != this_struct) {
-        throw std::runtime_error("Struct is not an instance of "
-                                 + (std::string)this_struct->Name());
+        throw std::runtime_error("Struct is not an instance of " + this_struct->Name());
     }
     copy_struct(addr, value);
 }

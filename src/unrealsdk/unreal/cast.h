@@ -102,7 +102,7 @@ namespace {
  */
 template <typename T>
 inline void default_cast_fallback(const T* obj) {
-    throw std::runtime_error("Unknown object type " + (std::string)obj->Class()->Name());
+    throw std::runtime_error("Unknown object type " + obj->Class()->Name());
 }
 
 #ifdef __clang__

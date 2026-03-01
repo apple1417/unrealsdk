@@ -13,11 +13,15 @@ namespace unrealsdk::unreal {
 
 UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(ZInterfaceProperty, UNREALSDK_ZINTERFACEPROPERTY_FIELDS);
 
+namespace {
+
 struct FScriptInterface {
     UObject* obj;     // A pointer to a UObject that implements a native interface.
     void* iface_ptr;  // Pointer to the location of the interface object within the UObject
                       // referenced by ObjectPointer.
 };
+
+}  // namespace
 
 PropTraits<ZInterfaceProperty>::Value PropTraits<ZInterfaceProperty>::get(
     const ZInterfaceProperty* /*prop*/,
@@ -37,8 +41,7 @@ void PropTraits<ZInterfaceProperty>::set(const ZInterfaceProperty* prop,
     if (value != nullptr) {
         FImplementedInterface impl{};
         if (!value->is_implementation(prop_iface, &impl)) {
-            throw std::runtime_error("Object is not implementation of "
-                                     + (std::string)prop_iface->Name());
+            throw std::runtime_error("Object is not implementation of " + prop_iface->Name());
         }
         pointer_offset = impl.get_pointer_offset();
     }

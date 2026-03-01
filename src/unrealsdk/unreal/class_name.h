@@ -40,7 +40,7 @@ void throw_on_wrong_type(const U* obj) {
     static const auto expected_cls_name = cls_fname<T>();
     auto cls_name = obj->Class()->Name();
     if (cls_name != expected_cls_name) {
-        throw std::invalid_argument("Object was of unexpected type " + (std::string)cls_name);
+        throw std::invalid_argument("Object was of unexpected type " + cls_name);
     }
 }
 

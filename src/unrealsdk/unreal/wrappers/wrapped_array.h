@@ -73,7 +73,7 @@ class WrappedArray {
         auto property_class = this->type->Class()->Name();
         if (property_class != cls_fname<T>()) {
             throw std::invalid_argument("WrappedArray property was of invalid type "
-                                        + (std::string)property_class);
+                                        + property_class);
         }
 
         if (idx >= (size_t)this->base->count) {

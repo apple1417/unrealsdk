@@ -70,6 +70,26 @@ struct FName {
 UNREALSDK_UNREAL_STRUCT_PADDING_POP()
 
 /**
+ * @brief Concatenates a string and an FName.
+ *
+ * @param str The string to add to.
+ * @param name The name to add.
+ * @return The new string.
+ */
+inline std::string operator+(std::string& str, const unrealsdk::unreal::FName& name) {
+    return str + std::string{name};
+}
+inline std::wstring operator+(std::wstring& str, const unrealsdk::unreal::FName& name) {
+    return str + std::wstring{name};
+}
+inline std::string operator+(std::string_view str, const unrealsdk::unreal::FName& name) {
+    return std::string{str} + std::string{name};
+}
+inline std::wstring operator+(std::wstring_view str, const unrealsdk::unreal::FName& name) {
+    return std::wstring{str} + std::wstring{name};
+}
+
+/**
  * @brief Construct an FName literal from a wide string.
  *
  * @param str The string to create a name of.

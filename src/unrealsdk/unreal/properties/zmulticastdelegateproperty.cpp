@@ -27,7 +27,7 @@ void PropTraits<ZMulticastDelegateProperty>::set(const ZMulticastDelegatePropert
                                                  const Value& value) {
     if (value.signature != prop->Signature()) {
         throw std::runtime_error("Multicast delegate signature doesn't match existing signature of "
-                                 + (std::string)prop->Signature()->Name());
+                                 + prop->Signature()->Name());
     }
 
     auto arr = reinterpret_cast<TArray<FScriptDelegate>*>(addr);

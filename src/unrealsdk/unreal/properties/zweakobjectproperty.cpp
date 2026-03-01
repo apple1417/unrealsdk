@@ -24,7 +24,7 @@ void PropTraits<ZWeakObjectProperty>::set(const ZWeakObjectProperty* prop,
     if (value != nullptr) {
         auto prop_cls = prop->PropertyClass();
         if (!value->is_instance(prop_cls)) {
-            throw std::runtime_error("Object is not instance of " + (std::string)prop_cls->Name());
+            throw std::runtime_error("Object is not instance of " + prop_cls->Name());
         }
     }
 

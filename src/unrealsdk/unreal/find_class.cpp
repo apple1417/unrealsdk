@@ -8,6 +8,7 @@ namespace {
 
 #ifndef UNREALSDK_IMPORTING
 class NamedClassCache : public NamedObjectCache<UClass> {
+   protected:
     [[nodiscard]] UClass* find_uclass(void) const override {
         // We can't exactly do a find class lookup here
         // Instead, just follow the class chain off of an arbitrary object

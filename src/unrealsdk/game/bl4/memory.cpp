@@ -38,9 +38,9 @@ struct FMallocVFtable {
     uintptr_t unknown10;
     uintptr_t unknown18;
     uintptr_t unknown20;
-    void* (*u_malloc)(FMalloc* self, uint32_t len, uint32_t align);
+    void* (*u_malloc)(FMalloc* self, uint64_t len, uint32_t align);
     uintptr_t unknown30;
-    void* (*u_realloc)(FMalloc* self, void* original, uint32_t len, uint32_t align);
+    void* (*u_realloc)(FMalloc* self, void* original, uint64_t len, uint32_t align);
     uintptr_t unknown40;
     void* (*u_free)(FMalloc* self, void* data);
     uintptr_t unknown50;
@@ -67,12 +67,12 @@ void BL4Hook::find_gmalloc(void) {
 }
 
 void* BL4Hook::u_malloc(size_t len) const {
-    auto ret = gmalloc->vftable->u_malloc(gmalloc, (uint32_t)len, get_malloc_alignment(len));
+    auto ret = gmalloc->vftable->u_malloc(gmalloc, len, get_malloc_alignment(len));
     memset(ret, 0, len);
     return ret;
 }
 void* BL4Hook::u_realloc(void* original, size_t len) const {
-    return gmalloc->vftable->u_realloc(gmalloc, original, (uint32_t)len, get_malloc_alignment(len));
+    return gmalloc->vftable->u_realloc(gmalloc, original, len, get_malloc_alignment(len));
 }
 void BL4Hook::u_free(void* data) const {
     gmalloc->vftable->u_free(gmalloc, data);

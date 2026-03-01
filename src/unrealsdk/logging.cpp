@@ -142,6 +142,7 @@ Level get_level_from_string(std::string_view str) {
     }
 
     // Doing it properly is a bit more complex, just check the first char
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-avoid-unchecked-container-access)
     switch (std::toupper(str[0])) {
         case 'E':
             return Level::ERROR;
@@ -331,11 +332,11 @@ void builtin_logger(const LogMessage* msg) {
         if (external_console_handle != nullptr) {
             if (external_console_colour) {
                 auto colourful = format_colourful_message(*msg);
-                WriteFile(external_console_handle, colourful.c_str(), (DWORD)colourful.size(),
-                          nullptr, nullptr);
+                WriteFile(external_console_handle, colourful.c_str(),
+                          static_cast<DWORD>(colourful.size()), nullptr, nullptr);
             } else {
-                WriteFile(external_console_handle, formatted.c_str(), (DWORD)formatted.size(),
-                          nullptr, nullptr);
+                WriteFile(external_console_handle, formatted.c_str(),
+                          static_cast<DWORD>(formatted.size()), nullptr, nullptr);
             }
         }
 
