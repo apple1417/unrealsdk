@@ -148,8 +148,13 @@ struct FFieldClass {
 template <typename T>
 class ZGbxDefPtrProperty : public T {
    public:
-    // NOLINTNEXTLINE(readability-identifier-naming)
     unreal::UScriptStruct* Struct;
+};
+
+template <typename T>
+class ZGbxInlineStructProperty : public T {
+   public:
+    unreal::UScriptStruct* MetaStruct;
 };
 
 // NOLINTEND(cppcoreguidelines-pro-type-member-init,

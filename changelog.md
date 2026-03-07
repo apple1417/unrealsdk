@@ -11,7 +11,10 @@ These are not hard rules, we just strive to follow them on a best-effort basis. 
 compatibility it's recommended to always compile against the exact same commit as you expect to be
 linking against.
 
-## 3.0.0
+## 3.0.0 Beta
+This release is marked as a beta, since it was only (partially) tested against BL4. Other games are
+mostly untested.
+
 - Now supports Borderlands 4 (Oak2). Thanks to Faultz for finding a lot of the signatures, and
   truman for creating binfold/general unreal RE advice.
 
@@ -28,7 +31,7 @@ linking against.
   You should be able to upgrade these using a couple of regexes:
   - `U([A-Z0-9]Property)` (case insensitive) -> `Z\1`
   - `#include "unrealsdk/unreal/classes/properties` -> `#include "unrealsdk/unreal/properties`
-  - `#include "unrealsdk/unreal/properties/u` -> `#include "unrealsdk/unreal/properties/z`
+  - `#include "unrealsdk/unreal/properties/u` -> `#include "unrealsdk/unreal/properties/z`    
   (may need more)
 
 - Introduced `unrealsdk/flavour.h`, which splits flavour defines down into more specific feature

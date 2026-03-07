@@ -22,7 +22,6 @@ uint8_t* FFrame::extract_current_args(WrappedStruct& args) {
 #endif
 
     if (first_prop == nullptr) {
-        LOG(ERROR, "Tried to extract frame from a function with no properties!");
         return original_code;
     }
 

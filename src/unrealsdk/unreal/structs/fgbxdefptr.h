@@ -1,7 +1,6 @@
 #ifndef UNREALSDK_UNREAL_STRUCTS_FGBXDEFPTR_H
 #define UNREALSDK_UNREAL_STRUCTS_FGBXDEFPTR_H
 
-#include "unrealsdk/unreal/classes/uscriptstruct.h"
 #include "unrealsdk/unreal/structs/fname.h"
 
 namespace unrealsdk::unreal {
