@@ -169,6 +169,8 @@ using ZFloatAttributeProperty = unreal::offsets::generic::GenericAttributeProper
 using ZIntAttributeProperty = unreal::offsets::generic::GenericAttributeProperty<ZIntProperty>;
 using ZSoftClassProperty = unreal::offsets::generic::ZSoftClassProperty<ZObjectProperty>;
 using ZGbxDefPtrProperty = unreal::offsets::generic::ZGbxDefPtrProperty<ZProperty>;
+using ZGbxInlineStructProperty =
+    unreal::offsets::generic::ZGbxInlineStructProperty<ZStructProperty>;
 
 class ZBoolProperty : public ZProperty {
    private:
