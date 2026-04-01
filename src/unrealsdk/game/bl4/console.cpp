@@ -37,6 +37,7 @@ const std::wstring INJECT_CONSOLE_ID = L"unrealsdk_bl4_inject_console";
 const constexpr auto MAX_HISTORY_ENTRIES = 50;
 
 UObject* console = nullptr;
+std::atomic<bool> console_created_once = false;
 
 void static_uconsole_output_text(const std::wstring& str) {
     static auto idx = config::get_int("unrealsdk.uconsole_output_text_vf_index")
@@ -56,6 +57,87 @@ void static_uconsole_output_text(const std::wstring& str) {
 
 using console_command_func = void(UObject* console_obj, UnmanagedFString* raw_line);
 console_command_func* console_command_ptr;
+[[nodiscard]] uintptr_t get_console_command_target(void) {
+    static auto console_command_vf_idx =
+        config::get_int("unrealsdk.uconsole_console_command_vf_index")
+            .value_or(86);  // NOLINT(readability-magic-numbers)
+    return console == nullptr ? 0 : console->vftable[console_command_vf_idx];
+}
+
+void try_set_console_key(void) {
+    auto input_settings_fn = L"InputSettings"_fn;
+    for (const auto& inner_obj : gobjects()) {
+        if (inner_obj->Class()->Name() != input_settings_fn) {
+            continue;
+        }
+
+        auto wanted_console_key = config::get_str("unrealsdk.console_key");
+
+        auto arr = inner_obj->get<ZArrayProperty>(L"ConsoleKeys"_fn);
+        if (arr.size() > 0) {
+            auto existing_fname = arr.get_at<ZStructProperty>(0).get<ZNameProperty>(L"KeyName"_fn);
+
+            if (wanted_console_key.has_value()) {
+                FName wanted_fname{std::string{*wanted_console_key}};
+                if (existing_fname == wanted_fname) {
+                    LOG(MISC, "Console key is already set to {}", existing_fname);
+                } else {
+                    arr.resize(1);
+                    arr.get_at<ZStructProperty>(0).set<ZNameProperty>(L"KeyName"_fn, wanted_fname);
+                    LOG(MISC, "Set console key to '{}'", wanted_fname);
+                }
+            } else {
+                LOG(MISC, "Console key is already set to {}", existing_fname);
+            }
+
+        } else {
+            FName wanted_fname{std::string{wanted_console_key.value_or("Tilde")}};
+            arr.resize(1);
+            arr.get_at<ZStructProperty>(0).set<ZNameProperty>(L"KeyName"_fn, wanted_fname);
+            LOG(MISC, "Set console key to '{}'", wanted_fname);
+        }
+
+        return;
+    }
+}
+
+bool initialize_console(UObject* player_controller) {
+    if (player_controller == nullptr) {
+        return false;
+    }
+
+    auto local_player = player_controller->get<ZObjectProperty>(L"Player"_fn);
+    if (local_player == nullptr) {
+        return false;
+    }
+
+    auto viewport = local_player->get<ZObjectProperty>(L"ViewportClient"_fn);
+    if (viewport == nullptr) {
+        return false;
+    }
+
+    auto console_property =
+        viewport->Class()->find_prop_and_validate<ZObjectProperty>(L"ViewportConsole"_fn);
+    auto viewport_console = viewport->get(console_property);
+
+    if (viewport_console == nullptr && !console_created_once.exchange(true)) {
+        auto default_console = console_property->PropertyClass()->ClassDefaultObject();
+        viewport_console = unrealsdk::construct_object(default_console->Class(), viewport);
+        if (viewport_console != nullptr) {
+            viewport->set<ZObjectProperty>(L"ViewportConsole"_fn, viewport_console);
+            LOG(MISC, "Created console at {:p}", reinterpret_cast<void*>(viewport_console));
+        }
+    }
+
+    if (viewport_console == nullptr) {
+        return false;
+    }
+
+    console = viewport_console;
+    console->set<ZObjectProperty>(L"ConsoleTargetPlayer"_fn, local_player);
+    try_set_console_key();
+    return true;
+}
 
 void console_command_hook(UObject* console_obj, UnmanagedFString* raw_line) {
     try {
@@ -160,76 +242,21 @@ void console_command_hook(UObject* console_obj, UnmanagedFString* raw_line) {
 }
 
 bool inject_console_hook(hook_manager::Details& hook) {
-    hook_manager::remove_hook(INJECT_CONSOLE_FUNC, INJECT_CONSOLE_TYPE, INJECT_CONSOLE_ID);
+    if (!initialize_console(hook.obj)) {
+        return false;
+    }
+
     LOG(INFO, "Injecting console");
 
-    auto local_player = hook.obj->get<ZObjectProperty>(L"Player"_fn);
-    auto viewport = local_player->get<ZObjectProperty>(L"ViewportClient"_fn);
-    auto console_property =
-        viewport->Class()->find_prop_and_validate<ZObjectProperty>(L"ViewportConsole"_fn);
-    console = viewport->get(console_property);
-
-    if (console == nullptr) {
-        auto default_console = console_property->PropertyClass()->ClassDefaultObject();
-        console = unrealsdk::construct_object(default_console->Class(), viewport);
-        viewport->set<ZObjectProperty>(L"ViewportConsole"_fn, console);
+    if (!bl4::delayed_function_detour(
+            "ConsoleCommand",
+            []() { return get_console_command_target(); },
+            console_command_hook, reinterpret_cast<void**>(&console_command_ptr),
+            "ConsoleCommand")) {
+        return false;
     }
 
-    console->set<ZObjectProperty>(L"ConsoleTargetPlayer"_fn, local_player);
-
-    static auto console_command_vf_idx =
-        config::get_int("unrealsdk.uconsole_console_command_vf_index")
-            .value_or(86);  // NOLINT(readability-magic-numbers)
-
-    memory::detour(console->vftable[console_command_vf_idx], console_command_hook,
-                   &console_command_ptr, "ConsoleCommand");
-
-    LOG(MISC, "Injected console");
-
-    // TODO: may be able to replace this loop with find class -> default object
-
-    // There isn't really a good path to the input settings class, which should be a singleton, so
-    // just search through gobjects for the default object ¯\_(ツ)_/¯
-    auto input_settings_fn = L"InputSettings"_fn;
-    for (const auto& inner_obj : gobjects()) {
-        if (inner_obj->Class()->Name() != input_settings_fn) {
-            continue;
-        }
-
-        auto wanted_console_key = config::get_str("unrealsdk.console_key");
-
-        auto arr = inner_obj->get<ZArrayProperty>(L"ConsoleKeys"_fn);
-        if (arr.size() > 0) {
-            auto existing_fname = arr.get_at<ZStructProperty>(0).get<ZNameProperty>(L"KeyName"_fn);
-
-            // It seems we do have tilde as a default console key in this game. Rather than just
-            // accept that like we do in other games (where there's no default), if the user's
-            // specified a key, overwrite it.
-            if (wanted_console_key.has_value()) {
-                FName wanted_fname{std::string{*wanted_console_key}};
-                if (existing_fname == wanted_fname) {
-                    // Or not in this case :)
-                    LOG(MISC, "Console key is already set to {}", existing_fname);
-                } else {
-                    // Technically we might be throwing away other keys in later slots, but you did
-                    // say you wanted this one
-                    arr.resize(1);
-                    arr.get_at<ZStructProperty>(0).set<ZNameProperty>(L"KeyName"_fn, wanted_fname);
-
-                    LOG(MISC, "Set console key to '{}'", wanted_fname);
-                }
-            } else {
-                LOG(MISC, "Console key is already set to {}", existing_fname);
-            }
-
-        } else {
-            FName wanted_fname{std::string{wanted_console_key.value_or("Tilde")}};
-            arr.resize(1);
-            arr.get_at<ZStructProperty>(0).set<ZNameProperty>(L"KeyName"_fn, wanted_fname);
-
-            LOG(MISC, "Set console key to '{}'", wanted_fname);
-        }
-    }
+    hook_manager::remove_hook(INJECT_CONSOLE_FUNC, INJECT_CONSOLE_TYPE, INJECT_CONSOLE_ID);
 
     return false;
 }
