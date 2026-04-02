@@ -200,8 +200,9 @@ UNREALSDK_CAPI([[nodiscard]] wchar_t*, ffield_path_name, const FField* obj, size
 UNREALSDK_CAPI(void,
                ftext_as_culture_invariant,
                unreal::FText* text,
-               unreal::TemporaryFString&& str) {
-    hook_instance->ftext_as_culture_invariant(text, std::move(str));
+               const wchar_t* str,
+               size_t size) {
+    hook_instance->ftext_as_culture_invariant(text, {str, size});
 }
 
 UNREALSDK_CAPI(void, fsoftobjectptr_assign, FSoftObjectPtr* ptr, const unreal::UObject* obj) {

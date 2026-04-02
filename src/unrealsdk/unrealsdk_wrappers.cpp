@@ -108,8 +108,8 @@ std::wstring ffield_path_name(const FField* obj) {
     return str;
 }
 
-void ftext_as_culture_invariant(unreal::FText* text, unreal::TemporaryFString&& str) {
-    UNREALSDK_MANGLE(ftext_as_culture_invariant)(text, std::move(str));
+void ftext_as_culture_invariant(unreal::FText* text, std::wstring_view str) {
+    UNREALSDK_MANGLE(ftext_as_culture_invariant)(text, str.data(), str.size());
 }
 
 void fsoftobjectptr_assign(unreal::FSoftObjectPtr* ptr, const unreal::UObject* obj) {

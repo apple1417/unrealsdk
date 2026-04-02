@@ -84,8 +84,7 @@ struct AbstractHook {
     virtual void uconsole_output_text(const std::wstring& str) const;
     [[nodiscard]] virtual std::wstring uobject_path_name(const unreal::UObject* obj) const;
     [[nodiscard]] virtual std::wstring ffield_path_name(const unreal::FField* field) const;
-    virtual void ftext_as_culture_invariant(unreal::FText* text,
-                                            unreal::TemporaryFString&& str) const;
+    virtual void ftext_as_culture_invariant(unreal::FText* text, std::wstring_view str) const;
     virtual void fsoftobjectptr_assign(unreal::FSoftObjectPtr* ptr,
                                        const unreal::UObject* obj) const;
     virtual void flazyobjectptr_assign(unreal::FLazyObjectPtr* ptr,

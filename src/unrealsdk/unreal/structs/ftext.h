@@ -4,6 +4,12 @@
 #include "unrealsdk/pch.h"
 #include "unrealsdk/unreal/structs/tsharedpointer.h"
 
+namespace unrealsdk::game {
+
+class BL4Hook;
+
+}
+
 namespace unrealsdk::unreal {
 
 UNREALSDK_UNREAL_STRUCT_PADDING_PUSH()
@@ -17,6 +23,8 @@ struct FTextData {
 
 struct FText {
    private:
+    friend class game::BL4Hook;
+
     static const constexpr auto FLAG_TRANSIENT = 1 << 0;
     static const constexpr auto FLAG_INVARIANT_CULTURE = 1 << 1;
     static const constexpr auto FLAG_FROM_NAME_OR_STRING = 1 << 4;
