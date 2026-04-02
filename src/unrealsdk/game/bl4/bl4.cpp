@@ -16,18 +16,27 @@ namespace unrealsdk::game {
 void BL4Hook::hook(void) {
     hook_antidebug();
     hook_process_event_and_wait_for_unpack();
-    hook_call_function();
 
-    find_fname_funcs();
-    find_gobjects();
-    find_gmalloc();
-    find_get_path_name();
-
-    find_construct_object();
-    find_static_find_object();
-    find_load_package();
-    find_fframe_step();
-    // find_ftext_as_culture_invariant();
+    // The exe is quite big, a couple of these funcs use delay loops, and we seem to have run into
+    // timing issues before, so multithread the sigscans
+    std::vector<std::thread> threads;
+    for (auto func : {
+             hook_call_function,
+             find_fname_funcs,
+             find_gmalloc,
+             find_get_path_name,
+             find_construct_object,
+             find_static_find_object,
+             find_load_package,
+             find_fframe_step,
+             find_ftext_as_culture_invariant,
+             find_gobjects,
+         }) {
+        threads.emplace_back(func);
+    }
+    for (auto& thread : threads) {
+        thread.join();
+    }
 }
 
 void BL4Hook::post_init(void) {
