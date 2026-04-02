@@ -3,12 +3,13 @@
 #include "unrealsdk/game/bl4/bl4.h"
 #include "unrealsdk/memory.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2 && !defined(UNREALSDK_IMPORTING)
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
 
 using namespace unrealsdk::memory;
 
 namespace unrealsdk::game {
 
+#ifndef UNREALSDK_IMPORTING
 namespace {
 
 const constexpr auto ASSUMED_MIN_PAGE_SIZE = 0x1000;
@@ -138,6 +139,74 @@ void BL4Hook::hook_antidebug(void) {
         // DebugBreak();
     }
 }
+#endif
+
+namespace bl4 {
+
+namespace {
+
+/**
+ * @brief Checks if the given memory address is executable.
+ *
+ * @param addr The address to check.
+ * @return True if it points to executable memory.
+ */
+[[nodiscard]] bool is_executable(uintptr_t addr) {
+    if (addr == 0) {
+        return false;
+    }
+
+    MEMORY_BASIC_INFORMATION mbi{};
+    if (VirtualQuery(reinterpret_cast<void*>(addr), &mbi, sizeof(mbi)) != sizeof(mbi)) {
+        return false;
+    }
+
+    if (mbi.State != MEM_COMMIT) {
+        return false;
+    }
+
+    if ((mbi.Protect & (PAGE_GUARD | PAGE_NOACCESS)) != 0) {
+        return false;
+    }
+
+    constexpr auto executable_mask =
+        PAGE_EXECUTE | PAGE_EXECUTE_READ | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY;
+    return (mbi.Protect & executable_mask) != 0;
+}
+
+}  // namespace
+
+void detour_once_executable(uintptr_t addr,
+                            void* detour_func,
+                            void** original_func,
+                            std::string&& name,
+                            std::chrono::milliseconds poll_interval,
+                            std::chrono::milliseconds timeout) {
+    std::thread{[addr, detour_func, original_func, name = std::move(name), poll_interval,
+                 timeout]() mutable {
+        try {
+            const auto deadline = std::chrono::steady_clock::now() + timeout;
+
+            while (std::chrono::steady_clock::now() < deadline) {
+                if (is_executable(addr) && detour(addr, detour_func, original_func, name)) {
+                    return;
+                }
+                // In the case where we were executable, but failed to detour, try again anyway?
+
+                std::this_thread::sleep_for(poll_interval);
+            }
+
+            LOG(ERROR, "Delayed detour for '{}' timed out after {} ms", name, timeout.count());
+        } catch (const std::exception& ex) {
+            LOG(ERROR, "An exception occurred while running delayed detour for '{}': {}", name,
+                ex.what());
+        } catch (...) {
+            LOG(ERROR, "An unknown exception occurred while running delayed detour for '{}'", name);
+        }
+    }}.detach();
+}
+
+}  // namespace bl4
 
 }  // namespace unrealsdk::game
 

@@ -12,44 +12,6 @@
 
 namespace unrealsdk::game {
 
-namespace bl4 {
-
-using DelayedDetourTargetResolver = std::function<uintptr_t(void)>;
-
-UNREALSDK_CAPI([[nodiscard]] bool, bl4_is_executable_address, uintptr_t addr);
-UNREALSDK_CAPI(bool,
-               bl4_delayed_function_detour,
-               const char* name,
-               size_t name_size,
-               utils::DLLSafeCallback<DelayedDetourTargetResolver>&& target_resolver,
-               void* detour_func,
-               void** original_func,
-               const char* hook_name,
-               size_t hook_name_size,
-               int64_t poll_interval_ms,
-               int64_t max_runtime_ms);
-
-[[nodiscard]] inline bool is_executable_address(uintptr_t addr) {
-    return UNREALSDK_MANGLE(bl4_is_executable_address)(addr);
-}
-
-inline bool delayed_function_detour(
-    std::string_view name,
-    const DelayedDetourTargetResolver& target_resolver,
-    void* detour_func,
-    void** original_func,
-    std::string_view hook_name,
-    std::chrono::milliseconds poll_interval = std::chrono::milliseconds{100},
-    std::chrono::milliseconds max_runtime = std::chrono::milliseconds{30000}) {
-    return UNREALSDK_MANGLE(bl4_delayed_function_detour)(
-        name.data(), name.size(), {target_resolver}, detour_func, original_func,
-        hook_name.data(), hook_name.size(),
-        static_cast<int64_t>(poll_interval.count()),
-        static_cast<int64_t>(max_runtime.count()));
-}
-
-}  // namespace bl4
-
 #ifndef UNREALSDK_IMPORTING
 class BL4Hook : public AbstractHook {
    protected:
@@ -120,6 +82,47 @@ struct GameTraits<BL4Hook> {
     }
 };
 #endif
+
+namespace bl4 {
+namespace {
+
+constexpr auto DEFAULT_POLL_INTERVAL = std::chrono::milliseconds{100};
+constexpr auto DEFAULT_TIMEOUT = std::chrono::seconds{60};
+
+}  // namespace
+
+/**
+ * @brief Wait for an address to become executable, and only then detour the given function.
+ * @note This waits for the unpacking done by this game's antidebug, avoiding errors that can occur
+ *       when detouring too early.
+ *
+ * @tparam T The signature of the detour'd function (should be picked up automatically).
+ * @param addr The address of the function.
+ * @param detour_func The detour function.
+ * @param original_func Pointer to store the original function.
+ * @param name Name of the detour, to be used in log messages on error.
+ * @param poll_interval How long to wait between polls.
+ * @param timeout Duration to timeout after.
+ */
+void detour_once_executable(uintptr_t addr,
+                            void* detour_func,
+                            void** original_func,
+                            std::string&& name,
+                            std::chrono::milliseconds poll_interval = DEFAULT_POLL_INTERVAL,
+                            std::chrono::milliseconds timeout = DEFAULT_TIMEOUT);
+template <typename T>
+void detour_once_executable(uintptr_t addr,
+                            T* detour_func,
+                            T** original_func,
+                            std::string&& name,
+                            std::chrono::milliseconds poll_interval = DEFAULT_POLL_INTERVAL,
+                            std::chrono::milliseconds timeout = DEFAULT_TIMEOUT) {
+    detour_once_executable(addr, reinterpret_cast<void*>(detour_func),
+                           reinterpret_cast<void**>(original_func), std::move(name), poll_interval,
+                           timeout);
+}
+
+}  // namespace bl4
 
 }  // namespace unrealsdk::game
 
