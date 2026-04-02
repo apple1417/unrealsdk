@@ -120,7 +120,13 @@ void flazyobjectptr_assign(unreal::FLazyObjectPtr* ptr, const unreal::UObject* o
     UNREALSDK_MANGLE(flazyobjectptr_assign)(ptr, obj);
 }
 
-[[nodiscard]] const offsets::OffsetList& get_offsets() {
+[[nodiscard]]
+#if defined(_MSC_VER) && !defined(__clang__)
+__declspec(noalias)
+#else
+__attribute__((pure))
+#endif
+const offsets::OffsetList& get_offsets() {
     return *UNREALSDK_MANGLE(get_offsets)();
 }
 

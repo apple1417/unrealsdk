@@ -230,7 +230,13 @@ void flazyobjectptr_assign(unreal::FLazyObjectPtr* ptr, const unreal::UObject* o
  *
  * @return A reference to the offsets list.
  */
-[[nodiscard]] const unreal::offsets::OffsetList& get_offsets(void);
+[[nodiscard]]
+#if defined(_MSC_VER) && !defined(__clang__)
+__declspec(noalias)
+#else
+__attribute__((pure))
+#endif
+const unreal::offsets::OffsetList& get_offsets(void);
 
 }  // namespace internal
 
