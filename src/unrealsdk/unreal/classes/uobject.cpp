@@ -34,7 +34,7 @@ void iter_path_name(const UObject* obj, std::wstringstream& stream) {
         iter_path_name(obj->Outer(), stream);
 
         static const FName package_name = L"Package"_fn;
-        if (obj->Outer()->Class()->Name() != package_name
+        if (obj->Outer()->Class()->Name() != package_name && obj->Outer()->Outer() != nullptr
             && obj->Outer()->Outer()->Class()->Name() == package_name) {
             stream << L':';
         } else {
