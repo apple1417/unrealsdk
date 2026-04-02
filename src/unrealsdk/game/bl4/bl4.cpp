@@ -15,8 +15,8 @@ using namespace unrealsdk::memory;
 namespace unrealsdk::game {
 void BL4Hook::hook(void) {
     hook_antidebug();
+    hook_process_event_and_wait_for_unpack();
     hook_call_function();
-    hook_process_event();
 
     find_fname_funcs();
     find_gobjects();
@@ -27,7 +27,7 @@ void BL4Hook::hook(void) {
     find_static_find_object();
     find_load_package();
     find_fframe_step();
-    find_ftext_as_culture_invariant();
+    // find_ftext_as_culture_invariant();
 }
 
 void BL4Hook::post_init(void) {
@@ -53,8 +53,9 @@ const constinit Pattern<19> GNATIVES_PTR{
 
 void BL4Hook::find_fframe_step(void) {
     auto gnative_inst = GNATIVES_PTR.sigscan("gnative");
+    LOG(MISC, "GNatives sig: {:p}", reinterpret_cast<void*>(gnative_inst));
     gnatives_table_ptr = read_offset<decltype(gnatives_table_ptr)>(gnative_inst);
-    LOG(MISC, "FFrame::Step: {:p}", reinterpret_cast<void*>(gnatives_table_ptr));
+    LOG(MISC, "GNatives: {:p}", reinterpret_cast<void*>(gnatives_table_ptr));
 }
 
 void BL4Hook::fframe_step(FFrame* frame, UObject* obj, void* param) const {
@@ -72,7 +73,8 @@ namespace {
 using ftext_as_culture_invariant_func = void (*)(FText* self, const wchar_t* str);
 ftext_as_culture_invariant_func ftext_as_culture_invariant_ptr;
 
-const constinit Pattern<30> FTEXT_AS_CULTURE_INVARIANT_PATTERN{
+// currently broken
+const constinit Pattern<33> FTEXT_AS_CULTURE_INVARIANT_PATTERN{
     "56"                 // push rsi
     "48 83 EC ??"        // sub rsp, 40
     "48 89 CE"           // mov rsi, rcx
@@ -80,7 +82,8 @@ const constinit Pattern<30> FTEXT_AS_CULTURE_INVARIANT_PATTERN{
     "48 31 E0"           // xor rax, rsp
     "48 89 44 24 ??"     // mov [rsp+38], rax
     "48 89 54 24 ??"     // mov [rsp+28], rdx
-    "31 C0"              // xor eax, eax
+    "48 85 D2"           // test rdx, rdx
+    "74 0B"              // jz short loc_1410126AC
 };
 
 }  // namespace
@@ -95,9 +98,9 @@ void BL4Hook::find_ftext_as_culture_invariant(void) {
 // This is fine, since we consume it when calling the native function
 // The rvalue will live for the lifetime of this function call
 // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved)
-void BL4Hook::ftext_as_culture_invariant(FText* text, TemporaryFString&& str) const {
-    ftext_as_culture_invariant_ptr(text, str.data);
-}
+// void BL4Hook::ftext_as_culture_invariant(FText* text, TemporaryFString&& str) const {
+//     ftext_as_culture_invariant_ptr(text, str.data);
+// }
 
 #pragma endregion
 

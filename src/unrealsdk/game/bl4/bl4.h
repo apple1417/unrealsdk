@@ -14,7 +14,7 @@ class BL4Hook : public AbstractHook {
    protected:
     static void hook_antidebug(void);
     static void hook_call_function(void);
-    static void hook_process_event(void);
+    static void hook_process_event_and_wait_for_unpack(void);
 
     static void find_fname_funcs(void);
     static void find_gobjects(void);
@@ -59,9 +59,9 @@ class BL4Hook : public AbstractHook {
     [[nodiscard]] std::wstring uobject_path_name(const unreal::UObject* obj) const override;
     [[nodiscard]] std::wstring ffield_path_name(const unreal::FField* field) const override;
 
+    /*
     void ftext_as_culture_invariant(unreal::FText* text,
                                     unreal::TemporaryFString&& str) const override;
-    /*
     void fsoftobjectptr_assign(unreal::FSoftObjectPtr* ptr,
                                const unreal::UObject* obj) const override;
     void flazyobjectptr_assign(unreal::FLazyObjectPtr* ptr,

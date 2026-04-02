@@ -12,23 +12,23 @@ namespace unrealsdk::game {
 
 namespace {
 
-const constexpr Pattern<52> GMALLOC_SIG{
-    "48 8B 0D {????????}"  // mov rcx, [Borderlands4.exe+C4DBF30]
-    "48 85 C9"             // test rcx, rcx
-    "74 ??"                // je Borderlands4.exe+1D843
-    "48 8B 01"             // mov rax, [rcx]
-    "48 8B 40 ??"          // mov rax, [rax+28]
-    "48 89 FA"             // mov rdx, rdi
-    "41 89 F0"             // mov r8d, esi
-    "48 83 C4 ??"          // add rsp, 28
-    "5F"                   // pop rdi
-    "5E"                   // pop rsi
-    "48 FF E0"             // jmp rax
-    "E8 ????????"          // call Borderlands4.exe+5B4E598
-    "48 8B 0D ????????"    // mov rcx, [Borderlands4.exe+C4DBF30]
-    "EB ??"                // jmp Borderlands4.exe+1D82D
-    "CC"                   // int 3
-    "48 89 C8"             // mov rax, rcx
+const constexpr Pattern<67> GMALLOC_SIG{
+    // This is the inlined initialization code, it gets thousands of matches
+    "48 8B 0D {????????}"      // mov rcx, [Borderlands4.exe+114F8EA0]
+    "48 85 C9"                 // test rcx, rcx
+    "75 ??"                    // jne Borderlands4.exe+E6DE28
+    "8B 05 ????????"           // mov eax, [Borderlands4.exe+114D2468]
+    "8B 0D ????????"           // mov ecx, [Borderlands4.AK::IAkStreamMgr::m_pStreamMgr+15AC]
+    "65 4C 8B 04 25 ????????"  // mov r8, gs:[00000058]
+    "49 8B 0C C8"              // mov rcx, [r8+rcx*8]
+    "3B 81 ????????"           // cmp eax, [rcx+00000110]
+    "7F 1D"                    // jg Borderlands4.exe+E6DE3E
+    "48 8B 0D ????????"        // mov rcx, [Borderlands4.exe+114F8EA0]
+    "48 8B 01"                 // mov rax, [rcx]
+    "48 8B 40 48"              // mov rax, [rax+48]
+    "48 83 C4 20"              // add rsp, 20
+    "5E"                       // pop rsi
+    "48 FF E0"                 // jmp rax
 };
 
 struct FMalloc;
@@ -56,7 +56,9 @@ FMalloc* gmalloc;
 }  // namespace
 
 void BL4Hook::find_gmalloc(void) {
-    volatile auto gmalloc_ptr = read_offset<FMalloc**>(GMALLOC_SIG.sigscan("GMalloc"));
+    auto gmalloc_sig = GMALLOC_SIG.sigscan("GMalloc");
+    LOG(MISC, "GMalloc sig: {:p}", reinterpret_cast<void*>(gmalloc_sig));
+    volatile auto gmalloc_ptr = read_offset<FMalloc**>(gmalloc_sig);
     while (*gmalloc_ptr == nullptr) {
         // NOLINTNEXTLINE(readability-magic-numbers)
         std::this_thread::sleep_for(std::chrono::milliseconds{50});
