@@ -213,7 +213,7 @@ void uconsole_output_text(std::wstring_view str);
  * @param name Pointer to the text to initialize.
  * @param str The string to initialize the text to.
  */
-void ftext_as_culture_invariant(unreal::FText* text, unreal::TemporaryFString&& str);
+void ftext_as_culture_invariant(unreal::FText* text, std::wstring_view str);
 
 /**
  * @brief Assigns an object to a `FSoftObjectPtr` or `FLazyObjectPtr`.
@@ -230,7 +230,13 @@ void flazyobjectptr_assign(unreal::FLazyObjectPtr* ptr, const unreal::UObject* o
  *
  * @return A reference to the offsets list.
  */
-[[nodiscard]] const unreal::offsets::OffsetList& get_offsets(void);
+[[nodiscard]]
+#if defined(_MSC_VER) && !defined(__clang__)
+__declspec(noalias)
+#else
+__attribute__((pure))
+#endif
+const unreal::offsets::OffsetList& get_offsets(void);
 
 }  // namespace internal
 

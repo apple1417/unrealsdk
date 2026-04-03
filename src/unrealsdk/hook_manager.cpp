@@ -418,6 +418,15 @@ bool remove_hook(std::wstring_view func, Type type, std::wstring_view identifier
 std::shared_ptr<Node> preprocess_hook(std::wstring_view source,
                                       const UFunction* func,
                                       const UObject* obj) {
+    if (!unrealsdk::is_initialized()) {
+        static bool log_once = false;
+        if (!log_once) {
+            LOG(ERROR, "A hook function ran before the sdk fully initialized!");
+            log_once = true;
+        }
+        return nullptr;
+    }
+
     if (should_inject_next_call) {
         should_inject_next_call = false;
         return nullptr;

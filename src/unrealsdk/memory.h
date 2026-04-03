@@ -12,7 +12,7 @@ struct Pattern;
  * @brief Performs a sigscan.
  *
  * @tparam T The type to cast the result to.
- * @param bytes The bytes to search for.
+ * @param bytes The bytes to search for. Must already be masked.
  * @param mask The mask over the bytes to search for.
  * @param pattern_size The size of the bytes + mask.
  * @param start The address to start the search at. Defaults to the start of the exe.

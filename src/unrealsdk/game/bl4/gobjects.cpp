@@ -23,7 +23,9 @@ GObjects gobjects_wrapper{};
 }  // namespace
 
 void BL4Hook::find_gobjects(void) {
-    auto gobjects_ptr = read_offset<GObjects::internal_type>(GOBJECTS_SIG.sigscan_nullable());
+    auto gobjects_sig = GOBJECTS_SIG.sigscan_nullable();
+    LOG(MISC, "GObjects sig: {:p}", reinterpret_cast<void*>(gobjects_sig));
+    auto gobjects_ptr = read_offset<GObjects::internal_type>(gobjects_sig);
     LOG(MISC, "GObjects: {:p}", reinterpret_cast<void*>(gobjects_ptr));
 
     gobjects_wrapper = GObjects(gobjects_ptr);

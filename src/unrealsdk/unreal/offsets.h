@@ -40,6 +40,11 @@ using offset_type = uint16_t;
 #define UNREALSDK_OFFSETS__OFFSETOF_PRAGMA_PUSH
 #define UNREALSDK_OFFSETS__OFFSETOF_PRAGMA_POP
 #endif
+#if defined(_MSC_VER) && !defined(__clang__)
+#define UNREALSDK_OFFSETS__PURE_FUNC_ATTR __declspec(noalias)
+#else
+#define UNREALSDK_OFFSETS__PURE_FUNC_ATTR __attribute__((pure))
+#endif
 
 /**
  * @brief Header file macro to defines all the machinery for variable offset fields.
@@ -48,23 +53,23 @@ using offset_type = uint16_t;
  * @param ClassName The name of the class these fields are being defined for.
  * @param X_MACRO An X macro list of the fields to define. See the example below.
  */
-#define UNREALSDK_DEFINE_FIELDS_HEADER(ClassName, X_MACRO)             \
-   public:                                                             \
-    struct Offsets;                                                    \
-    /* NOLINTNEXTLINE(readability-identifier-naming) */                \
-    X_MACRO(UNREALSDK_OFFSETS__DEFINE_GETTER)                          \
-    struct Offsets {                                                   \
-        /* NOLINTNEXTLINE(readability-identifier-naming) */            \
-        X_MACRO(UNREALSDK_OFFSETS__DEFINE_OFFSET_MEMBERS)              \
-        template <typename T>                                          \
-        static constexpr Offsets from() {                              \
-            UNREALSDK_OFFSETS__OFFSETOF_PRAGMA_PUSH                    \
-            X_MACRO(UNREALSDK_OFFSETS__OFFSETOF_ASSERTS);              \
-            return {X_MACRO(UNREALSDK_OFFSETS__OFFSETOF)};             \
-            UNREALSDK_OFFSETS__OFFSETOF_PRAGMA_POP                     \
-        }                                                              \
-        static unrealsdk::unreal::offsets::offset_type get(            \
-            unrealsdk::unreal::offsets::offset_type Offsets::* field); \
+#define UNREALSDK_DEFINE_FIELDS_HEADER(ClassName, X_MACRO)                                    \
+   public:                                                                                    \
+    struct Offsets;                                                                           \
+    /* NOLINTNEXTLINE(readability-identifier-naming) */                                       \
+    X_MACRO(UNREALSDK_OFFSETS__DEFINE_GETTER)                                                 \
+    struct Offsets {                                                                          \
+        /* NOLINTNEXTLINE(readability-identifier-naming) */                                   \
+        X_MACRO(UNREALSDK_OFFSETS__DEFINE_OFFSET_MEMBERS)                                     \
+        template <typename T>                                                                 \
+        static constexpr Offsets from() {                                                     \
+            UNREALSDK_OFFSETS__OFFSETOF_PRAGMA_PUSH                                           \
+            X_MACRO(UNREALSDK_OFFSETS__OFFSETOF_ASSERTS);                                     \
+            return {X_MACRO(UNREALSDK_OFFSETS__OFFSETOF)};                                    \
+            UNREALSDK_OFFSETS__OFFSETOF_PRAGMA_POP                                            \
+        }                                                                                     \
+        static UNREALSDK_OFFSETS__PURE_FUNC_ATTR unrealsdk::unreal::offsets::offset_type get( \
+            unrealsdk::unreal::offsets::offset_type Offsets::* field);                        \
     }  // deliberately no semicolon - forward declared earlier so that we could put this last
 
 /**
@@ -74,10 +79,10 @@ using offset_type = uint16_t;
  * @param ClassName The name of the class these fields are being defined for.
  * @param X_MACRO An X macro list of the fields to define. See the example below.
  */
-#define UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(ClassName, X_MACRO)                \
-    unrealsdk::unreal::offsets::offset_type ClassName::Offsets::get(           \
-        unrealsdk::unreal::offsets::offset_type ClassName::Offsets::* field) { \
-        return unrealsdk::internal::get_offsets().ClassName.*field;            \
+#define UNREALSDK_DEFINE_FIELDS_SOURCE_FILE(ClassName, X_MACRO)                                    \
+    UNREALSDK_OFFSETS__PURE_FUNC_ATTR unrealsdk::unreal::offsets::offset_type                      \
+    ClassName::Offsets::get(unrealsdk::unreal::offsets::offset_type ClassName::Offsets::* field) { \
+        return unrealsdk::internal::get_offsets().ClassName.*field;                                \
     }
 
 #if 0  // NOLINT(readability-avoid-unconditional-preprocessor-if)

@@ -55,7 +55,10 @@ void static_uconsole_output_text(const std::wstring& str) {
 }
 
 using console_command_func = void(UObject* console_obj, UnmanagedFString* raw_line);
-console_command_func* console_command_ptr;
+
+// In most hooks we leave the original function pointer uninitialized, explicitly init to null so we
+// can use it in the console ready check
+console_command_func* console_command_ptr = nullptr;
 
 void console_command_hook(UObject* console_obj, UnmanagedFString* raw_line) {
     try {
@@ -181,8 +184,9 @@ bool inject_console_hook(hook_manager::Details& hook) {
         config::get_int("unrealsdk.uconsole_console_command_vf_index")
             .value_or(86);  // NOLINT(readability-magic-numbers)
 
-    memory::detour(console->vftable[console_command_vf_idx], console_command_hook,
-                   &console_command_ptr, "ConsoleCommand");
+    // This function is known to be slow to unpack
+    bl4::detour_once_executable(console->vftable[console_command_vf_idx], console_command_hook,
+                                &console_command_ptr, "ConsoleCommand");
 
     LOG(MISC, "Injected console");
 
@@ -247,7 +251,7 @@ void BL4Hook::uconsole_output_text(const std::wstring& str) const {
 }
 
 bool BL4Hook::is_console_ready(void) const {
-    return console != nullptr;
+    return console != nullptr && console_command_ptr != nullptr;
 }
 
 }  // namespace unrealsdk::game

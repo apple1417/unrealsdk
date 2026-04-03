@@ -150,11 +150,9 @@ void BL3Hook::find_ftext_as_culture_invariant(void) {
     LOG(MISC, "FText::AsCultureInvariant: {:p}", reinterpret_cast<void*>(fname_init_ptr));
 }
 
-// This is fine, since we consume it when calling the native function
-// The rvalue will live for the lifetime of this function call
-// NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved)
-void BL3Hook::ftext_as_culture_invariant(FText* text, TemporaryFString&& str) const {
-    ftext_as_culture_invariant_ptr(text, &str);
+void BL3Hook::ftext_as_culture_invariant(unreal::FText* text, std::wstring_view str) const {
+    const TemporaryFString temp = str;
+    ftext_as_culture_invariant_ptr(text, &temp);
 }
 
 #pragma endregion

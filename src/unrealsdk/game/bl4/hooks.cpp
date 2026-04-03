@@ -19,7 +19,9 @@ namespace {
 using call_function_func = void(UObject* obj, FFrame* stack, void* result, UFunction* func);
 call_function_func* call_function_ptr;
 
-const constinit Pattern<24> CALL_FUNCTION_SIG{
+// binfold seems good at picking up UObject::execVirtualFunction, it calls two functions, first is
+// UObject::FindFunctionChecked, second is this
+const constinit Pattern<27> CALL_FUNCTION_SIG{
     "55"              // push rbp
     "41 57"           // push r15
     "41 56"           // push r14
@@ -30,7 +32,8 @@ const constinit Pattern<24> CALL_FUNCTION_SIG{
     "53"              // push rbx
     "48 83 EC ??"     // sub rsp, 38
     "48 8D 6C 24 ??"  // lea rbp, [rsp+30]
-    "4C 89 CB"        // mov rbx, r9
+    "4C 89 C?"        // mov rbx, r9        | mov rsi, r9
+    "4D 89 C6"        // mov r14,r8
 };
 
 void call_function_hook(UObject* obj, FFrame* stack, void* result, UFunction* func) {
@@ -188,12 +191,25 @@ static_assert(std::is_same_v<decltype(process_event_hook), decltype(locking_proc
 
 }  // namespace
 
-void BL4Hook::hook_process_event(void) {
-    detour(PROCESS_EVENT_SIG,
-           // If we don't need locks, it's slightly more efficient to detour directly to the
-           // non-locking version
-           locks::FunctionCall::enabled() ? locking_process_event_hook : process_event_hook,
-           &process_event_ptr, "ProcessEvent");
+void BL4Hook::hook_process_event_and_wait_for_unpack(void) {
+    // HACK: The exe is packed, we don't have a proper hook after unpack yet, so instead just repeat
+    //       sigscan until it works (or timeout). This is normally the first sigscan.
+    const auto timeout = std::chrono::steady_clock::now() + std::chrono::seconds{30};
+    while (std::chrono::steady_clock::now() < timeout) {
+        auto process_event_addr = PROCESS_EVENT_SIG.sigscan_nullable();
+        if (process_event_addr == 0) {
+            const constexpr auto sleep_time = std::chrono::milliseconds{50};
+            std::this_thread::sleep_for(sleep_time);
+            continue;
+        }
+
+        detour(process_event_addr,
+               locks::FunctionCall::enabled() ? locking_process_event_hook : process_event_hook,
+               &process_event_ptr, "ProcessEvent");
+        return;
+    }
+
+    LOG(ERROR, "Couldn't find ProcessEvent signature before timeout!");
 }
 
 void BL4Hook::process_event(UObject* object, UFunction* func, void* params) const {

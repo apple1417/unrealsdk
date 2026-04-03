@@ -84,7 +84,7 @@ std::wstring AbstractHook::ffield_path_name(const unreal::FField* /*field*/) con
     unreachable();
 }
 void AbstractHook::ftext_as_culture_invariant(unreal::FText* /*text*/,
-                                              unreal::TemporaryFString&& /*str*/) const {
+                                              std::wstring_view /*str*/) const {
     throw_version_error("ftext_as_culture_invariant not implemented");
     unreachable();
 }

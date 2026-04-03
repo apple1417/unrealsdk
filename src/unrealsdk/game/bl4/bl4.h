@@ -2,19 +2,22 @@
 #define UNREALSDK_GAME_BL4_BL4_H
 
 #include "unrealsdk/pch.h"
+#include "unrealsdk/exports.h"
+#include "unrealsdk/utils.h"
 
-#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2 && !defined(UNREALSDK_IMPORTING)
+#if UNREALSDK_FLAVOUR == UNREALSDK_FLAVOUR_OAK2
 
 #include "unrealsdk/game/abstract_hook.h"
 #include "unrealsdk/game/selector.h"
 
 namespace unrealsdk::game {
 
+#ifndef UNREALSDK_IMPORTING
 class BL4Hook : public AbstractHook {
    protected:
     static void hook_antidebug(void);
     static void hook_call_function(void);
-    static void hook_process_event(void);
+    static void hook_process_event_and_wait_for_unpack(void);
 
     static void find_fname_funcs(void);
     static void find_gobjects(void);
@@ -59,8 +62,7 @@ class BL4Hook : public AbstractHook {
     [[nodiscard]] std::wstring uobject_path_name(const unreal::UObject* obj) const override;
     [[nodiscard]] std::wstring ffield_path_name(const unreal::FField* field) const override;
 
-    void ftext_as_culture_invariant(unreal::FText* text,
-                                    unreal::TemporaryFString&& str) const override;
+    void ftext_as_culture_invariant(unreal::FText* text, std::wstring_view str) const override;
     /*
     void fsoftobjectptr_assign(unreal::FSoftObjectPtr* ptr,
                                const unreal::UObject* obj) const override;
@@ -78,6 +80,48 @@ struct GameTraits<BL4Hook> {
         return executable == "Borderlands4.exe";
     }
 };
+#endif
+
+namespace bl4 {
+namespace {
+
+constexpr auto DEFAULT_POLL_INTERVAL = std::chrono::milliseconds{100};
+constexpr auto DEFAULT_TIMEOUT = std::chrono::seconds{60};
+
+}  // namespace
+
+/**
+ * @brief Wait for an address to become executable, and only then detour the given function.
+ * @note This waits for the unpacking done by this game's antidebug, avoiding errors that can occur
+ *       when detouring too early.
+ *
+ * @tparam T The signature of the detour'd function (should be picked up automatically).
+ * @param addr The address of the function.
+ * @param detour_func The detour function.
+ * @param original_func Pointer to store the original function.
+ * @param name Name of the detour, to be used in log messages on error.
+ * @param poll_interval How long to wait between polls.
+ * @param timeout Duration to timeout after.
+ */
+void detour_once_executable(uintptr_t addr,
+                            void* detour_func,
+                            void** original_func,
+                            std::string&& name,
+                            std::chrono::milliseconds poll_interval = DEFAULT_POLL_INTERVAL,
+                            std::chrono::milliseconds timeout = DEFAULT_TIMEOUT);
+template <typename T>
+void detour_once_executable(uintptr_t addr,
+                            T* detour_func,
+                            T** original_func,
+                            std::string&& name,
+                            std::chrono::milliseconds poll_interval = DEFAULT_POLL_INTERVAL,
+                            std::chrono::milliseconds timeout = DEFAULT_TIMEOUT) {
+    detour_once_executable(addr, reinterpret_cast<void*>(detour_func),
+                           reinterpret_cast<void**>(original_func), std::move(name), poll_interval,
+                           timeout);
+}
+
+}  // namespace bl4
 
 }  // namespace unrealsdk::game
 

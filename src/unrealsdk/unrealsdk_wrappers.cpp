@@ -108,8 +108,8 @@ std::wstring ffield_path_name(const FField* obj) {
     return str;
 }
 
-void ftext_as_culture_invariant(unreal::FText* text, unreal::TemporaryFString&& str) {
-    UNREALSDK_MANGLE(ftext_as_culture_invariant)(text, std::move(str));
+void ftext_as_culture_invariant(unreal::FText* text, std::wstring_view str) {
+    UNREALSDK_MANGLE(ftext_as_culture_invariant)(text, str.data(), str.size());
 }
 
 void fsoftobjectptr_assign(unreal::FSoftObjectPtr* ptr, const unreal::UObject* obj) {
@@ -120,7 +120,13 @@ void flazyobjectptr_assign(unreal::FLazyObjectPtr* ptr, const unreal::UObject* o
     UNREALSDK_MANGLE(flazyobjectptr_assign)(ptr, obj);
 }
 
-[[nodiscard]] const offsets::OffsetList& get_offsets() {
+[[nodiscard]]
+#if defined(_MSC_VER) && !defined(__clang__)
+__declspec(noalias)
+#else
+__attribute__((pure))
+#endif
+const offsets::OffsetList& get_offsets() {
     return *UNREALSDK_MANGLE(get_offsets)();
 }
 
