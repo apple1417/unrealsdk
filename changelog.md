@@ -11,6 +11,13 @@ These are not hard rules, we just strive to follow them on a best-effort basis. 
 compatibility it's recommended to always compile against the exact same commit as you expect to be
 linking against.
 
+## 3.1.0 Beta
+This release is marked as a beta, since it was only (partially) tested against BL4. Other games are
+mostly untested.
+
+- Updated to support the latest Borderlands 4 update. Thanks to Cr4nkSt4r for help finding new
+  signatures.
+
 ## 3.0.0 Beta
 This release is marked as a beta, since it was only (partially) tested against BL4. Other games are
 mostly untested.
