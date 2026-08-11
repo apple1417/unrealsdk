@@ -3,6 +3,7 @@
 #include "unrealsdk/config.h"
 #include "unrealsdk/game/abstract_hook.h"
 #include "unrealsdk/hook_manager.h"
+#include "unrealsdk/locks.h"
 #include "unrealsdk/logging.h"
 #include "unrealsdk/unreal/find_class.h"
 #include "unrealsdk/unrealsdk.h"
@@ -141,6 +142,7 @@ UNREALSDK_CAPI([[nodiscard]] UObject*,
                const wchar_t* name,
                size_t size,
                uint32_t flags) {
+    const locks::LoadPackage lock{};
     return hook_instance->load_package({name, size}, flags);
 }
 

@@ -27,6 +27,28 @@ struct FunctionCall {
     static bool enabled(void);
 };
 
+/**
+ * @brief RAII class to hold the load package lock.
+ * @note Noop if locking load package is not enabled.
+ */
+struct LoadPackage {
+   public:
+    LoadPackage();
+    ~LoadPackage();
+
+    LoadPackage(const LoadPackage&) = delete;
+    LoadPackage(LoadPackage&&) noexcept = delete;
+    LoadPackage& operator=(const LoadPackage&) = delete;
+    LoadPackage& operator=(LoadPackage&&) noexcept = delete;
+
+    /**
+     * @brief Checks if the load package lock is enabled.
+     *
+     * @return True if enabled, false if disabled.
+     */
+    static bool enabled(void);
+};
+
 }  // namespace unrealsdk::locks
 
 #endif
