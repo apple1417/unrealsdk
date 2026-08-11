@@ -58,6 +58,10 @@ WrappedStruct::WrappedStruct(const WrappedStruct& other) : type(other.type), bas
 WrappedStruct::WrappedStruct(WrappedStruct&& other) noexcept
     : type(std::exchange(other.type, nullptr)), base(std::exchange(other.base, {nullptr})) {}
 
+WrappedStruct WrappedStruct::copy_reference(void) const {
+    return {this->type, this->base.get(), this->base};
+}
+
 WrappedStruct& WrappedStruct::operator=(const WrappedStruct& other) {
     if (other.type != this->type) {
         throw std::runtime_error("Struct is not an instance of " + this->type->Name());

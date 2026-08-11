@@ -35,6 +35,14 @@ class WrappedStruct {
     WrappedStruct(WrappedStruct&& other) noexcept;
 
     /**
+     * @brief Constructs a new wrapped struct referencing the same memory as this one.
+     * @note This is like if the move constructor didn't invalidate the original object.
+     *
+     * @return A new wrapped struct.
+     */
+    [[nodiscard]] WrappedStruct copy_reference(void) const;
+
+    /**
      * @brief Assigns to the struct.
      * @note Only allowed if of the same type.
      *
